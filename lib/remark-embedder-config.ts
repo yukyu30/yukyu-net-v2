@@ -1,11 +1,12 @@
-import type { RemarkEmbedderOptions } from '@remark-embedder/core';
-
 // YouTube埋め込み用のトランスフォーマー
 const getYouTubeHTML = (url: string) => {
   const videoId = extractYouTubeVideoId(url);
-  if (!videoId) return null;
+  
+  if (!videoId) {
+    return null;
+  }
 
-  return `
+  const html = `
     <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 1.5rem 0;">
       <iframe 
         src="https://www.youtube.com/embed/${videoId}"
@@ -17,6 +18,8 @@ const getYouTubeHTML = (url: string) => {
       ></iframe>
     </div>
   `.trim();
+  
+  return html;
 };
 
 // Twitter/X埋め込み用のトランスフォーマー
@@ -82,7 +85,7 @@ function extractVimeoVideoId(url: string): string | null {
 }
 
 // remark-embedder設定
-export const remarkEmbedderConfig: RemarkEmbedderOptions = {
+export const remarkEmbedderConfig = {
   transformers: [
     // YouTube
     {
@@ -111,10 +114,4 @@ export const remarkEmbedderConfig: RemarkEmbedderOptions = {
       getHTML: (url: string) => getVimeoHTML(url),
     },
   ],
-  
-  // 埋め込み対象となるURLのパターン
-  handleHTML: (html) => {
-    // 基本的にはそのまま返す
-    return html;
-  },
 };
