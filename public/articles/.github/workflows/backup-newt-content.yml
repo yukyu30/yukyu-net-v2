@@ -1,0 +1,61 @@
+name: Backup Newt Content
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日午前0時に実行（UTC）
+  repository_dispatch:    # Webhookからのトリガー
+    types: [newt_content_updated]
+  workflow_dispatch:      # 手動実行も可能
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 markdown
+
+      - name: Run backup script
+        env:
+          NEWT_SPACE_UID: ${{ secrets.NEWT_SPACE_UID }}
+          NEWT_APP_UID: ${{ secrets.NEWT_APP_UID }}
+          NEWT_API_TOKEN: ${{ secrets.NEWT_API_TOKEN }}
+          NEWT_ARTICLE_MODEL_UID: ${{ secrets.NEWT_ARTICLE_MODEL_UID }}
+        run: python .github/scripts/backup_newt_content.py
+
+      - name: Commit and push if there are changes
+        id: commit
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
+          git add -A
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            git commit -m "Update content from Newt [skip ci]"
+            git push
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Changes committed and pushed"
+          fi
+          
+      - name: Create summary
+        if: steps.commit.outputs.changes == 'true'
+        run: |
+          echo "## バックアップ完了 :white_check_mark:" >> $GITHUB_STEP_SUMMARY
+          echo "Newtからのコンテンツバックアップが完了しました。" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 更新内容" >> $GITHUB_STEP_SUMMARY
+          echo "新しく追加されたファイル一覧：" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          git diff --name-only HEAD~1 HEAD >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

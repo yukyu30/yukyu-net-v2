@@ -7,7 +7,7 @@ import remarkEmbedder from '@remark-embedder/core';
 import { remarkEmbedderConfig } from './remark-embedder-config';
 import { remarkLinkCard } from './remark-link-card';
 
-const postsDirectory = path.join(process.cwd(), 'public_articles');
+const postsDirectory = path.join(process.cwd(), 'public', 'articles');
 
 export interface PostData {
   id: string;
@@ -109,7 +109,7 @@ export async function getPostData(slug: string): Promise<PostData> {
   let content = matterResult.content;
   content = content.replace(
     /!\[([^\]]*)\]\((?!http)([^)]+)\)/g,
-    `![$1](/images/${slug}/$2)`
+    `![$1](/articles/${slug}/$2)`
   );
 
   // Use remark to convert markdown into HTML string
