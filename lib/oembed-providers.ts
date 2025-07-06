@@ -22,9 +22,9 @@ export const OEMBED_PROVIDERS: OEmbedProvider[] = [
   {
     name: 'YouTube',
     urlPatterns: [
-      /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+/i,
-      /^https?:\/\/youtu\.be\/[\w-]+/i,
-      /^https?:\/\/(?:www\.)?youtube\.com\/embed\/[\w-]+/i,
+      /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+(?:[&?][\w=&%-]*)*$/i,
+      /^https?:\/\/youtu\.be\/[\w-]+(?:\?[\w=&%-]*)?$/i,
+      /^https?:\/\/(?:www\.)?youtube\.com\/embed\/[\w-]+(?:\?[\w=&%-]*)?$/i,
     ],
     endpointUrl: 'https://www.youtube.com/oembed',
     maxWidth: 560,

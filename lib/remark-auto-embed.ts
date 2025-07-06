@@ -29,8 +29,9 @@ const SUPPORTED_PATTERNS = [
   // Twitter/X
   /^https?:\/\/(?:www\.)?(twitter\.com|x\.com)\/[^\/]+\/status\/\d+/i,
   // YouTube
-  /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+/i,
-  /^https?:\/\/youtu\.be\/[\w-]+/i,
+  /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[\w-]+(?:[&?][\w=&%-]*)*$/i,
+  /^https?:\/\/youtu\.be\/[\w-]+(?:\?[\w=&%-]*)?$/i,
+  /^https?:\/\/(?:www\.)?youtube\.com\/embed\/[\w-]+(?:\?[\w=&%-]*)?$/i,
   // Vimeo
   /^https?:\/\/(?:www\.)?vimeo\.com\/\d+/i,
   // Instagram
