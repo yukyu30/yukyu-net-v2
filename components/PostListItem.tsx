@@ -17,7 +17,7 @@ export default function PostListItem({ post }: PostListItemProps) {
           {title}
         </h3>
         {excerpt && (
-          <p className="text-gray-700 mb-2 text-sm">
+          <p className="text-gray-700 mb-2 text-sm truncate">
             {excerpt}
           </p>
         )}
