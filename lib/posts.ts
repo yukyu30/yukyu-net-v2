@@ -5,7 +5,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import remarkEmbedder from '@remark-embedder/core';
 import { remarkEmbedderConfig } from './remark-embedder-config';
-// import { remarkLinkCard } from './remark-link-card';
+import { remarkLinkCard } from './remark-link-card';
 
 const postsDirectory = path.join(process.cwd(), 'public_articles');
 
@@ -23,7 +23,7 @@ export interface PostData {
 export const POSTS_PER_PAGE = 10;
 
 function getExcerpt(content: string): string {
-  // Remove markdown formatting and get first paragraph as excerpt
+  // Remove markdown formatting and get first 20 characters
   const plainText = content
     .replace(/^---[\s\S]*?---/, '') // Remove frontmatter
     .replace(/#+\s/g, '') // Remove headings
@@ -36,13 +36,7 @@ function getExcerpt(content: string): string {
     .replace(/\n+/g, ' ') // Replace newlines with spaces
     .trim();
   
-  // Get first 100 characters or first sentence, whichever is shorter
-  const firstSentence = plainText.split(/[。！？]/)[0];
-  const excerpt = firstSentence.length > 0 && firstSentence.length < 100 
-    ? firstSentence 
-    : plainText.substring(0, 100);
-    
-  return excerpt;
+  return plainText.substring(0, 20) + (plainText.length > 20 ? '...' : '');
 }
 
 export function getSortedPostsData(): PostData[] {
@@ -120,7 +114,7 @@ export async function getPostData(slug: string): Promise<PostData> {
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
-    // .use(remarkLinkCard)
+    .use(remarkLinkCard)
     .use(remarkEmbedder, remarkEmbedderConfig)
     .use(html, { sanitize: false })
     .process(content);
