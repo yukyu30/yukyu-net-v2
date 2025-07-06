@@ -7,7 +7,7 @@ import remarkEmbedder from '@remark-embedder/core';
 import { remarkEmbedderConfig } from './remark-embedder-config';
 import { remarkLinkCard } from './remark-link-card';
 
-const postsDirectory = path.join(process.cwd(), 'public', 'articles');
+const postsDirectory = path.join(process.cwd(), 'articles');
 
 export interface PostData {
   id: string;
