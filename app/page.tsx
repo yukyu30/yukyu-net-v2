@@ -1,10 +1,11 @@
-import Link from 'next/link';
-import { getSortedPostsData } from '@/lib/posts';
-import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { getSortedPostsData, POSTS_PER_PAGE } from '@/lib/posts';
+import PostList from '@/components/PostList';
+import Pagination from '@/components/Pagination';
 
 export default function Home() {
   const allPostsData = getSortedPostsData();
+  const totalPages = Math.ceil(allPostsData.length / POSTS_PER_PAGE);
+  const currentPosts = allPostsData.slice(0, POSTS_PER_PAGE);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -14,23 +15,11 @@ export default function Home() {
       </header>
       
       <main>
-        <section>
-          <h2 className="text-2xl font-semibold mb-6">最新の記事</h2>
-          <div className="space-y-6">
-            {allPostsData.map(({ slug, created_at, title }) => (
-              <article key={slug} className="border-b pb-6 last:border-0">
-                <Link href={`/posts/${slug}`} className="group">
-                  <h3 className="text-xl font-medium mb-2 group-hover:text-blue-600 transition-colors">
-                    {title}
-                  </h3>
-                  <time className="text-sm text-gray-600">
-                    {format(new Date(created_at), 'yyyy年MM月dd日', { locale: ja })}
-                  </time>
-                </Link>
-              </article>
-            ))}
-          </div>
-        </section>
+        <PostList posts={currentPosts} />
+        
+        {totalPages > 1 && (
+          <Pagination currentPage={1} totalPages={totalPages} />
+        )}
       </main>
     </div>
   );

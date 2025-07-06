@@ -14,6 +14,26 @@ export interface PostData {
   updated_at: string;
   content?: string;
   contentHtml?: string;
+  excerpt?: string;
+}
+
+export const POSTS_PER_PAGE = 10;
+
+function getExcerpt(content: string): string {
+  // Remove markdown formatting and get first 20 characters
+  const plainText = content
+    .replace(/^---[\s\S]*?---/, '') // Remove frontmatter
+    .replace(/#+\s/g, '') // Remove headings
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+    .replace(/\*(.*?)\*/g, '$1') // Remove italic
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links
+    .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
+    .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+    .replace(/`(.*?)`/g, '$1') // Remove inline code
+    .replace(/\n+/g, ' ') // Replace newlines with spaces
+    .trim();
+  
+  return plainText.substring(0, 20) + (plainText.length > 20 ? '...' : '');
 }
 
 export function getSortedPostsData(): PostData[] {
@@ -35,6 +55,9 @@ export function getSortedPostsData(): PostData[] {
       // Use gray-matter to parse the post metadata section
       const matterResult = matter(fileContents);
 
+      // Get excerpt from content
+      const excerpt = getExcerpt(matterResult.content);
+
       // Combine the data with the slug
       return {
         slug,
@@ -42,6 +65,7 @@ export function getSortedPostsData(): PostData[] {
         title: matterResult.data.title,
         created_at: matterResult.data.created_at,
         updated_at: matterResult.data.updated_at,
+        excerpt,
       } as PostData;
     });
 

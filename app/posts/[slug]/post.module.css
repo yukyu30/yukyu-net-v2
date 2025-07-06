@@ -1,0 +1,276 @@
+.article {
+  font-size: 16px;
+  line-height: 28px; /* Base Line Height 1.75 (16px * 1.75 = 28px) */
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+}
+
+.article h1 {
+  font-size: 32px;
+  line-height: 56px; /* 8/4 ratio */
+  font-weight: 700;
+  margin: 56px 0 28px;
+  color: #222;
+}
+
+.article h2 {
+  font-size: 26px;
+  line-height: 48px; /* 8/5 ratio */
+  font-weight: 700;
+  margin: 48px 0 24px;
+  color: #222;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.article h3 {
+  font-size: 21px;
+  line-height: 40px; /* 8/6 ratio */
+  font-weight: 700;
+  margin: 40px 0 20px;
+  color: #222;
+}
+
+.article h4 {
+  font-size: 18px;
+  line-height: 32px; /* 8/7 ratio */
+  font-weight: 700;
+  margin: 32px 0 16px;
+  color: #222;
+}
+
+.article p {
+  margin: 28px 0;
+  line-height: 28px; /* Base Line Height 1.75 */
+}
+
+.article a {
+  color: #1976d2;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.article a:hover {
+  color: #1565c0;
+  border-bottom-color: #1565c0;
+}
+
+.article ul,
+.article ol {
+  margin: 28px 0;
+  padding-left: 32px;
+}
+
+.article li {
+  margin: 8px 0;
+  line-height: 28px;
+}
+
+.article ul li {
+  list-style-type: disc;
+}
+
+.article ol li {
+  list-style-type: decimal;
+}
+
+.article blockquote {
+  margin: 32px 0;
+  padding: 20px 28px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #1976d2;
+  color: #555;
+}
+
+.article blockquote p {
+  margin: 0;
+  line-height: 28px;
+}
+
+.article code {
+  font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  font-size: 0.875em;
+  background-color: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  color: #d1003a;
+}
+
+.article pre {
+  margin: 32px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+}
+
+.article pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 14px;
+  line-height: 24px; /* 8/9 ratio for 14px */
+}
+
+.article img {
+  max-width: 100%;
+  height: auto;
+  margin: 32px auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.article table {
+  width: 100%;
+  margin: 32px 0;
+  border-collapse: collapse;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+}
+
+.article th,
+.article td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  line-height: 24px;
+}
+
+.article th {
+  background-color: #f8f9fa;
+  font-weight: 700;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.article tr:last-child td {
+  border-bottom: none;
+}
+
+.article hr {
+  margin: 56px 0;
+  border: none;
+  border-top: 2px solid #f0f0f0;
+}
+
+.article strong {
+  font-weight: 700;
+  color: #222;
+}
+
+.article em {
+  font-style: italic;
+}
+
+/* Twitter埋め込み用 */
+.article .twitter-tweet {
+  margin: 32px auto !important;
+}
+
+/* 記事のメタ情報 */
+.articleMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #666;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.articleMeta time {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .article {
+    font-size: 14px;
+    line-height: 24px; /* 8/9 ratio for mobile */
+  }
+  
+  .article h1 {
+    font-size: 26px;
+    line-height: 40px; /* 8/5 ratio */
+    margin: 40px 0 20px;
+  }
+  
+  .article h2 {
+    font-size: 21px;
+    line-height: 32px; /* 8/6 ratio */
+    margin: 32px 0 16px;
+  }
+  
+  .article h3 {
+    font-size: 18px;
+    line-height: 28px; /* 8/7 ratio */
+    margin: 28px 0 14px;
+  }
+  
+  .article h4 {
+    font-size: 16px;
+    line-height: 24px; /* 8/9 ratio */
+    margin: 24px 0 12px;
+  }
+  
+  .article p {
+    margin: 24px 0;
+    line-height: 24px;
+  }
+  
+  .article ul,
+  .article ol {
+    margin: 24px 0;
+    padding-left: 20px;
+  }
+  
+  .article li {
+    line-height: 24px;
+  }
+  
+  .article blockquote {
+    margin: 24px 0;
+    padding: 16px 20px;
+  }
+  
+  .article pre {
+    margin: 24px 0;
+    padding: 16px;
+  }
+  
+  .article pre code {
+    font-size: 12px;
+    line-height: 20px; /* 8/11 ratio for 12px */
+  }
+  
+  .article img {
+    margin: 24px auto;
+  }
+  
+  .article table {
+    margin: 24px 0;
+  }
+  
+  .article th,
+  .article td {
+    padding: 8px 12px;
+    line-height: 20px;
+  }
+  
+  .article hr {
+    margin: 40px 0;
+  }
+  
+  .articleMeta {
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+}

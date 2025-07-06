@@ -2,6 +2,7 @@ import { getPostData, getAllPostSlugs } from '@/lib/posts';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
+import styles from './post.module.css';
 
 export async function generateStaticParams() {
   const paths = getAllPostSlugs();
@@ -18,13 +19,15 @@ export default async function Post({ params }: { params: { slug: string } }) {
           ← ホームに戻る
         </Link>
         <h1 className="text-3xl font-bold mb-2">{postData.title}</h1>
-        <time className="text-sm text-gray-600">
-          {format(new Date(postData.created_at), 'yyyy年MM月dd日', { locale: ja })}
-        </time>
+        <div className={styles.articleMeta}>
+          <time>
+            {format(new Date(postData.created_at), 'yyyy年MM月dd日', { locale: ja })}
+          </time>
+        </div>
       </header>
       
       <article 
-        className="prose prose-lg max-w-none"
+        className={styles.article}
         dangerouslySetInnerHTML={{ __html: postData.contentHtml || '' }}
       />
     </div>
