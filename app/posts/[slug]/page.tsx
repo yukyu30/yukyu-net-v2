@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
 import styles from './post.module.css';
-import OEmbedProcessor from '@/components/OEmbedProcessor';
 
 export async function generateStaticParams() {
   const paths = getAllPostSlugs();
@@ -28,9 +27,10 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
         </div>
       </header>
       
-      <article className={styles.article}>
-        <OEmbedProcessor html={postData.contentHtml || ''} />
-      </article>
+      <article 
+        className={styles.article}
+        dangerouslySetInnerHTML={{ __html: postData.contentHtml || '' }}
+      />
     </div>
   );
 }

@@ -199,9 +199,10 @@ tags: ["技術", "Next.js", "React"]
 
 このように、将来のClaude Codeインスタンスが効率的に作業できるよう、重要な変更は必ずドキュメント化してください。
 
-## 追加された機能: oEmbed自動埋め込み対応
+## 追加された機能: remark-embedder自動埋め込み対応
 
 ### 依存関係
+- `@remark-embedder/core`: URL自動埋め込み用remarkプラグイン（バージョン: 3.0.3）
 - `unist-util-visit`: remarkプラグイン用AST操作（バージョン: 5.0.0）
 
 ### 新しいコマンド
@@ -209,13 +210,7 @@ tags: ["技術", "Next.js", "React"]
 - `npm run test:watch`: Jestウォッチモードでテスト実行
 
 ### アーキテクチャ変更
-- `lib/oembed-providers.ts`: oEmbedプロバイダー設定とURL検出
-- `lib/oembed-service.ts`: oEmbed APIクライアントサービス
-- `lib/remark-auto-embed.ts`: URLを自動検出してプレースホルダーに変換するremarkプラグイン
-- `components/OEmbedRenderer.tsx`: oEmbedデータを使って埋め込みを表示するコンポーネント
-- `components/OEmbedProcessor.tsx`: HTMLプレースホルダーをReactコンポーネントに変換
-- `app/api/oembed/route.ts`: oEmbed APIプロキシエンドポイント
-- `__tests__/lib/oembed-providers.test.ts`: URLパターンマッチングのテスト
+- `lib/remark-embedder-config.ts`: remark-embedder設定とURL変換ロジック
 
 ### 対応する埋め込みサービス
 
@@ -223,9 +218,6 @@ tags: ["技術", "Next.js", "React"]
 - **Twitter/X**: `https://twitter.com/user/status/123` または `https://x.com/user/status/123`
 - **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` または `https://youtu.be/VIDEO_ID`
 - **Vimeo**: `https://vimeo.com/123456789`
-- **Instagram**: `https://www.instagram.com/p/POST_ID/` または `https://www.instagram.com/reel/REEL_ID/`
-- **TikTok**: `https://www.tiktok.com/@username/video/123` または `https://vm.tiktok.com/SHORT_ID`
-- **SlideShare**: `https://www.slideshare.net/username/presentation-title`
 
 #### 使用方法
 Markdownファイルに対応するURLを直接貼り付けるだけで自動的に埋め込まれます：
@@ -242,16 +234,14 @@ https://www.youtube.com/watch?v=VIDEO_ID
 文章中に含まれるURLも https://youtu.be/SHORT_ID 自動的に埋め込まれます。
 ```
 
-### API仕様
-- `GET /api/oembed?url=ENCODED_URL`: oEmbedデータを取得
-- キャッシュ: 1時間（3600秒）
-- CORS対応済み
-- タイムアウト: 10秒
+#### 埋め込み形式
+- **YouTube**: レスポンシブな16:9アスペクト比のiframe
+- **Twitter**: 公式ウィジェット（DNT有効）
+- **Vimeo**: レスポンシブな16:9アスペクト比のiframe
 
 ### テスト環境
 - Jest設定ファイル: `jest.config.js`, `jest.setup.js`
-- oEmbedプロバイダーのURLパターンマッチングテスト
-- サポート対象: Twitter/X, YouTube, Vimeo, Instagram, TikTok, SlideShare
+- URL検出とトランスフォーマーの動作確認
 
 ## ファイルを削除したいとき
 ファイルを削除したいときはtrashディレクトリを作成し、そこのファイルを移動させてください
