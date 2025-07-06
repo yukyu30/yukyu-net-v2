@@ -10,7 +10,7 @@ interface HtmlNode extends Node {
 const TWITTER_BLOCKQUOTE_REGEX = /<blockquote class="twitter-tweet"[\s\S]*?<\/blockquote>\s*<script[^>]*src="https:\/\/platform\.twitter\.com\/widgets\.js"[^>]*><\/script>/gi;
 
 // YouTube埋め込みの正規表現（iframe形式）
-const YOUTUBE_IFRAME_REGEX = /<iframe[^>]*src="https:\/\/www\.youtube\.com\/embed\/([^"]*)"[^>]*><\/iframe>/gi;
+const YOUTUBE_IFRAME_REGEX = /<iframe[^>]*src="https:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]+)(?:\?[^"]*)?\"[^>]*><\/iframe>/gi;
 
 // SlideDeck埋め込みの正規表現
 const SLIDEDECK_IFRAME_REGEX = /<iframe[^>]*src="https:\/\/www\.slideshare\.net\/slideshow\/embed_code\/key\/([^"]*)"[^>]*><\/iframe>/gi;

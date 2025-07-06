@@ -56,6 +56,32 @@ Some other content.
     expect(output).not.toContain('youtube.com/embed');
   });
 
+  test('YouTubeクエリパラメータ付きURLもコンポーネントに変換する', async () => {
+    const input = `
+# Test Post
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/xs4AHwFCf_c?si=JiMNh8dsOiM3OFe6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Some other content.
+    `;
+
+    const result = await remark()
+      .use(remarkEmbeds)
+      .use(html)
+      .process(input);
+
+    const output = result.toString();
+    
+    // クエリパラメータがあってもvideoIdのみを正しく抽出する
+    expect(output).toContain('<YouTubeEmbed videoId="xs4AHwFCf_c"');
+    expect(output).toContain('title="YouTube video player"');
+    expect(output).toContain('width={560}');
+    expect(output).toContain('height={315}');
+    expect(output).not.toContain('<iframe');
+    expect(output).not.toContain('youtube.com/embed');
+    expect(output).not.toContain('?si='); // クエリパラメータは含まれない
+  });
+
   test('SlideDeck埋め込みHTMLをコンポーネントに変換する', async () => {
     const input = `
 # Test Post
