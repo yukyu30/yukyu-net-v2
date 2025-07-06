@@ -3,7 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
-import { remarkEmbeds } from './remarkEmbeds';
+import { remarkAutoEmbed } from './remark-auto-embed';
 
 const postsDirectory = path.join(process.cwd(), 'public_articles');
 
@@ -112,7 +112,7 @@ export async function getPostData(slug: string): Promise<PostData> {
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
-    .use(remarkEmbeds)
+    .use(remarkAutoEmbed)
     .use(html)
     .process(content);
   const contentHtml = processedContent.toString();

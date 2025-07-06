@@ -199,10 +199,9 @@ tags: ["技術", "Next.js", "React"]
 
 このように、将来のClaude Codeインスタンスが効率的に作業できるよう、重要な変更は必ずドキュメント化してください。
 
-## 追加された機能: 埋め込みメディア対応
+## 追加された機能: oEmbed自動埋め込み対応
 
 ### 依存関係
-- `html-react-parser`: HTMLをReactコンポーネントに変換（バージョン: 5.2.5）
 - `unist-util-visit`: remarkプラグイン用AST操作（バージョン: 5.0.0）
 
 ### 新しいコマンド
@@ -210,35 +209,49 @@ tags: ["技術", "Next.js", "React"]
 - `npm run test:watch`: Jestウォッチモードでテスト実行
 
 ### アーキテクチャ変更
-- `components/TwitterEmbed.tsx`: Twitter埋め込みコンポーネント
-- `components/YouTubeEmbed.tsx`: YouTube埋め込みコンポーネント  
-- `components/SlideDeckEmbed.tsx`: SlideDeck埋め込みコンポーネント
-- `components/HtmlParser.tsx`: HTMLをReactコンポーネントに変換する統合コンポーネント
-- `lib/remarkEmbeds.ts`: 埋め込みHTMLをコンポーネントタグに変換するremarkプラグイン
-- `__tests__/`: Jest + React Testing Libraryのテスト環境
+- `lib/oembed-providers.ts`: oEmbedプロバイダー設定とURL検出
+- `lib/oembed-service.ts`: oEmbed APIクライアントサービス
+- `lib/remark-auto-embed.ts`: URLを自動検出してプレースホルダーに変換するremarkプラグイン
+- `components/OEmbedRenderer.tsx`: oEmbedデータを使って埋め込みを表示するコンポーネント
+- `components/OEmbedProcessor.tsx`: HTMLプレースホルダーをReactコンポーネントに変換
+- `app/api/oembed/route.ts`: oEmbed APIプロキシエンドポイント
+- `__tests__/lib/oembed-providers.test.ts`: URLパターンマッチングのテスト
 
-### 対応する埋め込み形式
+### 対応する埋め込みサービス
 
-#### Twitter
-```html
-<blockquote class="twitter-tweet" data-dnt="true" data-align="center">
-  <!-- ツイート内容 -->
-  <a href="https://twitter.com/user/status/1368175661874024448">ツイートへのリンク</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js"></script>
+#### 自動検出されるURL形式
+- **Twitter/X**: `https://twitter.com/user/status/123` または `https://x.com/user/status/123`
+- **YouTube**: `https://www.youtube.com/watch?v=VIDEO_ID` または `https://youtu.be/VIDEO_ID`
+- **Vimeo**: `https://vimeo.com/123456789`
+- **Instagram**: `https://www.instagram.com/p/POST_ID/` または `https://www.instagram.com/reel/REEL_ID/`
+- **TikTok**: `https://www.tiktok.com/@username/video/123` または `https://vm.tiktok.com/SHORT_ID`
+- **SlideShare**: `https://www.slideshare.net/username/presentation-title`
+
+#### 使用方法
+Markdownファイルに対応するURLを直接貼り付けるだけで自動的に埋め込まれます：
+
+```markdown
+# ブログ記事
+
+こちらのツイートをご覧ください：
+https://twitter.com/username/status/123456789
+
+YouTube動画も埋め込まれます：
+https://www.youtube.com/watch?v=VIDEO_ID
+
+文章中に含まれるURLも https://youtu.be/SHORT_ID 自動的に埋め込まれます。
 ```
 
-#### YouTube
-```html
-<iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" title="Video Title" frameborder="0" allowfullscreen></iframe>
-```
-
-#### SlideDeck/SlideShare
-```html
-<iframe src="https://www.slideshare.net/slideshow/embed_code/key/SLIDE_ID" width="560" height="420" title="Presentation Title" frameborder="0" allowfullscreen></iframe>
-```
+### API仕様
+- `GET /api/oembed?url=ENCODED_URL`: oEmbedデータを取得
+- キャッシュ: 1時間（3600秒）
+- CORS対応済み
+- タイムアウト: 10秒
 
 ### テスト環境
 - Jest設定ファイル: `jest.config.js`, `jest.setup.js`
-- React Testing Library + Jest-DOM
-- コンポーネントとロジックのユニットテスト
+- oEmbedプロバイダーのURLパターンマッチングテスト
+- サポート対象: Twitter/X, YouTube, Vimeo, Instagram, TikTok, SlideShare
+
+## ファイルを削除したいとき
+ファイルを削除したいときはtrashディレクトリを作成し、そこのファイルを移動させてください
