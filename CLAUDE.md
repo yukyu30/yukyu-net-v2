@@ -198,3 +198,47 @@ tags: ["技術", "Next.js", "React"]
 ```
 
 このように、将来のClaude Codeインスタンスが効率的に作業できるよう、重要な変更は必ずドキュメント化してください。
+
+## 追加された機能: 埋め込みメディア対応
+
+### 依存関係
+- `html-react-parser`: HTMLをReactコンポーネントに変換（バージョン: 5.2.5）
+- `unist-util-visit`: remarkプラグイン用AST操作（バージョン: 5.0.0）
+
+### 新しいコマンド
+- `npm test`: Jestテストの実行
+- `npm run test:watch`: Jestウォッチモードでテスト実行
+
+### アーキテクチャ変更
+- `components/TwitterEmbed.tsx`: Twitter埋め込みコンポーネント
+- `components/YouTubeEmbed.tsx`: YouTube埋め込みコンポーネント  
+- `components/SlideDeckEmbed.tsx`: SlideDeck埋め込みコンポーネント
+- `components/HtmlParser.tsx`: HTMLをReactコンポーネントに変換する統合コンポーネント
+- `lib/remarkEmbeds.ts`: 埋め込みHTMLをコンポーネントタグに変換するremarkプラグイン
+- `__tests__/`: Jest + React Testing Libraryのテスト環境
+
+### 対応する埋め込み形式
+
+#### Twitter
+```html
+<blockquote class="twitter-tweet" data-dnt="true" data-align="center">
+  <!-- ツイート内容 -->
+  <a href="https://twitter.com/user/status/1368175661874024448">ツイートへのリンク</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js"></script>
+```
+
+#### YouTube
+```html
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" title="Video Title" frameborder="0" allowfullscreen></iframe>
+```
+
+#### SlideDeck/SlideShare
+```html
+<iframe src="https://www.slideshare.net/slideshow/embed_code/key/SLIDE_ID" width="560" height="420" title="Presentation Title" frameborder="0" allowfullscreen></iframe>
+```
+
+### テスト環境
+- Jest設定ファイル: `jest.config.js`, `jest.setup.js`
+- React Testing Library + Jest-DOM
+- コンポーネントとロジックのユニットテスト

@@ -13,8 +13,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function Page({ params }: { params: { page: string } }) {
-  const currentPage = parseInt(params.page);
+export default async function Page({ params }: { params: Promise<{ page: string }> }) {
+  const { page } = await params;
+  const currentPage = parseInt(page);
   
   if (isNaN(currentPage) || currentPage < 1) {
     notFound();

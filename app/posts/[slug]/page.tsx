@@ -3,14 +3,16 @@ import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import Link from 'next/link';
 import styles from './post.module.css';
+import HtmlParser from '@/components/HtmlParser';
 
 export async function generateStaticParams() {
   const paths = getAllPostSlugs();
   return paths;
 }
 
-export default async function Post({ params }: { params: { slug: string } }) {
-  const postData = await getPostData(params.slug);
+export default async function Post({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const postData = await getPostData(slug);
   
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -26,10 +28,9 @@ export default async function Post({ params }: { params: { slug: string } }) {
         </div>
       </header>
       
-      <article 
-        className={styles.article}
-        dangerouslySetInnerHTML={{ __html: postData.contentHtml || '' }}
-      />
+      <article className={styles.article}>
+        <HtmlParser html={postData.contentHtml || ''} />
+      </article>
     </div>
   );
 }

@@ -4,9 +4,10 @@ import path from 'path';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const imagePath = params.path.join('/');
+  const resolvedParams = await params;
+  const imagePath = resolvedParams.path.join('/');
   const fullPath = path.join(process.cwd(), imagePath);
 
   try {
@@ -31,6 +32,7 @@ export async function GET(
       },
     });
   } catch (error) {
+    console.error('Error serving image:', error);
     return new Response('Not Found', { status: 404 });
   }
 }
