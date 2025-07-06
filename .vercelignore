@@ -1,1 +1,1 @@
-public_articles/
+# Keep public_articles for build, but it will be copied to public/articles

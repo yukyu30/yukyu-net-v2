@@ -41,6 +41,11 @@ function copyDirectory(sourceDir, targetDir) {
   });
 }
 
+if (!fs.existsSync(SOURCE_DIR)) {
+  console.log('Source directory public_articles not found. Skipping copy (likely on Vercel).');
+  process.exit(0);
+}
+
 console.log('Copying public_articles to public/articles...');
 copyDirectory(SOURCE_DIR, TARGET_DIR);
 console.log('Article copying completed!');
