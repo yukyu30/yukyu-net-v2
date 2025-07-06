@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Optimize serverless function size by excluding large directories
+  outputFileTracingExcludes: {
+    '*': [
+      'articles/**/*',
+      'public_articles/**/*'
+    ]
+  }
 };
 
 export default nextConfig;
