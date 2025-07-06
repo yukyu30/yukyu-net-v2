@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@remark-embedder/core": "^3.0.3",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "date-fns": "^4.1.0",
     "gray-matter": "^4.0.3",
     "next": "15.3.5",

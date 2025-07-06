@@ -5,6 +5,7 @@ import { remark } from 'remark';
 import html from 'remark-html';
 import remarkEmbedder from '@remark-embedder/core';
 import { remarkEmbedderConfig } from './remark-embedder-config';
+import { remarkLinkCard } from './remark-link-card';
 
 const postsDirectory = path.join(process.cwd(), 'public_articles');
 
@@ -113,6 +114,7 @@ export async function getPostData(slug: string): Promise<PostData> {
 
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
+    .use(remarkLinkCard)
     .use(remarkEmbedder, remarkEmbedderConfig)
     .use(html, { sanitize: false })
     .process(content);
