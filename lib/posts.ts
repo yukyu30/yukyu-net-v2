@@ -78,10 +78,17 @@ export async function getPostData(slug: string): Promise<PostData> {
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
 
+  // Replace relative image paths with absolute paths
+  let content = matterResult.content;
+  content = content.replace(
+    /!\[([^\]]*)\]\((?!http)([^)]+)\)/g,
+    `![$1](/public_articles/${slug}/$2)`
+  );
+
   // Use remark to convert markdown into HTML string
   const processedContent = await remark()
     .use(html)
-    .process(matterResult.content);
+    .process(content);
   const contentHtml = processedContent.toString();
 
   // Combine the data with the slug and contentHtml
