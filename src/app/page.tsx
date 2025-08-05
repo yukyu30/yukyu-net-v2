@@ -11,7 +11,7 @@ export default function Home() {
           <div className="border-l-2 border-r-2 border-black mx-4">
             <div className="px-6 py-4 border-b-2 border-black">
               <h1 className="text-4xl font-bold tracking-tight">
-                BLOG ARCHIVE
+                DecoBoco Digital
               </h1>
             </div>
             <div className="flex border-black">
@@ -34,16 +34,19 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-0">
-        <div className="border-l-2 border-r-2 border-b-2 border-black mx-4">
+        <div className="border-l-2 border-r-2 border-black mx-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <article
                 key={post.slug}
                 className={`${
-                  index === 0 ? '' : 
-                  index === 1 ? 'border-t-2 md:border-t-0 lg:border-t-0' :
-                  index === 2 ? 'border-t-2 md:border-t-2 lg:border-t-0' :
-                  'border-t-2'
+                  index === 0
+                    ? ''
+                    : index === 1
+                      ? 'border-t-2 md:border-t-0 lg:border-t-0'
+                      : index === 2
+                        ? 'border-t-2 md:border-t-2 lg:border-t-0'
+                        : 'border-t-2'
                 } border-black ${
                   (index + 1) % 3 !== 0 ? 'lg:border-r-2' : ''
                 } ${
@@ -78,7 +81,9 @@ export default function Home() {
         <div className="container mx-auto px-0">
           <div className="border-l-2 border-r-2 border-black mx-4">
             <div className="px-6 py-4 flex justify-between items-center">
-              <span className="text-xs font-mono">© 2025 BLOG ARCHIVE</span>
+              <span className="text-xs font-mono">
+                © 2025 DecoBoco Digital
+              </span>
               <div className="flex gap-4">
                 <span className="text-xs font-mono">GRID LAYOUT</span>
                 <span className="text-xs font-mono">|</span>

@@ -81,7 +81,7 @@ export default async function PostPage({
         <div className="container mx-auto px-0">
           <div className="border-l-2 border-r-2 border-black mx-4">
             <div className="px-6 py-4 flex justify-between items-center">
-              <span className="text-xs font-mono">© 2025 BLOG ARCHIVE</span>
+              <span className="text-xs font-mono">© 2025 DecoBoco Digital</span>
               <div className="flex gap-4">
                 <span className="text-xs font-mono">ARTICLE VIEW</span>
                 <span className="text-xs font-mono">|</span>

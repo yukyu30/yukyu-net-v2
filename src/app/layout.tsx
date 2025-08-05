@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BLOG ARCHIVE",
+  title: "DecoBoco Digital",
   description: "A collection of thoughts and writings",
   alternates: {
     types: {
