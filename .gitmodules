@@ -1,0 +1,3 @@
+[submodule "public_articles"]
+	path = public_articles
+	url = https://github.com/yukyu30/public_articles.git
