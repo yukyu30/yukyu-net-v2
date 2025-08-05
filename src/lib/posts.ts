@@ -50,8 +50,20 @@ export function getAllPosts(): Post[] {
   }).filter((post): post is Post => post !== null)
 
   return posts.sort((a, b) => {
-    const dateA = new Date(a.date)
-    const dateB = new Date(b.date)
+    // slugから日付を抽出（YYYY-MM-DD形式の場合）
+    const getDateFromSlug = (slug: string): Date => {
+      const match = slug.match(/^(\d{4})-(\d{2})-(\d{2})/)
+      if (match) {
+        return new Date(match[1] + '-' + match[2] + '-' + match[3])
+      }
+      return new Date(0) // 日付形式でない場合は古い日付として扱う
+    }
+    
+    // dateフィールドがある場合はそれを優先、なければslugから日付を抽出
+    const dateA = a.date !== a.slug ? new Date(a.date) : getDateFromSlug(a.slug)
+    const dateB = b.date !== b.slug ? new Date(b.date) : getDateFromSlug(b.slug)
+    
+    // 降順ソート（新しい記事が上）
     return dateB.getTime() - dateA.getTime()
   })
 }

@@ -1,37 +1,88 @@
-import { getAllPosts } from '@/lib/posts'
-import Link from 'next/link'
+import { getAllPosts } from '@/lib/posts';
+import Link from 'next/link';
 
 export default function Home() {
-  const posts = getAllPosts()
+  const posts = getAllPosts();
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold">My Blog</h1>
+      <header className="border-b-2 border-black">
+        <div className="container mx-auto px-0">
+          <div className="border-l-2 border-r-2 border-black mx-4">
+            <div className="px-6 py-4 border-b-2 border-black">
+              <h1 className="text-4xl font-bold tracking-tight">
+                BLOG ARCHIVE
+              </h1>
+            </div>
+            <div className="flex border-black">
+              <div className="px-6 py-2 border-r border-black">
+                <span className="text-xs font-mono">
+                  ENTRIES: {posts.length}
+                </span>
+              </div>
+              <div className="px-6 py-2 border-r border-black">
+                <span className="text-xs font-mono">
+                  LAST UPDATE: {posts[0]?.date || 'N/A'}
+                </span>
+              </div>
+              <div className="px-6 py-2">
+                <span className="text-xs font-mono">STATUS: ACTIVE</span>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
-            <article
-              key={post.slug}
-              className="border rounded-lg p-6 hover:shadow-lg transition-shadow"
-            >
-              <Link href={`/posts/${post.slug}`}>
-                <h2 className="text-xl font-semibold mb-2 hover:text-blue-600">
-                  {post.title}
-                </h2>
-                <time className="text-sm text-gray-500">{post.date}</time>
-                <p className="mt-3 text-gray-600 line-clamp-3">
-                  {post.excerpt}
-                </p>
-              </Link>
-            </article>
-          ))}
+      <main className="container mx-auto px-0">
+        <div className="border-l-2 border-r-2 border-black mx-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post, index) => (
+              <article
+                key={post.slug}
+                className={`border-t-2 border-black ${
+                  (index + 1) % 3 !== 0 ? 'lg:border-r-2' : ''
+                } ${
+                  (index + 1) % 2 !== 0 ? 'md:border-r-2' : 'md:border-r-0'
+                } ${(index + 1) % 3 !== 0 ? '' : 'lg:border-r-0'}`}
+              >
+                <Link href={`/posts/${post.slug}`} className="block h-full">
+                  <div className="p-6 hover:bg-gray-50 transition-colors h-full flex flex-col">
+                    <div className="border-b border-black pb-2 mb-3">
+                      <time className="text-xs font-mono">{post.date}</time>
+                    </div>
+                    <h2 className="text-lg font-bold mb-3 leading-tight">
+                      {post.title}
+                    </h2>
+                    <p className="text-sm leading-relaxed line-clamp-4 flex-grow">
+                      {post.excerpt}
+                    </p>
+                    <div className="mt-4 pt-3 border-t border-gray-300">
+                      <span className="text-xs font-mono uppercase">
+                        Read →
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            ))}
+          </div>
         </div>
       </main>
+
+      <footer className="border-t-2 border-black mt-auto">
+        <div className="container mx-auto px-0">
+          <div className="border-l-2 border-r-2 border-black mx-4">
+            <div className="px-6 py-4 flex justify-between items-center">
+              <span className="text-xs font-mono">© 2025 BLOG ARCHIVE</span>
+              <div className="flex gap-4">
+                <span className="text-xs font-mono">GRID LAYOUT</span>
+                <span className="text-xs font-mono">|</span>
+                <span className="text-xs font-mono">V1.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
-  )
+  );
 }
