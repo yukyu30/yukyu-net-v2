@@ -34,12 +34,17 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-0">
-        <div className="border-l-2 border-r-2 border-black mx-4">
+        <div className="border-l-2 border-r-2 border-b-2 border-black mx-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <article
                 key={post.slug}
-                className={`border-t-2 border-black ${
+                className={`${
+                  index === 0 ? '' : 
+                  index === 1 ? 'border-t-2 md:border-t-0 lg:border-t-0' :
+                  index === 2 ? 'border-t-2 md:border-t-2 lg:border-t-0' :
+                  'border-t-2'
+                } border-black ${
                   (index + 1) % 3 !== 0 ? 'lg:border-r-2' : ''
                 } ${
                   (index + 1) % 2 !== 0 ? 'md:border-r-2' : 'md:border-r-0'
