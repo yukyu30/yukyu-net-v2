@@ -1,0 +1,9 @@
+{
+  "installCommand": "git submodule update --init --recursive && npm install",
+  "buildCommand": "npm run build",
+  "functions": {
+    "src/app/posts/[slug]/page.tsx": {
+      "maxDuration": 10
+    }
+  }
+}

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "cp -r public_articles public/ 2>/dev/null || true",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
