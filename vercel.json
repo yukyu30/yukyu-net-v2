@@ -1,6 +1,6 @@
 {
   "installCommand": "git submodule update --init --recursive && npm install",
-  "buildCommand": "npm run build",
+  "buildCommand": "mkdir -p public && cp -r public_articles public/ && npm run build:vercel",
   "functions": {
     "src/app/posts/[slug]/page.tsx": {
       "maxDuration": 10
