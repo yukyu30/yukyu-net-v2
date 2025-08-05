@@ -25,9 +25,16 @@ export default function Home() {
                   LAST UPDATE: {posts[0]?.date || 'N/A'}
                 </span>
               </div>
-              <div className="px-6 py-2">
+              <div className="px-6 py-2 flex-grow">
                 <span className="text-xs font-mono">STATUS: ACTIVE</span>
               </div>
+              <Link 
+                href="/rss.xml" 
+                className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center"
+                aria-label="RSS Feed"
+              >
+                <span className="text-xs font-mono font-bold">RSS</span>
+              </Link>
             </div>
           </div>
         </div>
