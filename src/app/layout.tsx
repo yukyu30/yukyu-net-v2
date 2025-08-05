@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DecoBoco Digital",
-  description: "A collection of thoughts and writings",
+  title: "yukyu's diary - DecoBoco Digital",
+  description: "yukyu's thoughts and digital archive",
+  authors: [{ name: 'yukyu' }],
   alternates: {
     types: {
       'application/rss+xml': '/rss.xml',

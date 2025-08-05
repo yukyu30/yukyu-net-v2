@@ -28,8 +28,8 @@ export default function Home() {
               <div className="px-6 py-2 flex-grow">
                 <span className="text-xs font-mono">STATUS: ACTIVE</span>
               </div>
-              <Link 
-                href="/rss.xml" 
+              <Link
+                href="/rss.xml"
                 className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center"
                 aria-label="RSS Feed"
               >
@@ -40,7 +40,53 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="container mx-auto px-0">
+      <main className="container mx-auto px-0 relative">
+        <div className="absolute -left-12 top-8">
+          <div className="border border-black bg-white">
+            <div className="px-1 py-2">
+              <div
+                className="text-xs font-mono tracking-wider"
+                style={{
+                  writingMode: 'vertical-rl',
+                  transform: 'rotate(180deg)',
+                }}
+              >
+                YUKYU'S DIARY
+              </div>
+            </div>
+            <div className="border-t border-black px-1 py-2">
+              <div
+                className="text-xs font-mono tracking-wider"
+                style={{
+                  writingMode: 'vertical-rl',
+                  transform: 'rotate(180deg)',
+                }}
+              >
+                PERSONAL ARCHIVE
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute -right-12 top-8">
+          <div className="border border-black bg-white">
+            <div className="px-1 py-2">
+              <div
+                className="text-xs font-mono tracking-wider"
+                style={{ writingMode: 'vertical-lr' }}
+              >
+                WRITTEN BY YUKYU
+              </div>
+            </div>
+            <div className="border-t border-black px-1 py-2">
+              <div
+                className="text-xs font-mono tracking-wider"
+                style={{ writingMode: 'vertical-lr' }}
+              >
+                {new Date().getFullYear()} ARCHIVE
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="border-l-2 border-r-2 border-black mx-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
