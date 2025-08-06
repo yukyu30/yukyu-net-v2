@@ -2,18 +2,18 @@ import Link from 'next/link'
 
 export default function ProfileSection() {
   const socialLinks = [
-    { name: 'X', url: 'https://x.com/yukyu30', label: 'X' },
-    { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net', label: 'BSKY' },
-    { name: 'GitHub', url: 'https://github.com/yukyu30', label: 'GH' },
-    { name: 'Zenn', url: 'https://zenn.dev/yu_9', label: 'ZENN' },
-    { name: 'Instagram', url: 'https://instagram.com/ugo_kun_930', label: 'IG' },
-    { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30', label: 'SZR' },
-    { name: 'Portfolio', url: 'https://foriio.com/yukyu30', label: 'FOLIO' },
-    { name: 'Blog', url: 'https://yukyu.net', label: 'BLOG' },
-    { name: 'LinkedIn', url: '#', label: 'IN' },
-    { name: 'YouTube', url: '#', label: 'YT' },
-    { name: 'Threads', url: '#', label: 'THR' },
-    { name: 'Note', url: '#', label: 'NOTE' },
+    { name: 'X', url: 'https://x.com/yukyu30', label: 'X', type: 'link' },
+    { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net', label: 'BSKY', type: 'link' },
+    { name: 'GitHub', url: 'https://github.com/yukyu30', label: 'GH', type: 'link' },
+    { name: 'Zenn', url: 'https://zenn.dev/yu_9', label: 'ZENN', type: 'link' },
+    { name: 'Instagram', url: 'https://instagram.com/ugo_kun_930', label: 'IG', type: 'link' },
+    { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30', label: 'SZR', type: 'link' },
+    { name: 'Portfolio', url: 'https://foriio.com/yukyu30', label: 'FOLIO', type: 'link' },
+    { name: 'YouTube', url: 'https://www.youtube.com/@yukyu30', label: 'YT', type: 'link' },
+    { name: 'Empty1', url: '#', label: '/', type: 'empty' },
+    { name: 'Empty2', url: '#', label: '/', type: 'empty' },
+    { name: 'Empty3', url: '#', label: '/', type: 'empty' },
+    { name: 'Empty4', url: '#', label: '/', type: 'empty' },
   ]
 
   return (
@@ -68,6 +68,37 @@ export default function ProfileSection() {
                   const col = index % 6
                   const colDesktop = index % 12
                   const isInFirstRow = index < 6
+                  
+                  if (link.type === 'empty') {
+                    return (
+                      <div
+                        key={link.name}
+                        className={`
+                          relative overflow-hidden
+                          bg-black
+                          ${col < 5 ? 'border-r border-white' : ''}
+                          ${col === 5 && colDesktop < 11 ? 'md:border-r md:border-white' : ''}
+                          ${isInFirstRow ? 'border-b border-white md:border-b-0' : ''}
+                        `}
+                        style={{ height: '40px' }}
+                      >
+                        <svg
+                          className="absolute inset-0 w-full h-full"
+                          viewBox="0 0 100 100"
+                          preserveAspectRatio="none"
+                        >
+                          <line
+                            x1="0"
+                            y1="100"
+                            x2="100"
+                            y2="0"
+                            stroke="white"
+                            strokeWidth="1"
+                          />
+                        </svg>
+                      </div>
+                    )
+                  }
                   
                   return (
                     <Link
