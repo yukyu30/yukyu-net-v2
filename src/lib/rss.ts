@@ -2,9 +2,19 @@ import { getAllPosts } from './posts'
 import fs from 'fs'
 import path from 'path'
 
-function escapeCDATA(text: string): string {
-  // CDATAセクション内の ]]> を防ぐ
-  return text.replace(/]]>/g, ']]]]><![CDATA[>')
+function escapeXML(text: string): string {
+  // XMLエンティティをエスケープ
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;')
+}
+
+function cleanText(text: string): string {
+  // 制御文字を削除（タブ、改行、キャリッジリターンを除く）
+  return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
 }
 
 export function generateRSSFeed(): string {
@@ -16,16 +26,18 @@ export function generateRSSFeed(): string {
     const postUrl = `${siteUrl}/posts/${post.slug}`
     const pubDate = new Date(post.date).toUTCString()
     
-    // タイトルと抜粋をエスケープ
-    const safeTitle = escapeCDATA(post.title)
-    const safeExcerpt = escapeCDATA(post.excerpt)
+    // タイトルと抜粋をクリーンアップしてエスケープ
+    const cleanTitle = cleanText(post.title)
+    const cleanExcerpt = cleanText(post.excerpt)
+    const safeTitle = escapeXML(cleanTitle)
+    const safeExcerpt = escapeXML(cleanExcerpt)
     
     return `
     <item>
-      <title><![CDATA[${safeTitle}]]></title>
+      <title>${safeTitle}</title>
       <link>${postUrl}</link>
       <guid isPermaLink="true">${postUrl}</guid>
-      <description><![CDATA[${safeExcerpt}]]></description>
+      <description>${safeExcerpt}</description>
       <pubDate>${pubDate}</pubDate>
     </item>`
   }).join('')
