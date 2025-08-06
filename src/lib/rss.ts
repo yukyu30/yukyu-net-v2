@@ -2,6 +2,11 @@ import { getAllPosts } from './posts'
 import fs from 'fs'
 import path from 'path'
 
+function escapeCDATA(text: string): string {
+  // CDATAセクション内の ]]> を防ぐ
+  return text.replace(/]]>/g, ']]]]><![CDATA[>')
+}
+
 export function generateRSSFeed(): string {
   const posts = getAllPosts()
   const siteUrl = process.env.SITE_URL || 'https://yukyu.net'
@@ -11,12 +16,16 @@ export function generateRSSFeed(): string {
     const postUrl = `${siteUrl}/posts/${post.slug}`
     const pubDate = new Date(post.date).toUTCString()
     
+    // タイトルと抜粋をエスケープ
+    const safeTitle = escapeCDATA(post.title)
+    const safeExcerpt = escapeCDATA(post.excerpt)
+    
     return `
     <item>
-      <title><![CDATA[${post.title}]]></title>
+      <title><![CDATA[${safeTitle}]]></title>
       <link>${postUrl}</link>
       <guid isPermaLink="true">${postUrl}</guid>
-      <description><![CDATA[${post.excerpt}]]></description>
+      <description><![CDATA[${safeExcerpt}]]></description>
       <pubDate>${pubDate}</pubDate>
     </item>`
   }).join('')
