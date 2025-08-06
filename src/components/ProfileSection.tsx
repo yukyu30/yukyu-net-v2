@@ -40,10 +40,15 @@ export default function ProfileSection() {
       label: 'YT',
       type: 'link',
     },
+    {
+      name: 'VRChat',
+      url: 'https://vrchat.com/home/user/usr_c3a3cf58-fbf3-420b-9eb2-c9b69d46b5d6',
+      label: 'VRC',
+      type: 'link',
+    },
     { name: 'Empty1', url: '#', label: '/', type: 'empty' },
     { name: 'Empty2', url: '#', label: '/', type: 'empty' },
     { name: 'Empty3', url: '#', label: '/', type: 'empty' },
-    { name: 'Empty4', url: '#', label: '/', type: 'empty' },
   ];
 
   return (
@@ -79,14 +84,9 @@ export default function ProfileSection() {
                 </div>
 
                 {/* 職業 */}
-                <div className="border-b-2 border-black">
-                  <div className="border-b-2 border-black px-4 py-2">
-                    <div className="text-xs font-mono font-bold">所属/役職</div>
-                  </div>
-                  <div className="p-4">
-                    <div className="text-sm font-mono">
-                      GMOペパボ株式会社 メタバース推進室 エンジニアリングリード
-                    </div>
+                <div className="border-b-2 border-black p-4 flex items-center">
+                  <div className="text-sm font-mono">
+                    GMOペパボ株式会社 メタバース推進室 エンジニアリングリード / 上級VR技術者
                   </div>
                 </div>
               </div>

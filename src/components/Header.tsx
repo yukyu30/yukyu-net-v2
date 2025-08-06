@@ -41,13 +41,10 @@ export default function Header({
                     ENTRIES: {postsCount}
                   </span>
                 </div>
-                <div className="px-6 py-2 border-r border-black">
+                <div className="px-6 py-2 flex-grow">
                   <span className="text-xs font-mono">
                     LAST UPDATE: {lastUpdate || 'N/A'}
                   </span>
-                </div>
-                <div className="px-6 py-2 flex-grow">
-                  <span className="text-xs font-mono">STATUS: ACTIVE</span>
                 </div>
                 <Link
                   href="/rss.xml"
@@ -66,13 +63,10 @@ export default function Header({
                       ENTRIES: {postsCount}
                     </span>
                   </div>
-                  <div className="px-6 py-2 border-r border-black">
+                  <div className="px-6 py-2 flex-grow">
                     <span className="text-xs font-mono">
                       LAST UPDATE: {lastUpdate || 'N/A'}
                     </span>
-                  </div>
-                  <div className="px-6 py-2 flex-grow">
-                    <span className="text-xs font-mono">STATUS: ACTIVE</span>
                   </div>
                 </div>
                 <div className="border-t-2 border-black">
