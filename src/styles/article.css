@@ -22,11 +22,11 @@
 }
 
 .article-content h2 {
-  font-size: 2.4rem; /* 38.4px ≈ 16 * (12/5) */
-  line-height: 1.25;
-  font-weight: 800;
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
+  font-size: 1.5rem; /* 24px = 16 * 1.5 */
+  line-height: 1.35;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   letter-spacing: -0.01em;
   border-bottom: 1px solid #000;
   padding-bottom: 0.5rem;
