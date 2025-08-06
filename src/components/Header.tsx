@@ -34,7 +34,8 @@ export default function Header({
                   DecoBoco Digital
                 </h1>
               </div>
-              <div className="flex border-black">
+              {/* デスクトップ表示 */}
+              <div className="hidden md:flex border-black">
                 <div className="px-6 py-2 border-r border-black">
                   <span className="text-xs font-mono">
                     ENTRIES: {postsCount}
@@ -55,6 +56,34 @@ export default function Header({
                 >
                   <span className="text-xs font-mono font-bold">RSS</span>
                 </Link>
+              </div>
+              
+              {/* モバイル表示 */}
+              <div className="md:hidden">
+                <div className="flex border-black">
+                  <div className="px-6 py-2 border-r border-black">
+                    <span className="text-xs font-mono">
+                      ENTRIES: {postsCount}
+                    </span>
+                  </div>
+                  <div className="px-6 py-2 border-r border-black">
+                    <span className="text-xs font-mono">
+                      LAST UPDATE: {lastUpdate || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="px-6 py-2 flex-grow">
+                    <span className="text-xs font-mono">STATUS: ACTIVE</span>
+                  </div>
+                </div>
+                <div className="border-t-2 border-black">
+                  <Link
+                    href="/rss.xml"
+                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center w-full"
+                    aria-label="RSS Feed"
+                  >
+                    <span className="text-xs font-mono font-bold">RSS</span>
+                  </Link>
+                </div>
               </div>
             </>
           )}
