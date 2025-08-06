@@ -15,7 +15,7 @@ export default function Footer({ variant = 'grid' }: FooterProps) {
             </span>
             <div className="flex gap-4">
               <span className="text-xs font-mono">
-                {variant === 'grid' ? 'GRID LAYOUT' : 'ARTICLE VIEW'}
+                {variant === 'grid' ? 'ARTICLE LIST VIEW' : 'ARTICLE VIEW'}
               </span>
               <span className="text-xs font-mono">|</span>
               <span className="text-xs font-mono">V1.0</span>
