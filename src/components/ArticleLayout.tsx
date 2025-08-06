@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import Link from 'next/link'
 import Header from './Header'
 import Footer from './Footer'
+import '@/styles/article.css'
 
 interface ArticleLayoutProps {
   title: string
@@ -28,7 +29,7 @@ export default function ArticleLayout({ title, date, content }: ArticleLayoutPro
             
             <div className="p-8">
               <div 
-                className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-p:leading-relaxed prose-a:text-black prose-a:underline prose-a:font-semibold prose-img:border-2 prose-img:border-black prose-pre:bg-gray-100 prose-pre:border-2 prose-pre:border-black prose-code:bg-gray-100 prose-code:px-1 prose-code:font-mono"
+                className="article-content max-w-none"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </div>

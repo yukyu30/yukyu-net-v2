@@ -1,0 +1,246 @@
+/* 調和数列に基づくタイポグラフィスケール */
+/* ベース: 16px (1rem) */
+/* 調和数列: 1/1, 1/2, 1/3, 1/4, 1/5, 1/6 の逆数 */
+
+.article-content {
+  font-size: 1rem; /* 16px */
+  line-height: 1.8; /* 28.8px */
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 見出し - 調和数列スケール */
+.article-content h1 {
+  font-size: 3rem; /* 48px = 16 * 3 */
+  line-height: 1.2;
+  font-weight: 900;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.75rem;
+}
+
+.article-content h2 {
+  font-size: 2.4rem; /* 38.4px ≈ 16 * (12/5) */
+  line-height: 1.25;
+  font-weight: 800;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.article-content h3 {
+  font-size: 2rem; /* 32px = 16 * 2 */
+  line-height: 1.3;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.article-content h4 {
+  font-size: 1.6rem; /* 25.6px ≈ 16 * (8/5) */
+  line-height: 1.35;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.875rem;
+}
+
+.article-content h5 {
+  font-size: 1.333rem; /* 21.33px ≈ 16 * (4/3) */
+  line-height: 1.4;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-content h6 {
+  font-size: 1.143rem; /* 18.29px ≈ 16 * (8/7) */
+  line-height: 1.45;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 段落 */
+.article-content p {
+  margin-bottom: 1.5rem;
+  hanging-punctuation: first allow-end;
+}
+
+/* リスト */
+.article-content ul,
+.article-content ol {
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+}
+
+.article-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.8;
+}
+
+.article-content ul {
+  list-style-type: square;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+}
+
+/* 引用 */
+.article-content blockquote {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border-left: 4px solid #000;
+  background-color: #f9f9f9;
+  font-style: italic;
+}
+
+.article-content blockquote p {
+  margin-bottom: 0.75rem;
+}
+
+.article-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* コード */
+.article-content code {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 0.875rem; /* 14px */
+  background-color: #f4f4f4;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0;
+  border: 1px solid #ddd;
+}
+
+.article-content pre {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border: 2px solid #000;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.article-content pre code {
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  font-size: inherit;
+}
+
+/* リンク */
+.article-content a {
+  color: #000;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.article-content a:hover {
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  padding: 0 0.25rem;
+  margin: 0 -0.25rem;
+}
+
+/* 画像 */
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 2rem 0;
+  border: 2px solid #000;
+}
+
+/* テーブル */
+.article-content table {
+  width: 100%;
+  margin: 2rem 0;
+  border-collapse: collapse;
+  border: 2px solid #000;
+}
+
+.article-content th,
+.article-content td {
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid #000;
+}
+
+.article-content th {
+  background-color: #f4f4f4;
+  font-weight: 700;
+}
+
+.article-content tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* 水平線 */
+.article-content hr {
+  margin: 3rem 0;
+  border: none;
+  border-top: 2px solid #000;
+}
+
+/* 強調 */
+.article-content strong {
+  font-weight: 700;
+}
+
+.article-content em {
+  font-style: italic;
+}
+
+/* 埋め込みコンテンツ */
+.article-content iframe {
+  margin: 2rem 0;
+  border: 2px solid #000;
+}
+
+/* リズムと空白の調整 */
+.article-content > *:first-child {
+  margin-top: 0;
+}
+
+.article-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  .article-content h1 {
+    font-size: 2.25rem; /* 36px */
+  }
+  
+  .article-content h2 {
+    font-size: 1.875rem; /* 30px */
+  }
+  
+  .article-content h3 {
+    font-size: 1.5rem; /* 24px */
+  }
+  
+  .article-content h4 {
+    font-size: 1.25rem; /* 20px */
+  }
+  
+  .article-content h5 {
+    font-size: 1.125rem; /* 18px */
+  }
+  
+  .article-content h6 {
+    font-size: 1rem; /* 16px */
+  }
+}

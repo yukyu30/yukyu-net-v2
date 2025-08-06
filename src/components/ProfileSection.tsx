@@ -1,20 +1,50 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
 export default function ProfileSection() {
   const socialLinks = [
     { name: 'X', url: 'https://x.com/yukyu30', label: 'X', type: 'link' },
-    { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net', label: 'BSKY', type: 'link' },
-    { name: 'GitHub', url: 'https://github.com/yukyu30', label: 'GH', type: 'link' },
+    {
+      name: 'BlueSky',
+      url: 'https://bsky.app/profile/yukyu.net',
+      label: 'BSKY',
+      type: 'link',
+    },
+    {
+      name: 'GitHub',
+      url: 'https://github.com/yukyu30',
+      label: 'GH',
+      type: 'link',
+    },
     { name: 'Zenn', url: 'https://zenn.dev/yu_9', label: 'ZENN', type: 'link' },
-    { name: 'Instagram', url: 'https://instagram.com/ugo_kun_930', label: 'IG', type: 'link' },
-    { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30', label: 'SZR', type: 'link' },
-    { name: 'Portfolio', url: 'https://foriio.com/yukyu30', label: 'FOLIO', type: 'link' },
-    { name: 'YouTube', url: 'https://www.youtube.com/@yukyu30', label: 'YT', type: 'link' },
+    {
+      name: 'Instagram',
+      url: 'https://instagram.com/ugo_kun_930',
+      label: 'IG',
+      type: 'link',
+    },
+    {
+      name: 'SUZURI',
+      url: 'https://suzuri.jp/yukyu30',
+      label: 'SZR',
+      type: 'link',
+    },
+    {
+      name: 'Portfolio',
+      url: 'https://foriio.com/yukyu30',
+      label: 'FOLIO',
+      type: 'link',
+    },
+    {
+      name: 'YouTube',
+      url: 'https://www.youtube.com/@yukyu30',
+      label: 'YT',
+      type: 'link',
+    },
     { name: 'Empty1', url: '#', label: '/', type: 'empty' },
     { name: 'Empty2', url: '#', label: '/', type: 'empty' },
     { name: 'Empty3', url: '#', label: '/', type: 'empty' },
     { name: 'Empty4', url: '#', label: '/', type: 'empty' },
-  ]
+  ];
 
   return (
     <section className="border-b-2 border-black">
@@ -34,7 +64,6 @@ export default function ProfileSection() {
                 PROFILE
               </h2>
             </div>
-
             {/* プロフィール内容 */}
             <div className="flex-1">
               {/* 名前と職業 */}
@@ -48,7 +77,7 @@ export default function ProfileSection() {
                     <div className="text-sm font-mono">yukyu</div>
                   </div>
                 </div>
-                
+
                 {/* 職業 */}
                 <div className="border-b-2 border-black">
                   <div className="border-b-2 border-black px-4 py-2">
@@ -61,14 +90,14 @@ export default function ProfileSection() {
                   </div>
                 </div>
               </div>
-              
+
               {/* SNSリンクグリッド */}
               <div className="grid grid-cols-6 md:grid-cols-12">
                 {socialLinks.map((link, index) => {
-                  const col = index % 6
-                  const colDesktop = index % 12
-                  const isInFirstRow = index < 6
-                  
+                  const col = index % 6;
+                  const colDesktop = index % 12;
+                  const isInFirstRow = index < 6;
+
                   if (link.type === 'empty') {
                     return (
                       <div
@@ -77,8 +106,16 @@ export default function ProfileSection() {
                           relative overflow-hidden
                           bg-white
                           ${col < 5 ? 'border-r-2 border-black' : ''}
-                          ${col === 5 && colDesktop < 11 ? 'md:border-r-2 md:border-black' : ''}
-                          ${isInFirstRow ? 'border-b-2 border-black md:border-b-0' : ''}
+                          ${
+                            col === 5 && colDesktop < 11
+                              ? 'md:border-r-2 md:border-black'
+                              : ''
+                          }
+                          ${
+                            isInFirstRow
+                              ? 'border-b-2 border-black md:border-b-0'
+                              : ''
+                          }
                         `}
                         style={{ height: '40px' }}
                       >
@@ -97,9 +134,9 @@ export default function ProfileSection() {
                           />
                         </svg>
                       </div>
-                    )
+                    );
                   }
-                  
+
                   return (
                     <Link
                       key={link.name}
@@ -112,15 +149,23 @@ export default function ProfileSection() {
                         hover:bg-black hover:text-white transition-colors
                         text-xs font-mono font-bold
                         ${col < 5 ? 'border-r-2 border-black' : ''}
-                        ${col === 5 && colDesktop < 11 ? 'md:border-r-2 md:border-black' : ''}
-                        ${isInFirstRow ? 'border-b-2 border-black md:border-b-0' : ''}
+                        ${
+                          col === 5 && colDesktop < 11
+                            ? 'md:border-r-2 md:border-black'
+                            : ''
+                        }
+                        ${
+                          isInFirstRow
+                            ? 'border-b-2 border-black md:border-b-0'
+                            : ''
+                        }
                       `}
                       style={{ height: '40px' }}
                       aria-label={link.label}
                     >
                       {link.label}
                     </Link>
-                  )
+                  );
                 })}
               </div>
             </div>
