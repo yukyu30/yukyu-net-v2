@@ -107,7 +107,7 @@ export default function ProfileSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`
-                        py-2 px-2 flex items-center justify-center
+                        flex items-center justify-center
                         bg-white text-black
                         hover:bg-black hover:text-white transition-colors
                         text-xs font-mono font-bold
@@ -115,6 +115,7 @@ export default function ProfileSection() {
                         ${col === 5 && colDesktop < 11 ? 'md:border-r-2 md:border-black' : ''}
                         ${isInFirstRow ? 'border-b-2 border-black md:border-b-0' : ''}
                       `}
+                      style={{ height: '40px' }}
                       aria-label={link.label}
                     >
                       {link.label}
