@@ -41,7 +41,7 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-0 relative">
-        <div className="absolute -left-12 top-8">
+        <div className="hidden md:block absolute -left-12 top-8">
           <div className="border border-black bg-white">
             <div className="px-1 py-2">
               <div
@@ -67,7 +67,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="absolute -right-12 top-8">
+        <div className="hidden md:block absolute -right-12 top-8">
           <div className="border border-black bg-white">
             <div className="px-1 py-2">
               <div
