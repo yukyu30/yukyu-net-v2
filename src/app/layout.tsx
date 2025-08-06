@@ -21,6 +21,9 @@ export const metadata: Metadata = {
       'application/rss+xml': '/rss.xml',
     },
   },
+  other: {
+    'theme-color': '#000',
+  },
 };
 
 export default function RootLayout({
