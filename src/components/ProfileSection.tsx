@@ -63,7 +63,7 @@ export default function ProfileSection() {
               </div>
               
               {/* SNSリンクグリッド */}
-              <div className="grid grid-cols-6 md:grid-cols-12 bg-black">
+              <div className="grid grid-cols-6 md:grid-cols-12">
                 {socialLinks.map((link, index) => {
                   const col = index % 6
                   const colDesktop = index % 12
@@ -75,10 +75,10 @@ export default function ProfileSection() {
                         key={link.name}
                         className={`
                           relative overflow-hidden
-                          bg-black
-                          ${col < 5 ? 'border-r border-white' : ''}
-                          ${col === 5 && colDesktop < 11 ? 'md:border-r md:border-white' : ''}
-                          ${isInFirstRow ? 'border-b border-white md:border-b-0' : ''}
+                          bg-white
+                          ${col < 5 ? 'border-r-2 border-black' : ''}
+                          ${col === 5 && colDesktop < 11 ? 'md:border-r-2 md:border-black' : ''}
+                          ${isInFirstRow ? 'border-b-2 border-black md:border-b-0' : ''}
                         `}
                         style={{ height: '40px' }}
                       >
@@ -92,8 +92,8 @@ export default function ProfileSection() {
                             y1="100"
                             x2="100"
                             y2="0"
-                            stroke="white"
-                            strokeWidth="1"
+                            stroke="black"
+                            strokeWidth="2"
                           />
                         </svg>
                       </div>
@@ -108,12 +108,12 @@ export default function ProfileSection() {
                       rel="noopener noreferrer"
                       className={`
                         py-2 px-2 flex items-center justify-center
-                        bg-black text-white
-                        hover:bg-white hover:text-black transition-colors
+                        bg-white text-black
+                        hover:bg-black hover:text-white transition-colors
                         text-xs font-mono font-bold
-                        ${col < 5 ? 'border-r border-white' : ''}
-                        ${col === 5 && colDesktop < 11 ? 'md:border-r md:border-white' : ''}
-                        ${isInFirstRow ? 'border-b border-white md:border-b-0' : ''}
+                        ${col < 5 ? 'border-r-2 border-black' : ''}
+                        ${col === 5 && colDesktop < 11 ? 'md:border-r-2 md:border-black' : ''}
+                        ${isInFirstRow ? 'border-b-2 border-black md:border-b-0' : ''}
                       `}
                       aria-label={link.label}
                     >
