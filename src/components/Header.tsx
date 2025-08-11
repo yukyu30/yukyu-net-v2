@@ -30,9 +30,11 @@ export default function Header({
           ) : (
             <>
               <div className="px-6 py-4 border-b-2 border-black">
-                <h1 className="text-4xl font-bold tracking-tight">
-                  DecoBoco Digital
-                </h1>
+                <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
+                  <h1 className="text-4xl font-bold tracking-tight">
+                    DecoBoco Digital
+                  </h1>
+                </Link>
               </div>
               {/* デスクトップ表示 */}
               <div className="hidden md:flex border-black">
