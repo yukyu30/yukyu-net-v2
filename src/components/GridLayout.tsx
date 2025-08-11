@@ -26,14 +26,25 @@ export default function GridLayout({
       <Header postsCount={postsCount} lastUpdate={lastUpdate} />
       
       {currentTag && (
-        <div className="container mx-auto px-0">
-          <div className="border-l-2 border-r-2 border-black mx-4">
-            <div className="border-b-2 border-black">
-              <div className="px-6 py-6 flex items-center gap-4">
-                <span className="text-sm font-mono uppercase transform rotate-90 origin-center">
-                  タグ
-                </span>
-                <div>
+        <section className="border-b-2 border-black">
+          <div className="container mx-auto px-0">
+            <div className="border-l-2 border-r-2 border-black mx-4">
+              <div className="flex">
+                {/* 左側の縦書きタイトル */}
+                <div className="border-r-2 border-black px-4 py-6 flex items-center">
+                  <h2
+                    className="text-sm font-mono font-bold uppercase"
+                    style={{
+                      writingMode: 'vertical-rl',
+                      textOrientation: 'mixed',
+                      transform: 'rotate(180deg)',
+                    }}
+                  >
+                    TAG
+                  </h2>
+                </div>
+                {/* タグ内容 */}
+                <div className="flex-1 px-6 py-6">
                   <h1 className="text-2xl font-bold mb-2">#{currentTag}</h1>
                   <p className="text-sm font-mono">
                     {postsCount} {postsCount === 1 ? 'ARTICLE' : 'ARTICLES'} FOUND
@@ -42,7 +53,7 @@ export default function GridLayout({
               </div>
             </div>
           </div>
-        </div>
+        </section>
       )}
       
       {showProfile && <ProfileSection />}
