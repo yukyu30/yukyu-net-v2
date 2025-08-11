@@ -29,11 +29,16 @@ export default function GridLayout({
         <div className="container mx-auto px-0">
           <div className="border-l-2 border-r-2 border-black mx-4">
             <div className="border-b-2 border-black">
-              <div className="px-6 py-6">
-                <h1 className="text-2xl font-bold mb-2">タグ: #{currentTag}</h1>
-                <p className="text-sm font-mono">
-                  {postsCount} {postsCount === 1 ? 'ARTICLE' : 'ARTICLES'} FOUND
-                </p>
+              <div className="px-6 py-6 flex items-center gap-4">
+                <span className="text-sm font-mono uppercase transform rotate-90 origin-center">
+                  タグ
+                </span>
+                <div>
+                  <h1 className="text-2xl font-bold mb-2">#{currentTag}</h1>
+                  <p className="text-sm font-mono">
+                    {postsCount} {postsCount === 1 ? 'ARTICLE' : 'ARTICLES'} FOUND
+                  </p>
+                </div>
               </div>
             </div>
           </div>
