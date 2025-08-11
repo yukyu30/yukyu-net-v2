@@ -42,10 +42,14 @@ export function getAllPosts(): Post[] {
       .substring(0, 200)
       .trim() + '...'
 
+    const dateString = data.date || data.created_at 
+      ? new Date(data.date || data.created_at).toISOString().split('T')[0]
+      : slug
+
     return {
       slug,
       title: data.title || slug,
-      date: data.date || slug,
+      date: dateString,
       excerpt: data.excerpt || excerpt,
       tags: data.tags || [],
     }
@@ -101,10 +105,14 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     .substring(0, 200)
     .trim() + '...'
 
+  const dateString = data.date || data.created_at 
+    ? new Date(data.date || data.created_at).toISOString().split('T')[0]
+    : slug
+
   return {
     slug,
     title: data.title || slug,
-    date: data.date || slug,
+    date: dateString,
     excerpt: data.excerpt || excerpt,
     tags: data.tags || [],
     content: contentHtml,
