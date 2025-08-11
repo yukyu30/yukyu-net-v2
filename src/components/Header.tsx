@@ -47,6 +47,13 @@ export default function Header({
                   </span>
                 </div>
                 <Link
+                  href="/tags"
+                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
+                  aria-label="All Tags"
+                >
+                  <span className="text-xs font-mono font-bold">TAGS</span>
+                </Link>
+                <Link
                   href="/rss.xml"
                   className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center"
                   aria-label="RSS Feed"

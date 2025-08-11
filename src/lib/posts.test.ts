@@ -1,4 +1,4 @@
-import { getAllPosts, getPostBySlug } from './posts'
+import { getAllPosts, getPostBySlug, getAllTags, getPostsByTag } from './posts'
 import fs from 'fs'
 import path from 'path'
 
@@ -35,6 +35,13 @@ describe('記事一覧を取得する関数', () => {
       expect(typeof firstPost.slug).toBe('string')
     })
 
+    test('記事のタグが取得できること', () => {
+      const posts = getAllPosts()
+      const postsWithTags = posts.filter(post => post.tags && post.tags.length > 0)
+      expect(postsWithTags.length).toBeGreaterThan(0)
+      expect(Array.isArray(postsWithTags[0].tags)).toBe(true)
+    })
+
     test('READMEやmeなどの特殊なディレクトリが除外されること', () => {
       const posts = getAllPosts()
       const hasReadme = posts.some(post => post.slug === 'README')
@@ -69,6 +76,15 @@ describe('記事詳細を取得する関数', () => {
       expect(post).toHaveProperty('slug')
     })
 
+    test('記事のタグが取得できること', async () => {
+      const post = await getPostBySlug('2021-03-07')
+      expect(post).toHaveProperty('tags')
+      expect(Array.isArray(post?.tags)).toBe(true)
+      if (post?.tags && post.tags.length > 0) {
+        expect(post.tags).toContain('日記')
+      }
+    })
+
     test('存在しないslugの場合はnullが返ること', async () => {
       const post = await getPostBySlug('not-exist-slug')
       expect(post).toBeNull()
@@ -79,6 +95,58 @@ describe('記事詳細を取得する関数', () => {
       if (post?.content) {
         const hasAbsolutePath = post.content.includes('/public_articles/source/2025-06-30/')
         expect(hasAbsolutePath).toBe(true)
+      }
+    })
+  })
+})
+
+describe('タグ関連の関数', () => {
+  describe('getAllTags', () => {
+    test('すべてのタグが取得できること', () => {
+      const tags = getAllTags()
+      expect(tags).toBeDefined()
+      expect(tags instanceof Map).toBe(true)
+      expect(tags.size).toBeGreaterThan(0)
+    })
+
+    test('タグごとの記事数が正しくカウントされること', () => {
+      const tags = getAllTags()
+      const posts = getAllPosts()
+      
+      // 日記タグの数を手動でカウント
+      const diaryCount = posts.filter(post => post.tags?.includes('日記')).length
+      if (tags.has('日記')) {
+        expect(tags.get('日記')).toBe(diaryCount)
+      }
+    })
+  })
+
+  describe('getPostsByTag', () => {
+    test('指定したタグの記事一覧が取得できること', () => {
+      const posts = getPostsByTag('日記')
+      expect(posts).toBeDefined()
+      expect(Array.isArray(posts)).toBe(true)
+      expect(posts.length).toBeGreaterThan(0)
+      
+      // すべての記事に指定タグが含まれていること
+      posts.forEach(post => {
+        expect(post.tags).toContain('日記')
+      })
+    })
+
+    test('存在しないタグの場合は空配列が返ること', () => {
+      const posts = getPostsByTag('存在しないタグ')
+      expect(posts).toBeDefined()
+      expect(Array.isArray(posts)).toBe(true)
+      expect(posts.length).toBe(0)
+    })
+
+    test('タグでフィルタリングされた記事が日付順にソートされていること', () => {
+      const posts = getPostsByTag('日記')
+      for (let i = 0; i < posts.length - 1; i++) {
+        const current = new Date(posts[i].date)
+        const next = new Date(posts[i + 1].date)
+        expect(current.getTime()).toBeGreaterThanOrEqual(next.getTime())
       }
     })
   })

@@ -7,10 +7,11 @@ import '@/styles/article.css'
 interface ArticleLayoutProps {
   title: string
   date: string
+  tags: string[] | undefined
   content: string
 }
 
-export default function ArticleLayout({ title, date, content }: ArticleLayoutProps) {
+export default function ArticleLayout({ title, date, tags, content }: ArticleLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       <Header showBackButton={true} pageType="article" />
@@ -22,6 +23,19 @@ export default function ArticleLayout({ title, date, content }: ArticleLayoutPro
               <div className="p-8">
                 <div className="border-b border-black pb-4 mb-6">
                   <time className="text-xs font-mono uppercase">{date}</time>
+                  {tags && tags.length > 0 && (
+                    <div className="flex gap-2 mt-2 flex-wrap">
+                      {tags.map((tag) => (
+                        <Link
+                          key={tag}
+                          href={`/tags/${encodeURIComponent(tag)}`}
+                          className="text-xs font-mono px-2 py-1 border border-black hover:bg-black hover:text-white transition-colors"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <h1 className="text-3xl font-bold leading-tight">{title}</h1>
               </div>

@@ -25,6 +25,7 @@ export default async function PostPage({
     <ArticleLayout
       title={post.title}
       date={post.date}
+      tags={post.tags}
       content={post.content || ''}
     />
   )

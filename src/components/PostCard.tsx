@@ -34,6 +34,18 @@ export default function PostCard({ post, index }: PostCardProps) {
           <p className="text-sm leading-relaxed line-clamp-4 flex-grow">
             {post.excerpt}
           </p>
+          {post.tags && post.tags.length > 0 && (
+            <div className="flex gap-2 mt-3 flex-wrap">
+              {post.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs font-mono px-2 py-1 border border-black"
+                >
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="mt-4 pt-3 border-t border-gray-300">
             <span className="text-xs font-mono uppercase">
               Read →

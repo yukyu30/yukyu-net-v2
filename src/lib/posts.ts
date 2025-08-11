@@ -11,6 +11,7 @@ export interface Post {
   title: string
   date: string
   excerpt: string
+  tags: string[]
   content?: string
 }
 
@@ -46,6 +47,7 @@ export function getAllPosts(): Post[] {
       title: data.title || slug,
       date: data.date || slug,
       excerpt: data.excerpt || excerpt,
+      tags: data.tags || [],
     }
   }).filter((post): post is Post => post !== null)
 
@@ -104,6 +106,27 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     title: data.title || slug,
     date: data.date || slug,
     excerpt: data.excerpt || excerpt,
+    tags: data.tags || [],
     content: contentHtml,
   }
+}
+
+export function getAllTags(): Map<string, number> {
+  const posts = getAllPosts()
+  const tagCount = new Map<string, number>()
+  
+  posts.forEach(post => {
+    if (post.tags) {
+      post.tags.forEach(tag => {
+        tagCount.set(tag, (tagCount.get(tag) || 0) + 1)
+      })
+    }
+  })
+  
+  return tagCount
+}
+
+export function getPostsByTag(tag: string): Post[] {
+  const posts = getAllPosts()
+  return posts.filter(post => post.tags?.includes(tag))
 }
