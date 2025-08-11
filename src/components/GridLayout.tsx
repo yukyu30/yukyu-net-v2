@@ -10,6 +10,7 @@ interface GridLayoutProps {
   lastUpdate?: string;
   showVerticalTexts?: boolean;
   showProfile?: boolean;
+  currentTag?: string;
 }
 
 export default function GridLayout({
@@ -18,10 +19,26 @@ export default function GridLayout({
   lastUpdate,
   showVerticalTexts = true,
   showProfile = false,
+  currentTag,
 }: GridLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       <Header postsCount={postsCount} lastUpdate={lastUpdate} />
+      
+      {currentTag && (
+        <div className="container mx-auto px-0">
+          <div className="border-l-2 border-r-2 border-black mx-4">
+            <div className="border-b-2 border-black">
+              <div className="px-6 py-6">
+                <h1 className="text-2xl font-bold mb-2">タグ: #{currentTag}</h1>
+                <p className="text-sm font-mono">
+                  {postsCount} {postsCount === 1 ? 'ARTICLE' : 'ARTICLES'} FOUND
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {showProfile && <ProfileSection />}
 
