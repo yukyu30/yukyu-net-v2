@@ -1,10 +1,10 @@
 interface FooterProps {
-  variant?: 'grid' | 'article'
+  variant?: 'grid' | 'article';
 }
 
 export default function Footer({ variant = 'grid' }: FooterProps) {
-  const year = new Date().getFullYear()
-  
+  const year = new Date().getFullYear();
+
   return (
     <footer className="border-t-2 border-black mt-auto">
       <div className="container mx-auto px-0">
@@ -24,5 +24,5 @@ export default function Footer({ variant = 'grid' }: FooterProps) {
         </div>
       </div>
     </footer>
-  )
+  );
 }

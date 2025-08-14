@@ -1,17 +1,23 @@
-import { ReactNode } from 'react'
-import Link from 'next/link'
-import Header from './Header'
-import Footer from './Footer'
-import '@/styles/article.css'
+import { ReactNode } from 'react';
+import Link from 'next/link';
+import Header from './Header';
+import Footer from './Footer';
+import ArticleActions from './ArticleActions';
+import '@/styles/article.css';
 
 interface ArticleLayoutProps {
-  title: string
-  date: string
-  tags: string[] | undefined
-  content: string
+  title: string;
+  date: string;
+  tags: string[] | undefined;
+  content: string;
 }
 
-export default function ArticleLayout({ title, date, tags, content }: ArticleLayoutProps) {
+export default function ArticleLayout({
+  title,
+  date,
+  tags,
+  content,
+}: ArticleLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       <Header showBackButton={true} pageType="article" />
@@ -40,29 +46,32 @@ export default function ArticleLayout({ title, date, tags, content }: ArticleLay
                 <h1 className="text-3xl font-bold leading-tight">{title}</h1>
               </div>
             </div>
-            
+
             <div className="p-8">
-              <div 
+              <div
                 className="article-content max-w-none"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </div>
-            
-            <div className="border-t-2 border-black">
+
+            <ArticleActions title={title} />
+
+            <div className="border-black">
               <div className="p-8 flex justify-between items-center">
-                <Link href="/" className="text-sm font-mono uppercase hover:bg-black hover:text-white px-3 py-2 border border-black transition-colors">
+                <Link
+                  href="/"
+                  className="text-sm font-mono uppercase hover:bg-black hover:text-white px-3 py-2 border border-black transition-colors"
+                >
                   ← RETURN TO INDEX
                 </Link>
-                <div className="text-xs font-mono">
-                  END OF ARTICLE
-                </div>
+                <div className="text-xs font-mono">END OF ARTICLE</div>
               </div>
             </div>
           </article>
         </div>
       </main>
-      
+
       <Footer variant="article" />
     </div>
-  )
+  );
 }
