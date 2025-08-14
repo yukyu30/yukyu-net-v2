@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import Link from 'next/link'
 import Header from './Header'
 import Footer from './Footer'
+import ShareButtons from './ShareButtons'
 import '@/styles/article.css'
 
 interface ArticleLayoutProps {
@@ -47,6 +48,8 @@ export default function ArticleLayout({ title, date, tags, content }: ArticleLay
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </div>
+            
+            <ShareButtons title={title} />
             
             <div className="border-t-2 border-black">
               <div className="p-8 flex justify-between items-center">
