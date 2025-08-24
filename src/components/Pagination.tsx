@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PaginationProps {
   currentPage: number;
@@ -17,6 +17,16 @@ export default function Pagination({
   const [expandedDots, setExpandedDots] = useState<'start' | 'end' | null>(
     null
   );
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   if (totalPages <= 1) return null;
 
@@ -28,8 +38,6 @@ export default function Pagination({
   const renderPageNumbers = () => {
     const pages = [];
     // モバイルでは表示数を制限
-    const isMobile =
-      typeof window !== 'undefined' ? window.innerWidth < 640 : false;
     const maxVisible = isMobile ? 5 : 7;
 
     // 現在のページを中心に表示
@@ -186,7 +194,7 @@ export default function Pagination({
     <section className="border-t-2 border-black">
       <div className="container mx-auto px-0">
         <div className="border-l-2 border-r-2 border-black mx-4">
-          <nav className="flex font-mono text-xs sm:text-sm uppercase border-black">
+          <nav className="flex font-mono text-xs sm:text-sm uppercase border-b-2 border-black">
             {currentPage > 1 && (
               <Link
                 href={getPagePath(currentPage - 1)}
