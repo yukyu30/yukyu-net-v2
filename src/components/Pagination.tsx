@@ -161,7 +161,7 @@ export default function Pagination({
     <section className="border-t-2 border-black">
       <div className="container mx-auto px-0">
         <div className="border-l-2 border-r-2 border-black mx-4">
-          <nav className="flex font-mono text-xs sm:text-sm uppercase border-black">
+          <nav className="flex font-mono text-xs sm:text-sm uppercase border-b-2 border-black">
             {currentPage > 1 && (
               <Link
                 href={getPagePath(currentPage - 1)}
