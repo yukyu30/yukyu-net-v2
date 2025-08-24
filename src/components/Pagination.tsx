@@ -27,12 +27,37 @@ export default function Pagination({
 
   const renderPageNumbers = () => {
     const pages = [];
-    const maxVisible = 7;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-    const endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    // モバイルでは表示数を制限
+    const isMobile =
+      typeof window !== 'undefined' ? window.innerWidth < 640 : false;
+    const maxVisible = isMobile ? 5 : 7;
 
+    // 現在のページを中心に表示
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+    // ページ数が少ない場合の調整
     if (endPage - startPage + 1 < maxVisible) {
       startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    // モバイルで最初と最後のページを常に表示する場合の調整
+    if (isMobile && totalPages > maxVisible) {
+      // 現在のページが最初の方の場合
+      if (currentPage <= 3) {
+        startPage = 1;
+        endPage = Math.min(maxVisible - 1, totalPages - 1);
+      }
+      // 現在のページが最後の方の場合
+      else if (currentPage >= totalPages - 2) {
+        startPage = Math.max(2, totalPages - maxVisible + 2);
+        endPage = totalPages;
+      }
+      // 中間の場合
+      else {
+        startPage = currentPage - 1;
+        endPage = currentPage + 1;
+      }
     }
 
     const hasNext = currentPage < totalPages;
@@ -42,7 +67,7 @@ export default function Pagination({
         <Link
           key={1}
           href={getPagePath(1)}
-          className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white transition-colors font-bold text-center min-w-[40px] sm:min-w-[60px] text-xs sm:text-sm"
+          className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white transition-colors font-bold text-center text-xs sm:text-sm"
         >
           1
         </Link>
@@ -54,7 +79,7 @@ export default function Pagination({
             onClick={() =>
               setExpandedDots(expandedDots === 'start' ? null : 'start')
             }
-            className="flex-1 py-3 sm:py-4 border-r-2 border-black text-center min-w-[40px] sm:min-w-[60px] hover:bg-gray-100 transition-colors cursor-pointer text-xs sm:text-sm"
+            className="flex-1 py-3 sm:py-4 border-r-2 border-black text-center hover:bg-gray-100 transition-colors cursor-pointer text-xs sm:text-sm font-bold"
           >
             ...
           </button>
@@ -70,7 +95,7 @@ export default function Pagination({
           href={getPagePath(i)}
           className={`flex-1 py-3 sm:py-4 ${
             !isLast ? 'border-r-2' : ''
-          } border-black transition-colors font-bold text-center min-w-[40px] sm:min-w-[60px] text-xs sm:text-sm ${
+          } border-black transition-colors font-bold text-center text-xs sm:text-sm ${
             i === currentPage
               ? 'bg-black text-white'
               : 'hover:bg-black hover:text-white'
@@ -89,7 +114,7 @@ export default function Pagination({
             onClick={() =>
               setExpandedDots(expandedDots === 'end' ? null : 'end')
             }
-            className="flex-1 py-3 sm:py-4 border-r-2 border-black text-center min-w-[40px] sm:min-w-[60px] hover:bg-gray-100 transition-colors cursor-pointer text-xs sm:text-sm"
+            className="flex-1 py-3 sm:py-4 border-r-2 border-black text-center hover:bg-gray-100 transition-colors cursor-pointer text-xs sm:text-sm font-bold"
           >
             ...
           </button>
@@ -101,7 +126,7 @@ export default function Pagination({
           href={getPagePath(totalPages)}
           className={`flex-1 py-3 sm:py-4 ${
             hasNext ? 'border-r-2' : ''
-          } border-black hover:bg-black hover:text-white transition-colors font-bold text-center min-w-[40px] sm:min-w-[60px] text-xs sm:text-sm`}
+          } border-black hover:bg-black hover:text-white transition-colors font-bold text-center text-xs sm:text-sm`}
         >
           {totalPages}
         </Link>
@@ -145,7 +170,7 @@ export default function Pagination({
               href={getPagePath(page)}
               className={`flex-1 py-3 sm:py-4 ${
                 index < hiddenPages.length - 1 ? 'border-r-2' : ''
-              } border-black hover:bg-black hover:text-white transition-colors font-bold text-center min-w-[40px] sm:min-w-[60px] ${
+              } border-black hover:bg-black hover:text-white transition-colors font-bold text-center text-xs sm:text-sm ${
                 page === currentPage ? 'bg-black text-white' : ''
               }`}
             >
