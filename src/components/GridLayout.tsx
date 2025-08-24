@@ -11,6 +11,7 @@ interface GridLayoutProps {
   showVerticalTexts?: boolean;
   showProfile?: boolean;
   currentTag?: string;
+  pagination?: ReactNode;
 }
 
 export default function GridLayout({
@@ -20,6 +21,7 @@ export default function GridLayout({
   showVerticalTexts = true,
   showProfile = false,
   currentTag,
+  pagination,
 }: GridLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
@@ -79,6 +81,8 @@ export default function GridLayout({
         </div>
       </main>
 
+      {pagination}
+      
       <Footer variant="grid" />
     </div>
   );
