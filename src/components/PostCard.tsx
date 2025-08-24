@@ -28,6 +28,16 @@ export default function PostCard({ post, index }: PostCardProps) {
           <div className="border-b border-black pb-2 mb-3">
             <time className="text-xs font-mono">{post.date}</time>
           </div>
+          {post.thumbnail && (
+            <div className="mb-3 relative aspect-video bg-gray-100 overflow-hidden">
+              <img 
+                src={post.thumbnail} 
+                alt={post.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
           <h2 className="text-lg font-bold mb-3 leading-tight">
             {post.title}
           </h2>
