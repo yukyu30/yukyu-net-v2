@@ -49,13 +49,6 @@ export default function Header({
                   </span>
                 </div>
                 <Link
-                  href="/works"
-                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
-                  aria-label="Works"
-                >
-                  <span className="text-xs font-mono font-bold">WORKS</span>
-                </Link>
-                <Link
                   href="/tags"
                   className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
                   aria-label="All Tags"
@@ -85,24 +78,10 @@ export default function Header({
                     </span>
                   </div>
                 </div>
-                <div className="border-t-2 border-black flex">
-                  <Link
-                    href="/works"
-                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
-                    aria-label="Works"
-                  >
-                    <span className="text-xs font-mono font-bold">WORKS</span>
-                  </Link>
-                  <Link
-                    href="/tags"
-                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
-                    aria-label="All Tags"
-                  >
-                    <span className="text-xs font-mono font-bold">TAGS</span>
-                  </Link>
+                <div className="border-t-2 border-black">
                   <Link
                     href="/rss.xml"
-                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center flex-1"
+                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center w-full"
                     aria-label="RSS Feed"
                   >
                     <span className="text-xs font-mono font-bold">RSS</span>

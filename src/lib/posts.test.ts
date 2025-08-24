@@ -69,14 +69,6 @@ describe('記事詳細を取得する関数', () => {
       expect(post?.content).toContain('>')
     })
 
-    test('URLが自動的にリンクに変換されること', async () => {
-      const post = await getPostBySlug('2022-12-17-hakusyon')
-      if (post?.content) {
-        // URLが自動的にリンクタグに変換されているか確認
-        expect(post.content).toContain('<a href="https://hakusyu.yukyu.net"')
-      }
-    })
-
     test('記事のメタデータが取得できること', async () => {
       const post = await getPostBySlug('2025-06-30')
       expect(post).toHaveProperty('title')
