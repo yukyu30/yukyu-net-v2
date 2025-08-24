@@ -1,8 +1,13 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { remark } from 'remark'
-import html from 'remark-html'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
+import remarkRehype from 'remark-rehype'
+import rehypeRaw from 'rehype-raw'
+import rehypeStringify from 'rehype-stringify'
 
 const postsDirectory = path.join(process.cwd(), 'public_articles', 'source')
 
@@ -13,6 +18,7 @@ export interface Post {
   excerpt: string
   tags: string[]
   content?: string
+  thumbnail?: string
 }
 
 export function getAllPosts(): Post[] {
@@ -46,14 +52,27 @@ export function getAllPosts(): Post[] {
       ? new Date(data.date || data.created_at).toISOString().split('T')[0]
       : slug
 
+    // Extract first image from content
+    const imageMatch = content.match(/!\[.*?\]\(([^)]+)\)/)
+    let thumbnail = undefined
+    if (imageMatch && imageMatch[1]) {
+      const imagePath = imageMatch[1]
+      if (!imagePath.startsWith('http') && !imagePath.startsWith('/')) {
+        thumbnail = `/public_articles/source/${slug}/${imagePath}`
+      } else {
+        thumbnail = imagePath
+      }
+    }
+
     return {
       slug,
       title: data.title || slug,
       date: dateString,
       excerpt: data.excerpt || excerpt,
       tags: data.tags || [],
+      thumbnail,
     }
-  }).filter((post): post is Post => post !== null)
+  }).filter(post => post !== null) as Post[]
 
   return posts.sort((a, b) => {
     // slugから日付を抽出（YYYY-MM-DD形式の場合）
@@ -92,8 +111,13 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     }
   )
 
-  const processedMarkdown = await remark()
-    .use(html)
+  const processedMarkdown = await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkBreaks)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeStringify)
     .process(processedContent)
   
   const contentHtml = processedMarkdown.toString()
@@ -109,6 +133,18 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     ? new Date(data.date || data.created_at).toISOString().split('T')[0]
     : slug
 
+  // Extract first image from content
+  const imageMatch = content.match(/!\[.*?\]\(([^)]+)\)/)
+  let thumbnail = undefined
+  if (imageMatch && imageMatch[1]) {
+    const imagePath = imageMatch[1]
+    if (!imagePath.startsWith('http') && !imagePath.startsWith('/')) {
+      thumbnail = `/public_articles/source/${slug}/${imagePath}`
+    } else {
+      thumbnail = imagePath
+    }
+  }
+
   return {
     slug,
     title: data.title || slug,
@@ -116,6 +152,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     excerpt: data.excerpt || excerpt,
     tags: data.tags || [],
     content: contentHtml,
+    thumbnail,
   }
 }
 
