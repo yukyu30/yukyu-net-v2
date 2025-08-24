@@ -3,6 +3,8 @@ import path from 'path'
 import matter from 'gray-matter'
 import { remark } from 'remark'
 import html from 'remark-html'
+import remarkGfm from 'remark-gfm'
+import remarkBreaks from 'remark-breaks'
 
 const postsDirectory = path.join(process.cwd(), 'public_articles', 'source')
 
@@ -107,6 +109,8 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   )
 
   const processedMarkdown = await remark()
+    .use(remarkGfm)
+    .use(remarkBreaks)
     .use(html)
     .process(processedContent)
   

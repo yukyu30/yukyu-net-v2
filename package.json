@@ -30,6 +30,8 @@
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "remark": "^15.0.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.0",
     "remark-html": "^16.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
