@@ -1,12 +1,4 @@
 {
   "installCommand": "git submodule update --init --recursive && npm install",
-  "buildCommand": "rm -rf public/public_articles && mkdir -p public && cp -r public_articles public/ && npm run build:vercel && npm run generate:rss",
-  "functions": {
-    "src/app/posts/[slug]/page.tsx": {
-      "maxDuration": 10
-    },
-    "src/app/tags/[tag]/page.tsx": {
-      "maxDuration": 10
-    }
-  }
+  "buildCommand": "rm -rf public/public_articles && mkdir -p public && cp -r public_articles public/ && npm run build:vercel && npm run generate:rss"
 }
