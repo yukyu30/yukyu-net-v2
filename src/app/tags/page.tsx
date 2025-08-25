@@ -27,7 +27,7 @@ export default function TagsPage() {
               {sortedTags.map(([tag, count]) => (
                 <Link
                   key={tag}
-                  href={`/tags/${tag}`}
+                  href={`/tags/${encodeURIComponent(tag)}`}
                   className="group border-2 border-black p-4 hover:bg-black hover:text-white transition-colors"
                 >
                   <div className="flex justify-between items-center">

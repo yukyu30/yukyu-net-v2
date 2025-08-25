@@ -34,7 +34,7 @@ export default function ArticleLayout({
                       {tags.map((tag) => (
                         <Link
                           key={tag}
-                          href={`/tags/${tag}`}
+                          href={`/tags/${encodeURIComponent(tag)}`}
                           className="text-xs font-mono px-2 py-1 border border-black hover:bg-black hover:text-white transition-colors"
                         >
                           #{tag}
