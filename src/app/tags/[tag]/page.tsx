@@ -7,7 +7,7 @@ import { Metadata } from 'next'
 export async function generateStaticParams() {
   const tags = getAllTags()
   return Array.from(tags.keys()).map((tag) => ({
-    tag: encodeURIComponent(tag),
+    tag: tag,
   }))
 }
 
@@ -17,11 +17,10 @@ export async function generateMetadata({
   params: Promise<{ tag: string }>
 }): Promise<Metadata> {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
   
   return {
-    title: `${decodedTag} - yukyu.net`,
-    description: `${decodedTag}タグが付いた記事一覧`,
+    title: `${tag} - yukyu.net`,
+    description: `${tag}タグが付いた記事一覧`,
   }
 }
 
@@ -31,8 +30,7 @@ export default async function TagPage({
   params: Promise<{ tag: string }>
 }) {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
-  const posts = getPostsByTag(decodedTag)
+  const posts = getPostsByTag(tag)
   
   if (posts.length === 0) {
     notFound()
@@ -43,7 +41,7 @@ export default async function TagPage({
       postsCount={posts.length} 
       lastUpdate={posts[0]?.date}
       showProfile={false}
-      currentTag={decodedTag}
+      currentTag={tag}
     >
       {posts.map((post, index) => (
         <PostCard key={post.slug} post={post} index={index} />
