@@ -4,6 +4,9 @@
   "functions": {
     "src/app/posts/[slug]/page.tsx": {
       "maxDuration": 10
+    },
+    "src/app/tags/[tag]/page.tsx": {
+      "maxDuration": 10
     }
   }
 }
