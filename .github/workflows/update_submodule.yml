@@ -1,7 +1,14 @@
 name: Update Submodules
 on:
+  # 手動実行
+  workflow_dispatch:
+  # 定期実行 (毎日午前3時 UTC)
+  push:
+    branches:
+      - main
+  # リポジトリディスパッチ
   repository_dispatch:
-    types: [update-submodule]
+    types: [update_submodule]
 
 jobs:
   update:
