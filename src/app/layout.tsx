@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: "yukyu's thoughts and digital archive",
     type: 'website',
     locale: 'ja_JP',
-    siteName: "yukyu's diary",
+    siteName: "DecoBoco Digital"
     images: [
       {
         url: `https://yukyu-site-og.vercel.app/api/og?title=${encodeURIComponent("yukyu's diary - DecoBoco Digital")}`,
