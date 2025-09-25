@@ -26,10 +26,12 @@ export const metadata: Metadata = {
     description: "yukyu's thoughts and digital archive",
     type: 'website',
     locale: 'ja_JP',
-    siteName: "DecoBoco Digital"
+    siteName: 'DecoBoco Digital',
     images: [
       {
-        url: `https://yukyu-site-og.vercel.app/api/og?title=${encodeURIComponent("yukyu's diary - DecoBoco Digital")}`,
+        url: `https://yukyu-site-og.vercel.app/api/og?title=${encodeURIComponent(
+          "yukyu's diary - DecoBoco Digital"
+        )}`,
         width: 1200,
         height: 630,
         alt: "yukyu's diary - DecoBoco Digital",
@@ -40,7 +42,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "yukyu's diary - DecoBoco Digital",
     description: "yukyu's thoughts and digital archive",
-    images: [`https://yukyu-site-og.vercel.app/api/og?title=${encodeURIComponent("yukyu's diary - DecoBoco Digital")}`],
+    images: [
+      `https://yukyu-site-og.vercel.app/api/og?title=${encodeURIComponent(
+        "yukyu's diary - DecoBoco Digital"
+      )}`,
+    ],
   },
   other: {
     'theme-color': '#000',
