@@ -2,16 +2,16 @@ import { visit } from 'unist-util-visit'
 import type { Root, Element, Text, ElementContent } from 'hast'
 
 const EMOTION_LABELS: Record<string, string> = {
-  'sadness': '悲しみ',
-  'happiness': '喜び',
-  'anger': '怒り',
-  'fear': '恐怖',
-  'surprise': '驚き',
-  'disgust': '嫌悪',
-  'love': '愛',
-  'joy': '喜び',
-  'anxiety': '不安',
-  'hope': '希望',
+  'sadness': '😢',
+  'happiness': '😊',
+  'anger': '😠',
+  'fear': '😨',
+  'surprise': '😲',
+  'disgust': '🤢',
+  'love': '❤️',
+  'joy': '😄',
+  'anxiety': '😰',
+  'hope': '🙏',
 }
 
 export default function rehypeEmotion() {
@@ -48,7 +48,14 @@ export default function rehypeEmotion() {
               type: 'element',
               tagName: 'div',
               properties: { className: 'emotion-line-label' },
-              children: [{ type: 'text', value: label }]
+              children: [
+                {
+                  type: 'element',
+                  tagName: 'span',
+                  properties: { className: 'emotion-emoji' },
+                  children: [{ type: 'text', value: label }]
+                }
+              ]
             },
             {
               type: 'element',

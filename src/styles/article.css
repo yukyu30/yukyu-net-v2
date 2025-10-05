@@ -252,25 +252,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #666;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  letter-spacing: 0.25em;
-  padding: 0.5rem 0;
+  justify-content: center;
+  min-height: 100%;
 }
 
+/* 中央の縦線 */
 .article-content .emotion-line-label::before {
   content: '';
   position: absolute;
   top: 0;
+  bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
   width: 1px;
-  height: 100%;
   background-color: #666;
-  z-index: -1;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+/* 絵文字に白背景を追加 */
+.article-content .emotion-emoji {
+  font-size: 1.2rem;
+  background-color: white;
+  padding: 10px;
+  position: relative;
+  z-index: 2;
 }
 
 /* テキスト部分 */
