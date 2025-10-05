@@ -218,28 +218,89 @@
   margin-bottom: 0;
 }
 
+/* Emotionタグのスタイル */
+.article-content .emotion-wrapper {
+  display: block;
+  margin: 1.5rem 0;
+}
+
+/* 開始タグと閉じタグ */
+.article-content .emotion-tag-open,
+.article-content .emotion-tag-close {
+  font-size: 0.875rem;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+  color: #666;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+}
+
+.article-content .emotion-tag-close {
+  margin-bottom: 0;
+  margin-top: 0.5rem;
+}
+
+/* コンテンツ部分（縦線とラベル） */
+.article-content .emotion-content {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* 縦線とラベル */
+.article-content .emotion-line-label {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #666;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.25em;
+  padding: 0.5rem 0;
+}
+
+.article-content .emotion-line-label::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 100%;
+  background-color: #666;
+  z-index: -1;
+}
+
+/* テキスト部分 */
+.article-content .emotion-text {
+  flex: 1;
+  padding-left: 1rem;
+}
+
 /* レスポンシブ調整 */
 @media (max-width: 768px) {
   .article-content h1 {
     font-size: 2.25rem; /* 36px */
   }
-  
+
   .article-content h2 {
     font-size: 1.25rem; /* 20px */
   }
-  
+
   .article-content h3 {
     font-size: 1.125rem; /* 18px */
   }
-  
+
   .article-content h4 {
     font-size: 1.25rem; /* 20px */
   }
-  
+
   .article-content h5 {
     font-size: 1.125rem; /* 18px */
   }
-  
+
   .article-content h6 {
     font-size: 1rem; /* 16px */
   }
