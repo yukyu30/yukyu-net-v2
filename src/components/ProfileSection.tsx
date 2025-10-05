@@ -79,14 +79,20 @@ export default function ProfileSection() {
                     <div className="text-xs font-mono font-bold">名前</div>
                   </div>
                   <div className="p-4">
-                    <div className="text-sm font-mono">yukyu</div>
+                    <Link
+                      href="posts/me"
+                      className="text-sm font-mono hover:underline"
+                    >
+                      yukyu
+                    </Link>
                   </div>
                 </div>
 
                 {/* 職業 */}
                 <div className="border-b-2 border-black p-4 flex items-center">
                   <div className="text-sm font-mono">
-                    GMOペパボ株式会社 メタバース推進室 エンジニアリングリード / 上級VR技術者
+                    GMOペパボ株式会社 メタバース推進室 エンジニアリングリード /
+                    上級VR技術者
                   </div>
                 </div>
               </div>
