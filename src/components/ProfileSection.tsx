@@ -79,11 +79,15 @@ export default function ProfileSection() {
                     <div className="text-xs font-mono font-bold">名前</div>
                   </div>
                   <div className="p-4">
+                    <div className="text-sm font-mono inline-block">
+                      yukyu
+                    </div>
+                    <span className="text-sm font-mono mx-2">/</span>
                     <Link
                       href="posts/me"
-                      className="text-sm font-mono hover:underline"
+                      className="text-xs font-mono hover:underline"
                     >
-                      yukyu
+                      プロフィールを見る
                     </Link>
                   </div>
                 </div>
