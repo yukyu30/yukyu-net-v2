@@ -23,7 +23,7 @@ export interface Post {
 }
 
 export function getAllPosts(): Post[] {
-  const excludeDirs = ['README', 'me', 'privacy-policy']
+  const excludeDirs = ['README', 'privacy-policy']
   
   const directories = fs.readdirSync(postsDirectory)
     .filter(dir => {

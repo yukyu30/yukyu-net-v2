@@ -42,14 +42,18 @@ describe('記事一覧を取得する関数', () => {
       expect(Array.isArray(postsWithTags[0].tags)).toBe(true)
     })
 
-    test('READMEやmeなどの特殊なディレクトリが除外されること', () => {
+    test('READMEやprivacy-policyなどの特殊なディレクトリが除外されること', () => {
       const posts = getAllPosts()
       const hasReadme = posts.some(post => post.slug === 'README')
-      const hasMe = posts.some(post => post.slug === 'me')
       const hasPrivacyPolicy = posts.some(post => post.slug === 'privacy-policy')
       expect(hasReadme).toBe(false)
-      expect(hasMe).toBe(false)
       expect(hasPrivacyPolicy).toBe(false)
+    })
+
+    test('meディレクトリが記事一覧に含まれること', () => {
+      const posts = getAllPosts()
+      const hasMe = posts.some(post => post.slug === 'me')
+      expect(hasMe).toBe(true)
     })
   })
 })
