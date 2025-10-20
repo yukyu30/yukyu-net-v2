@@ -20,6 +20,7 @@ export interface Post {
   tags: string[]
   content?: string
   thumbnail?: string
+  rss?: boolean
 }
 
 export function getAllPosts(): Post[] {
@@ -72,6 +73,7 @@ export function getAllPosts(): Post[] {
       excerpt: data.excerpt || excerpt,
       tags: data.tags || [],
       thumbnail,
+      rss: data.rss !== false,
     }
   }).filter(post => post !== null) as Post[]
 
@@ -155,6 +157,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     tags: data.tags || [],
     content: contentHtml,
     thumbnail,
+    rss: data.rss !== false,
   }
 }
 

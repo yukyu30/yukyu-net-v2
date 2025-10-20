@@ -18,10 +18,10 @@ function cleanText(text: string): string {
 }
 
 export function generateRSSFeed(): string {
-  const posts = getAllPosts()
+  const posts = getAllPosts().filter(post => post.rss !== false)
   const siteUrl = process.env.SITE_URL || 'https://yukyu.net'
   const feedUrl = `${siteUrl}/rss.xml`
-  
+
   const rssItems = posts.slice(0, 20).map(post => {
     const postUrl = `${siteUrl}/posts/${post.slug}`
     const pubDate = new Date(post.date).toUTCString()
