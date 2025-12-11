@@ -35,7 +35,7 @@ export default function ArticleLayout({
                         <Link
                           key={tag}
                           href={`/tags/${encodeURIComponent(tag)}`}
-                          className="text-xs font-mono px-2 py-1 border border-black hover:bg-black hover:text-white transition-colors"
+                          className="text-xs font-mono px-2 py-1 border border-black hover:bg-black hover:text-white hover-tag"
                         >
                           #{tag}
                         </Link>
@@ -57,7 +57,7 @@ export default function ArticleLayout({
               <div className="p-8 flex justify-between items-center">
                 <Link
                   href="/"
-                  className="text-sm font-mono uppercase hover:bg-black hover:text-white px-3 py-2 border border-black transition-colors"
+                  className="text-sm font-mono uppercase hover:bg-black hover:text-white px-3 py-2 border border-black hover-shift"
                 >
                   ← RETURN TO INDEX
                 </Link>

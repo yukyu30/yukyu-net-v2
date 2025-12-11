@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Post } from '@/lib/posts'
 
@@ -21,19 +23,25 @@ export default function PostCard({ post, index }: PostCardProps) {
     (index + 1) % 2 !== 0 ? 'md:border-r-2' : 'md:border-r-0'
   } ${(index + 1) % 3 !== 0 ? '' : 'lg:border-r-0'}`
 
+  // スタガーアニメーション用のdelay計算
+  const animationDelay = `${index * 50}ms`
+
   return (
-    <article className={borderClasses}>
-      <Link href={`/posts/${post.slug}`} className="block h-full">
-        <div className="p-6 hover:bg-gray-50 transition-colors h-full flex flex-col">
+    <article
+      className={`${borderClasses} animate-stagger-in`}
+      style={{ animationDelay }}
+    >
+      <Link href={`/posts/${post.slug}`} className="block h-full group">
+        <div className="p-6 hover-lift h-full flex flex-col hover:bg-gray-50 hover-snap">
           <div className="border-b border-black pb-2 mb-3">
             <time className="text-xs font-mono">{post.date}</time>
           </div>
           {post.thumbnail && (
             <div className="mb-3 relative aspect-video bg-gray-100 overflow-hidden">
-              <img 
-                src={post.thumbnail} 
+              <img
+                src={post.thumbnail}
                 alt={post.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
               />
             </div>
@@ -49,7 +57,7 @@ export default function PostCard({ post, index }: PostCardProps) {
               {post.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs font-mono px-2 py-1 border border-black"
+                  className="text-xs font-mono px-2 py-1 border border-black hover-tag"
                 >
                   #{tag}
                 </span>
@@ -58,7 +66,7 @@ export default function PostCard({ post, index }: PostCardProps) {
           )}
           <div className="mt-4 pt-3 border-t border-gray-300">
             <span className="text-xs font-mono uppercase">
-              Read →
+              Read <span className="hover-arrow">→</span>
             </span>
           </div>
         </div>

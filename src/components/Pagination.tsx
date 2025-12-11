@@ -75,7 +75,7 @@ export default function Pagination({
         <Link
           key={1}
           href={getPagePath(1)}
-          className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white transition-colors font-bold text-center text-xs sm:text-sm"
+          className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white hover-snap font-bold text-center text-xs sm:text-sm"
         >
           1
         </Link>
@@ -103,7 +103,7 @@ export default function Pagination({
           href={getPagePath(i)}
           className={`flex-1 py-3 sm:py-4 ${
             !isLast ? 'border-r-2' : ''
-          } border-black transition-colors font-bold text-center text-xs sm:text-sm ${
+          } border-black hover-snap font-bold text-center text-xs sm:text-sm ${
             i === currentPage
               ? 'bg-black text-white'
               : 'hover:bg-black hover:text-white'
@@ -134,7 +134,7 @@ export default function Pagination({
           href={getPagePath(totalPages)}
           className={`flex-1 py-3 sm:py-4 ${
             hasNext ? 'border-r-2' : ''
-          } border-black hover:bg-black hover:text-white transition-colors font-bold text-center text-xs sm:text-sm`}
+          } border-black hover:bg-black hover:text-white hover-snap font-bold text-center text-xs sm:text-sm`}
         >
           {totalPages}
         </Link>
@@ -198,7 +198,7 @@ export default function Pagination({
             {currentPage > 1 && (
               <Link
                 href={getPagePath(currentPage - 1)}
-                className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white transition-colors font-bold text-center"
+                className="flex-1 py-3 sm:py-4 border-r-2 border-black hover:bg-black hover:text-white hover-snap font-bold text-center"
               >
                 <span className="hidden sm:inline">← Prev</span>
                 <span className="sm:hidden">←</span>
@@ -210,7 +210,7 @@ export default function Pagination({
             {currentPage < totalPages && (
               <Link
                 href={getPagePath(currentPage + 1)}
-                className="flex-1 py-3 sm:py-4 hover:bg-black hover:text-white transition-colors font-bold text-center"
+                className="flex-1 py-3 sm:py-4 hover:bg-black hover:text-white hover-snap font-bold text-center"
               >
                 <span className="hidden sm:inline">Next →</span>
                 <span className="sm:hidden">→</span>
