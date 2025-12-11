@@ -22,8 +22,8 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
   const cy = 12;
   const r = 8;
 
-  // 経線の数（30度間隔で6本）
-  const meridianAngles = [0, 30, 60, 90, 120, 150];
+  // 経線の数（45度間隔で4本）
+  const meridianAngles = [0, 45, 90, 135];
 
   // 経線のパスを計算
   // 左端: ( 形（左に膨らむ）
@@ -33,21 +33,25 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
     const angle = (baseAngle + rotation) % 180;
     const normalizedAngle = angle > 90 ? angle - 180 : angle;
 
-    // 角度からx位置を計算
+    // 角度からx位置を計算（sin関数で-1〜1の範囲）
     const rad = (normalizedAngle * Math.PI) / 180;
-    const x = cx + Math.sin(rad) * r;
+    const sinVal = Math.sin(rad);
 
-    // 曲率: 左端で負（左膨らみ）、中央で0（直線）、右端で正（右膨らみ）
-    // sin(角度)で曲率の方向と大きさを決定
-    // 端で半円に近づくよう、曲率を大きく（r * 0.55 ≈ ベジェ曲線で円を近似する係数）
-    const curvature = Math.sin(rad) * r * 0.6;
+    // x位置: 円の内側に収める
+    const x = cx + sinVal * r;
+
+    // 曲率: 位置に応じて ( | ) 形に変化
+    // 制御点は円の内側に収まるよう、位置に応じた最大曲率を計算
+    // 端（x = cx ± r）では曲率0、中央（x = cx）では最大
+    const maxCurvature = Math.sqrt(1 - sinVal * sinVal) * r * 0.55;
+    const curvature = sinVal * maxCurvature;
 
     // 透明度: 端に近いほど薄く
     const opacity = Math.abs(Math.cos(rad));
 
-    if (opacity < 0.15) return null;
+    if (opacity < 0.1) return null;
 
-    // 制御点のx座標（曲率を反映）
+    // 制御点のx座標
     const controlX = x + curvature;
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
@@ -69,7 +73,7 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
       <circle cx={cx} cy={cy} r={r} />
 
       {/* 赤道 */}
-      <ellipse cx={cx} cy={cy} rx={r} ry={2} />
+      <line x1={cx - r} y1={cy} x2={cx + r} y2={cy} />
 
       {/* 回転する経線 */}
       {meridianAngles.map((angle, i) => {
