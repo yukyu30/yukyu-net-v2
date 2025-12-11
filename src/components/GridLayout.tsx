@@ -5,7 +5,7 @@ import MenuBar from './MenuBar';
 import StatusBar from './StatusBar';
 import WindowFrame from './WindowFrame';
 import ProfileSection from './ProfileSection';
-import FolderOpen from './FolderOpen';
+import BootSequence from './BootSequence';
 
 interface GridLayoutProps {
   children: ReactNode;
@@ -24,7 +24,7 @@ export default function GridLayout({
   currentTag,
   pagination,
 }: GridLayoutProps) {
-  const [folderOpened, setFolderOpened] = useState(false);
+  const [bootComplete, setBootComplete] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -37,16 +37,16 @@ export default function GridLayout({
     setMounted(true);
   }, []);
 
-  const handleFolderComplete = () => {
-    setFolderOpened(true);
+  const handleBootComplete = () => {
+    setBootComplete(true);
     // 少し遅延してからコンテンツ表示
     setTimeout(() => setShowContent(true), 100);
   };
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* フォルダオープンアニメーション */}
-      {mounted && !folderOpened && <FolderOpen onComplete={handleFolderComplete} />}
+      {/* ブートシーケンス */}
+      {mounted && !bootComplete && <BootSequence onComplete={handleBootComplete} />}
 
       {/* メニューバー */}
       <MenuBar />
