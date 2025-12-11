@@ -21,38 +21,29 @@ export default function PostCard({ post, index }: PostCardProps) {
 
   useEffect(() => {
     if (cardRef.current) {
-      // 四方八方からのランダムな方向を決定
-      const directions = [
-        { x: -200, y: -100 },  // 左上
-        { x: 0, y: -150 },    // 上
-        { x: 200, y: -100 },  // 右上
-        { x: -250, y: 0 },    // 左
-        { x: 250, y: 0 },     // 右
-        { x: -200, y: 100 },  // 左下
-        { x: 0, y: 150 },     // 下
-        { x: 200, y: 100 },   // 右下
-      ]
+      // フォルダから出てくるアニメーション
+      // 左上の一点（フォルダの位置）から各位置へ展開
+      const delay = index * 0.03 // より速いスタガー
 
-      const direction = directions[index % directions.length]
-      const delay = index * 0.05
-
-      // 初期位置を設定
+      // 初期位置: 左上のフォルダ位置（重なった状態）
       gsap.set(cardRef.current, {
-        x: direction.x,
-        y: direction.y,
+        x: -300,
+        y: -200,
         opacity: 0,
-        scale: 0.8,
+        scale: 0.3,
+        rotation: -15 + (index % 5) * 3, // ファイルが少しバラけた角度
       })
 
-      // アニメーション実行
+      // アニメーション: フォルダから出てきて整列
       gsap.to(cardRef.current, {
         x: 0,
         y: 0,
         opacity: 1,
         scale: 1,
-        duration: 0.4,
+        rotation: 0,
+        duration: 0.5,
         delay: delay,
-        ease: 'power2.out',
+        ease: 'power3.out',
       })
     }
   }, [index])
