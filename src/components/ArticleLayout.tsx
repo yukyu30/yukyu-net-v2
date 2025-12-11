@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import Link from 'next/link';
 import Header from './Header';
 import Footer from './Footer';
 import ArticleActions from './ArticleActions';
+import ArticleContent from './ArticleContent';
 import '@/styles/article.css';
 
 interface ArticleLayoutProps {
@@ -48,10 +48,7 @@ export default function ArticleLayout({
             </div>
 
             <div className="p-8">
-              <div
-                className="article-content max-w-none"
-                dangerouslySetInnerHTML={{ __html: content }}
-              />
+              <ArticleContent content={content} duration={2500} />
             </div>
 
             <ArticleActions title={title} />
