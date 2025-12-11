@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
+import GlobeIcon from './GlobeIcon';
 
 interface MenuItem {
   label: string;
@@ -140,13 +141,16 @@ export default function MenuBar() {
           ))}
         </div>
 
-        {/* 右側: アクティビティインジケーター */}
-        <div className="flex items-center gap-3">
-          <div
-            ref={activityRef}
-            className="w-1.5 h-1.5 rounded-full bg-green-400 opacity-20"
-          />
-          <span className="text-sm font-mono text-green-600 hidden sm:inline">SYS</span>
+        {/* 右側: 地球アイコン + アクティビティインジケーター */}
+        <div className="flex items-center gap-4">
+          <GlobeIcon size={20} className="text-green-400" />
+          <div className="flex items-center gap-2">
+            <div
+              ref={activityRef}
+              className="w-1.5 h-1.5 rounded-full bg-green-400 opacity-20"
+            />
+            <span className="text-sm font-mono text-green-600 hidden sm:inline">SYS</span>
+          </div>
         </div>
       </div>
     </nav>
