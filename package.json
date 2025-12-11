@@ -14,7 +14,9 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@tailwindcss/typography": "^0.5.16",
+    "gsap": "^3.14.1",
     "next": "^16.0.8",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
