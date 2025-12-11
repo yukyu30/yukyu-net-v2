@@ -31,8 +31,8 @@ export default function PostCard({ post, index }: PostCardProps) {
       className={`${borderClasses} animate-stagger-in`}
       style={{ animationDelay }}
     >
-      <Link href={`/posts/${post.slug}`} className="block h-full group">
-        <div className="p-6 hover-lift h-full flex flex-col hover:bg-gray-50 hover-snap">
+      <Link href={`/posts/${post.slug}`} className="block h-full">
+        <div className="p-6 h-full flex flex-col hover:bg-gray-50 transition-colors">
           <div className="border-b border-black pb-2 mb-3">
             <time className="text-xs font-mono">{post.date}</time>
           </div>
@@ -41,7 +41,7 @@ export default function PostCard({ post, index }: PostCardProps) {
               <img
                 src={post.thumbnail}
                 alt={post.title}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
             </div>
@@ -57,7 +57,7 @@ export default function PostCard({ post, index }: PostCardProps) {
               {post.tags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="text-xs font-mono px-2 py-1 border border-black hover-tag"
+                  className="text-xs font-mono px-2 py-1 border border-black"
                 >
                   #{tag}
                 </span>
@@ -66,7 +66,7 @@ export default function PostCard({ post, index }: PostCardProps) {
           )}
           <div className="mt-4 pt-3 border-t border-gray-300">
             <span className="text-xs font-mono uppercase">
-              Read <span className="hover-arrow">→</span>
+              Read →
             </span>
           </div>
         </div>

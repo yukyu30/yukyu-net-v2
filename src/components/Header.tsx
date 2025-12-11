@@ -51,21 +51,21 @@ export default function Header({
                 </div>
                 <Link
                   href="/works"
-                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white hover-snap flex items-center justify-center"
+                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
                   aria-label="Works"
                 >
                   <span className="text-xs font-mono font-bold">WORKS</span>
                 </Link>
                 <Link
                   href="/tags"
-                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white hover-snap flex items-center justify-center"
+                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
                   aria-label="All Tags"
                 >
                   <span className="text-xs font-mono font-bold">TAGS</span>
                 </Link>
                 <Link
                   href="/rss.xml"
-                  className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black hover-snap flex items-center justify-center"
+                  className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center"
                   aria-label="RSS Feed"
                 >
                   <span className="text-xs font-mono font-bold">RSS</span>
@@ -89,21 +89,21 @@ export default function Header({
                 <div className="border-t-2 border-black flex">
                   <Link
                     href="/works"
-                    className="px-4 py-2 hover:bg-black hover:text-white hover-snap flex items-center justify-center flex-1 border-r border-black"
+                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
                     aria-label="Works"
                   >
                     <span className="text-xs font-mono font-bold">WORKS</span>
                   </Link>
                   <Link
                     href="/tags"
-                    className="px-4 py-2 hover:bg-black hover:text-white hover-snap flex items-center justify-center flex-1 border-r border-black"
+                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
                     aria-label="All Tags"
                   >
                     <span className="text-xs font-mono font-bold">TAGS</span>
                   </Link>
                   <Link
                     href="/rss.xml"
-                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black hover-snap flex items-center justify-center flex-1"
+                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center flex-1"
                     aria-label="RSS Feed"
                   >
                     <span className="text-xs font-mono font-bold">RSS</span>
