@@ -7,12 +7,15 @@ interface GlobeIconProps {
   className?: string;
 }
 
-export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps) {
+export default function GlobeIcon({
+  size = 20,
+  className = '',
+}: GlobeIconProps) {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotation(prev => (prev + 2) % 360);
+      setRotation((prev) => (prev + 2) % 360);
     }, 50);
 
     return () => clearInterval(interval);
@@ -55,8 +58,10 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
     // 制御点: 円の内側に収まるよう計算
     // 経線のx位置から、外側方向（右なら右、左なら左）に膨らむ
     // 端では制御点がさらに外側へ（半円に近づく）
-    const bulge = curveFactor * r * 0.55; // ベジェで円を近似する係数
-    const direction = sinVal > 0 ? 1 : (sinVal < 0 ? -1 : 0);
+    // ただし円の外にはみ出さないよう制限
+    const maxBulge = r - Math.abs(x - cx); // 円の端までの距離
+    const bulge = Math.min(curveFactor * r, maxBulge);
+    const direction = sinVal > 0 ? 1 : sinVal < 0 ? -1 : 0;
     const controlX = x + direction * bulge;
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
