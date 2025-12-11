@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  --background: #000000;
+  --foreground: #4ade80;
+  --foreground-secondary: #16a34a;
+  --border-color: #4ade80;
+  --hover-bg: #4ade80;
+  --hover-text: #000000;
+  --code-bg: #052e16;
 }
 
 @theme inline {
@@ -38,13 +43,13 @@ body {
 }
 
 ::selection {
-  background: #000000;
-  color: #ffffff;
+  background: #4ade80;
+  color: #000000;
 }
 
 ::-moz-selection {
-  background: #000000;
-  color: #ffffff;
+  background: #4ade80;
+  color: #000000;
 }
 
 /* =====================================

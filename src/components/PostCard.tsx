@@ -1,7 +1,9 @@
 'use client'
 
-import Link from 'next/link'
+import { useState, useEffect, useRef } from 'react'
+import { gsap } from 'gsap'
 import { Post } from '@/lib/posts'
+import UnlockTransition from './UnlockTransition'
 
 interface PostCardProps {
   post: Post
@@ -9,68 +11,115 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, index }: PostCardProps) {
-  const borderClasses = `${
-    index === 0
-      ? ''
-      : index === 1
-        ? 'border-t-2 md:border-t-0 lg:border-t-0'
-        : index === 2
-          ? 'border-t-2 md:border-t-2 lg:border-t-0'
-          : 'border-t-2'
-  } border-black ${
-    (index + 1) % 3 !== 0 ? 'lg:border-r-2' : ''
-  } ${
-    (index + 1) % 2 !== 0 ? 'md:border-r-2' : 'md:border-r-0'
-  } ${(index + 1) % 3 !== 0 ? '' : 'lg:border-r-0'}`
+  const [isUnlocking, setIsUnlocking] = useState(false)
+  const cardRef = useRef<HTMLElement>(null)
 
-  // スタガーアニメーション用のdelay計算
-  const animationDelay = `${index * 50}ms`
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsUnlocking(true)
+  }
+
+  useEffect(() => {
+    if (cardRef.current) {
+      // フォルダ（中央）から出てくるアニメーション
+      const delay = index * 0.03
+
+      // カードの位置を取得して中央からの相対位置を計算
+      const rect = cardRef.current.getBoundingClientRect()
+      const windowCenterX = window.innerWidth / 2
+      const windowCenterY = window.innerHeight / 2
+      const cardCenterX = rect.left + rect.width / 2
+      const cardCenterY = rect.top + rect.height / 2
+
+      // 中央からカードへの方向ベクトル（逆方向に初期位置を設定）
+      const offsetX = windowCenterX - cardCenterX
+      const offsetY = windowCenterY - cardCenterY
+
+      // 初期位置: 画面中央（フォルダ位置）に重なった状態
+      gsap.set(cardRef.current, {
+        x: offsetX,
+        y: offsetY,
+        opacity: 0,
+        scale: 0.2,
+        rotation: -10 + (index % 5) * 4,
+      })
+
+      // アニメーション: 中央から各位置へ展開
+      gsap.to(cardRef.current, {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        rotation: 0,
+        duration: 0.5,
+        delay: delay,
+        ease: 'power3.out',
+      })
+    }
+  }, [index])
 
   return (
-    <article
-      className={`${borderClasses} animate-stagger-in`}
-      style={{ animationDelay }}
-    >
-      <Link href={`/posts/${post.slug}`} className="block h-full">
-        <div className="p-6 h-full flex flex-col hover:bg-gray-50 transition-colors">
-          <div className="border-b border-black pb-2 mb-3">
-            <time className="text-xs font-mono">{post.date}</time>
-          </div>
-          {post.thumbnail && (
-            <div className="mb-3 relative aspect-video bg-gray-100 overflow-hidden">
-              <img
-                src={post.thumbnail}
-                alt={post.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+    <>
+      {isUnlocking && (
+        <UnlockTransition
+          href={`/posts/${post.slug}`}
+          onComplete={() => setIsUnlocking(false)}
+        />
+      )}
+      <article
+        ref={cardRef}
+        className="p-2 h-full opacity-0"
+      >
+        <a
+          href={`/posts/${post.slug}`}
+          onClick={handleClick}
+          className="block cursor-pointer group h-full"
+        >
+          <div className="bg-black group-hover:bg-green-950/50 transition-colors h-full flex flex-col p-4">
+            {/* ヘッダー */}
+            <div className="flex items-center gap-2 mb-3 text-green-600">
+              <span className="text-sm font-mono">{post.slug}.md</span>
+              <span className="text-sm font-mono ml-auto">{post.date}</span>
             </div>
-          )}
-          <h2 className="text-lg font-bold mb-3 leading-tight">
-            {post.title}
-          </h2>
-          <p className="text-sm leading-relaxed line-clamp-4 flex-grow">
-            {post.excerpt}
-          </p>
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex gap-2 mt-3 flex-wrap">
-              {post.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs font-mono px-2 py-1 border border-black"
-                >
-                  #{tag}
-                </span>
-              ))}
+
+            {/* サムネイル */}
+            {post.thumbnail && (
+              <div className="mb-3 relative aspect-video bg-green-950 overflow-hidden">
+                <img
+                  src={post.thumbnail}
+                  alt={post.title}
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                  loading="lazy"
+                />
+              </div>
+            )}
+
+            {/* コンテンツ */}
+            <h2 className="text-lg font-bold mb-2 leading-tight group-hover:text-green-300 transition-colors">
+              {post.title}
+            </h2>
+            <p className="text-base leading-relaxed line-clamp-3 text-green-600 flex-1">
+              {post.excerpt}
+            </p>
+
+            {/* タグ */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex gap-2 mt-3 text-sm font-mono text-green-600">
+                {post.tags.slice(0, 2).map((tag) => (
+                  <span key={tag}>[{tag}]</span>
+                ))}
+              </div>
+            )}
+
+            {/* フッター */}
+            <div className="mt-3 pt-3 border-t border-green-800">
+              <span className="text-sm font-mono text-green-400">
+                &gt;_ OPEN
+              </span>
             </div>
-          )}
-          <div className="mt-4 pt-3 border-t border-gray-300">
-            <span className="text-xs font-mono uppercase">
-              Read →
-            </span>
           </div>
-        </div>
-      </Link>
-    </article>
+        </a>
+      </article>
+    </>
   )
 }

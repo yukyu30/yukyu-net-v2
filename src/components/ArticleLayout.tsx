@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import Header from './Header';
-import Footer from './Footer';
+import MenuBar from './MenuBar';
+import StatusBar from './StatusBar';
 import ArticleActions from './ArticleActions';
 import ArticleContent from './ArticleContent';
 import '@/styles/article.css';
@@ -19,56 +19,53 @@ export default function ArticleLayout({
   content,
 }: ArticleLayoutProps) {
   return (
-    <div className="min-h-screen bg-white">
-      <Header showBackButton={true} pageType="article" />
+    <div className="min-h-screen bg-black flex flex-col">
+      {/* メニューバー */}
+      <MenuBar />
 
-      <main className="container mx-auto px-0">
-        <div className="border-l-2 border-r-2 border-black mx-4">
-          <article className="max-w-4xl mx-auto">
-            <div className="border-b-2 border-black">
-              <div className="p-8">
-                <div className="border-b border-black pb-4 mb-6">
-                  <time className="text-xs font-mono uppercase">{date}</time>
-                  {tags && tags.length > 0 && (
-                    <div className="flex gap-2 mt-2 flex-wrap">
-                      {tags.map((tag) => (
-                        <Link
-                          key={tag}
-                          href={`/tags/${encodeURIComponent(tag)}`}
-                          className="text-xs font-mono px-2 py-1 border border-black hover:bg-black hover:text-white transition-colors"
-                        >
-                          #{tag}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <h1 className="text-3xl font-bold leading-tight">{title}</h1>
-              </div>
-            </div>
-
-            <div className="p-8">
-              <ArticleContent content={content} charsPerSecond={150} />
-            </div>
-
-            <ArticleActions title={title} />
-
-            <div className="border-black">
-              <div className="p-8 flex justify-between items-center">
+      {/* 記事コンテンツ */}
+      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full">
+        {/* 記事ヘッダー */}
+        <header className="mb-8">
+          <time className="text-sm font-mono text-green-600 uppercase">{date}</time>
+          <h1 className="text-2xl md:text-3xl font-bold leading-tight mt-2">{title}</h1>
+          {tags && tags.length > 0 && (
+            <div className="flex gap-2 mt-4 flex-wrap">
+              {tags.map((tag) => (
                 <Link
-                  href="/"
-                  className="text-sm font-mono uppercase hover:bg-black hover:text-white px-3 py-2 border border-black transition-colors"
+                  key={tag}
+                  href={`/tags/${encodeURIComponent(tag)}`}
+                  className="text-sm font-mono text-green-600 hover:text-green-400 transition-colors"
                 >
-                  ← RETURN TO INDEX
+                  [#{tag}]
                 </Link>
-                <div className="text-xs font-mono">END OF ARTICLE</div>
-              </div>
+              ))}
             </div>
-          </article>
-        </div>
+          )}
+        </header>
+
+        {/* 記事本文 */}
+        <article className="mb-8">
+          <ArticleContent content={content} charsPerSecond={150} />
+        </article>
+
+        {/* アクション */}
+        <ArticleActions title={title} />
+
+        {/* 戻るリンク */}
+        <footer className="border-t border-green-800 mt-8 pt-6 flex justify-between items-center">
+          <Link
+            href="/"
+            className="text-sm font-mono uppercase hover:text-green-300 transition-colors"
+          >
+            &lt;- RETURN TO INDEX
+          </Link>
+          <div className="text-sm font-mono text-green-600">END OF FILE</div>
+        </footer>
       </main>
 
-      <Footer variant="article" />
+      {/* ステータスバー */}
+      <StatusBar status="VIEWING ARTICLE" />
     </div>
   );
 }

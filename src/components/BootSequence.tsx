@@ -1,9 +1,11 @@
-'use client';
+'use client'
 
-import { useState, useEffect, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import GlobeIcon from './GlobeIcon'
 
 interface BootSequenceProps {
-  children: ReactNode;
+  onComplete: () => void
 }
 
 const BOOT_MESSAGES = [
@@ -18,109 +20,88 @@ const BOOT_MESSAGES = [
   { text: '  - animation.mod........... OK', delay: 1300 },
   { text: 'ESTABLISHING CONNECTION..... OK', delay: 1500 },
   { text: 'SYSTEM READY', delay: 1800 },
-  { text: '', delay: 2000 },
-  { text: 'Welcome to DecoBocoDigital', delay: 2200 },
-];
+]
 
-const TOTAL_BOOT_TIME = 3000;
-
-export default function BootSequence({ children }: BootSequenceProps) {
-  const [isBooted, setIsBooted] = useState(false);
-  const [visibleLines, setVisibleLines] = useState<number[]>([]);
-  const [showCursor, setShowCursor] = useState(true);
+export default function BootSequence({ onComplete }: BootSequenceProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const globeRef = useRef<HTMLDivElement>(null)
+  const logRef = useRef<HTMLDivElement>(null)
+  const [visibleLines, setVisibleLines] = useState<number[]>([])
+  const [showCursor, setShowCursor] = useState(true)
 
   useEffect(() => {
-    // セッション中に既に起動済みかチェック
-    const hasBooted = sessionStorage.getItem('decoboco-booted');
-    if (hasBooted) {
-      setIsBooted(true);
-      return;
-    }
+    const timeouts: NodeJS.Timeout[] = []
+
+    // 地球アイコン登場
+    gsap.fromTo(
+      globeRef.current,
+      { scale: 0, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' }
+    )
 
     // 各行を順番に表示
-    const timeouts: NodeJS.Timeout[] = [];
-
     BOOT_MESSAGES.forEach((msg, index) => {
       timeouts.push(
         setTimeout(() => {
-          setVisibleLines((prev) => [...prev, index]);
+          setVisibleLines((prev) => [...prev, index])
         }, msg.delay)
-      );
-    });
-
-    // 起動完了
-    timeouts.push(
-      setTimeout(() => {
-        setIsBooted(true);
-        sessionStorage.setItem('decoboco-booted', 'true');
-      }, TOTAL_BOOT_TIME)
-    );
+      )
+    })
 
     // カーソル点滅
     const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev);
-    }, 500);
+      setShowCursor((prev) => !prev)
+    }, 500)
+
+    // 起動完了後フェードアウト
+    timeouts.push(
+      setTimeout(() => {
+        gsap.to(containerRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          onComplete,
+        })
+      }, 2500)
+    )
 
     return () => {
-      timeouts.forEach((t) => clearTimeout(t));
-      clearInterval(cursorInterval);
-    };
-  }, []);
-
-  if (isBooted) {
-    return <>{children}</>;
-  }
+      timeouts.forEach((t) => clearTimeout(t))
+      clearInterval(cursorInterval)
+    }
+  }, [onComplete])
 
   return (
-    <div className="fixed inset-0 bg-black text-green-400 font-mono text-sm p-8 z-50 overflow-hidden">
-      <div className="max-w-2xl">
-        {/* ヘッダー */}
-        <div className="border border-green-400 p-4 mb-6">
-          <div className="text-center text-lg font-bold tracking-wider">
-            DecoBocoDigital OS
-          </div>
-          <div className="text-center text-xs mt-1 text-green-600">
-            PERSONAL COMPUTING SYSTEM
-          </div>
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black"
+    >
+      <div className="flex flex-col items-center">
+        {/* 地球アイコン */}
+        <div ref={globeRef} className="mb-8">
+          <GlobeIcon size={120} className="text-green-400" />
         </div>
 
         {/* ブートログ */}
-        <div className="space-y-1">
+        <div ref={logRef} className="font-mono text-xs text-green-400 space-y-0.5 max-w-md">
           {BOOT_MESSAGES.map((msg, index) => (
             <div
               key={index}
               className={`transition-opacity duration-100 ${
                 visibleLines.includes(index) ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{
-                fontFamily: 'monospace',
-                letterSpacing: '0.05em',
-              }}
+              style={{ letterSpacing: '0.05em' }}
             >
               {msg.text}
             </div>
           ))}
-        </div>
-
-        {/* カーソル */}
-        <div className="mt-4">
+          {/* カーソル */}
           <span
-            className={`inline-block w-2 h-4 bg-green-400 ${
+            className={`inline-block w-2 h-3 bg-green-400 mt-1 ${
               showCursor ? 'opacity-100' : 'opacity-0'
             }`}
           />
         </div>
-
-        {/* プログレスバー */}
-        <div className="mt-8 border border-green-400 p-1">
-          <div
-            className="h-2 bg-green-400 transition-all duration-100"
-            style={{
-              width: `${(visibleLines.length / BOOT_MESSAGES.length) * 100}%`,
-            }}
-          />
-        </div>
       </div>
     </div>
-  );
+  )
 }
