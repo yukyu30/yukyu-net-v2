@@ -78,7 +78,7 @@ export default function GlobeIcon({
       className={className}
     >
       {/* 外周の円 */}
-      <circle cx={cx} cy={cy} r={r} />
+      <circle cx={cx} cy={cy} r={r} strokeWidth="1.5" />
 
       {/* 赤道 */}
       <line x1={cx - r} y1={cy} x2={cx + r} y2={cy} />

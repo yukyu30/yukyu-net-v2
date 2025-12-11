@@ -27,14 +27,28 @@ export default function GridLayout({
   const [bootComplete, setBootComplete] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [shouldShowBoot, setShouldShowBoot] = useState(false);
 
   const windowTitle = currentTag
     ? `TAG: #${currentTag}`
     : 'DecoBoco Digital';
 
-  // クライアントサイドでマウント完了を検知
+  // クライアントサイドでマウント完了を検知し、referrerをチェック
   useEffect(() => {
     setMounted(true);
+
+    // referrerがyukyu.netからでない場合のみBootSequenceを表示
+    const referrer = document.referrer;
+    const isFromYukyuNet = referrer.includes('yukyu.net');
+
+    if (isFromYukyuNet) {
+      // yukyu.netからの遷移の場合はBootSequenceをスキップ
+      setBootComplete(true);
+      setShowContent(true);
+    } else {
+      // 外部からのアクセスの場合はBootSequenceを表示
+      setShouldShowBoot(true);
+    }
   }, []);
 
   const handleBootComplete = () => {
@@ -45,8 +59,8 @@ export default function GridLayout({
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      {/* ブートシーケンス */}
-      {mounted && !bootComplete && <BootSequence onComplete={handleBootComplete} />}
+      {/* ブートシーケンス（外部からのアクセス時のみ） */}
+      {mounted && shouldShowBoot && !bootComplete && <BootSequence onComplete={handleBootComplete} />}
 
       {/* メニューバー */}
       <MenuBar />
