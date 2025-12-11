@@ -42,22 +42,19 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
     if (opacity < 0.1) return null;
 
     // 曲率の計算
-    // 中央(sin=0): 直線 (曲率=0)
-    // 端(sin=±1): 半円 (曲率=r)
+    // 地球を正面から見たとき:
+    // - 右側の経線は ) 形（右に膨らむ）
+    // - 左側の経線は ( 形（左に膨らむ）
+    // - 中央の経線は | 形（直線）
     //
-    // ベジェ曲線で半円を描くには制御点を約 r * 0.55 離す必要がある
-    // ただし端では経線の始点・終点が円周上にあるため、
-    // 制御点は円の中心方向に r だけ離れる
-    //
-    // 曲率 = sin(角度) * r（端で最大、中央で0）
-    // ただし制御点が円の外に出ないよう調整
-    const curveFactor = Math.abs(sinVal);
+    // 制御点は円の内側に収める必要がある
+    // 端(sin=±1)では制御点がx位置と同じ（膨らみなし、円周上）
+    // 中央に近づくほど膨らみが大きい
+    const curveFactor = Math.abs(cosVal); // 中央で最大、端で0
 
-    // 端に近づくほど曲率を大きく（半円に近づける）
-    // 球体の経線は中心方向に膨らむ
-    // 右側(sin>0)の経線は ( 形 → 制御点を左（中心方向）へ
-    // 左側(sin<0)の経線は ) 形 → 制御点を右（中心方向）へ
-    const controlX = x - (sinVal * r * curveFactor);
+    // 制御点: xから外側方向へ（ただし円の内側に収まるよう）
+    const maxBulge = Math.sqrt(r * r - (x - cx) * (x - cx)); // その位置での最大膨らみ
+    const controlX = x + (sinVal > 0 ? 1 : -1) * maxBulge * curveFactor * 0.5;
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
 
