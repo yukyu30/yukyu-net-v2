@@ -39,7 +39,8 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
 
     // 曲率: 左端で負（左膨らみ）、中央で0（直線）、右端で正（右膨らみ）
     // sin(角度)で曲率の方向と大きさを決定
-    const curvature = Math.sin(rad) * 4;
+    // 端で半円に近づくよう、曲率を大きく（r * 0.55 ≈ ベジェ曲線で円を近似する係数）
+    const curvature = Math.sin(rad) * r * 0.6;
 
     // 透明度: 端に近いほど薄く
     const opacity = Math.abs(Math.cos(rad));
