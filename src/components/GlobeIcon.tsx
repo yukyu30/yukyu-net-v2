@@ -26,33 +26,37 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
   const meridianAngles = [0, 45, 90, 135];
 
   // 経線のパスを計算
-  // 左端: ( 形（左に膨らむ）
-  // 中央: | 形（直線）
-  // 右端: ) 形（右に膨らむ）
   const getMeridianPath = (baseAngle: number) => {
     const angle = (baseAngle + rotation) % 180;
     const normalizedAngle = angle > 90 ? angle - 180 : angle;
 
-    // 角度からx位置を計算（sin関数で-1〜1の範囲）
     const rad = (normalizedAngle * Math.PI) / 180;
     const sinVal = Math.sin(rad);
+    const cosVal = Math.cos(rad);
 
-    // x位置: 円の内側に収める
+    // x位置
     const x = cx + sinVal * r;
 
-    // 曲率: 位置に応じて ( | ) 形に変化
-    // 制御点は円の内側に収まるよう、位置に応じた最大曲率を計算
-    // 端（x = cx ± r）では曲率0、中央（x = cx）では最大
-    const maxCurvature = Math.sqrt(1 - sinVal * sinVal) * r * 0.55;
-    const curvature = sinVal * maxCurvature;
-
     // 透明度: 端に近いほど薄く
-    const opacity = Math.abs(Math.cos(rad));
-
+    const opacity = Math.abs(cosVal);
     if (opacity < 0.1) return null;
 
-    // 制御点のx座標
-    const controlX = x + curvature;
+    // 曲率の計算
+    // 中央(sin=0): 直線 (曲率=0)
+    // 端(sin=±1): 半円 (曲率=r)
+    //
+    // ベジェ曲線で半円を描くには制御点を約 r * 0.55 離す必要がある
+    // ただし端では経線の始点・終点が円周上にあるため、
+    // 制御点は円の中心方向に r だけ離れる
+    //
+    // 曲率 = sin(角度) * r（端で最大、中央で0）
+    // ただし制御点が円の外に出ないよう調整
+    const curveFactor = Math.abs(sinVal);
+
+    // 端に近づくほど曲率を大きく（半円に近づける）
+    // cos(角度)は端で0になるので、それを利用して制御点を内側に
+    const controlOffset = sinVal * r * curveFactor;
+    const controlX = x - controlOffset;
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
 
