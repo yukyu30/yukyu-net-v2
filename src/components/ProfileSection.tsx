@@ -2,48 +2,48 @@ import Link from 'next/link';
 
 export default function ProfileSection() {
   const socialLinks = [
-    { name: 'X', url: 'https://x.com/yukyu30', label: 'X' },
-    { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net', label: 'BSKY' },
-    { name: 'GitHub', url: 'https://github.com/yukyu30', label: 'GH' },
-    { name: 'Zenn', url: 'https://zenn.dev/yu_9', label: 'ZENN' },
-    { name: 'Instagram', url: 'https://instagram.com/ugo_kun_930', label: 'IG' },
-    { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30', label: 'SZR' },
-    { name: 'Portfolio', url: 'https://foriio.com/yukyu30', label: 'FOLIO' },
-    { name: 'YouTube', url: 'https://www.youtube.com/@yukyu30', label: 'YT' },
-    { name: 'VRChat', url: 'https://vrchat.com/home/user/usr_c3a3cf58-fbf3-420b-9eb2-c9b69d46b5d6', label: 'VRC' },
+    { name: 'X (Twitter)', url: 'https://x.com/yukyu30' },
+    { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net' },
+    { name: 'GitHub', url: 'https://github.com/yukyu30' },
+    { name: 'Zenn', url: 'https://zenn.dev/yu_9' },
+    { name: 'Instagram', url: 'https://instagram.com/ugo_kun_930' },
+    { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30' },
+    { name: 'Portfolio', url: 'https://foriio.com/yukyu30' },
+    { name: 'YouTube', url: 'https://www.youtube.com/@yukyu30' },
+    { name: 'VRChat', url: 'https://vrchat.com/home/user/usr_c3a3cf58-fbf3-420b-9eb2-c9b69d46b5d6' },
   ];
 
   return (
-    <div className="border-b border-green-800 p-4">
+    <div className="border-b border-green-800 p-6">
       {/* プロフィール情報 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
-          <span className="text-sm font-mono text-green-600">NAME: </span>
-          <span className="text-base font-mono">yukyu</span>
+          <span className="text-base font-mono text-green-600">NAME: </span>
+          <span className="text-lg font-mono">yukyu</span>
           <Link
             href="/posts/me"
-            className="ml-2 text-sm text-green-600 hover:text-green-400"
+            className="ml-3 text-base text-green-600 hover:text-green-400"
           >
-            [VIEW]
+            [VIEW PROFILE]
           </Link>
         </div>
         <div>
-          <span className="text-sm font-mono text-green-600">ROLE: </span>
-          <span className="text-base font-mono">GMO Pepabo / Metaverse Div. / VR Expert</span>
+          <span className="text-base font-mono text-green-600">ROLE: </span>
+          <span className="text-lg font-mono">GMO Pepabo / Metaverse Div. / VR Expert</span>
         </div>
       </div>
 
       {/* SNSリンク */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-3">
         {socialLinks.map((link) => (
           <Link
             key={link.name}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-mono text-green-600 hover:text-green-400 transition-colors"
+            className="text-base font-mono text-green-600 hover:text-green-400 transition-colors"
           >
-            [{link.label}]
+            [{link.name}]
           </Link>
         ))}
       </div>

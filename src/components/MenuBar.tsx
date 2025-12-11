@@ -43,11 +43,11 @@ export default function MenuBar() {
 
   return (
     <nav className="border-b border-green-400 bg-black">
-      <div className="flex items-center px-2 py-2">
+      <div className="flex items-center px-4 py-3">
         {/* TOP リンク（ドロップダウンなし） */}
         <Link
           href="/"
-          className="px-4 py-2 text-sm font-mono uppercase transition-colors hover:bg-green-400 hover:text-black"
+          className="px-5 py-2 text-base font-mono uppercase transition-colors hover:bg-green-400 hover:text-black"
         >
           Top
         </Link>
@@ -57,7 +57,7 @@ export default function MenuBar() {
           <div key={menu.label} className="relative">
             <button
               onClick={() => handleMenuClick(menu.label)}
-              className={`px-4 py-2 text-sm font-mono uppercase transition-colors ${
+              className={`px-5 py-2 text-base font-mono uppercase transition-colors ${
                 openMenu === menu.label
                   ? 'bg-green-400 text-black'
                   : 'hover:bg-green-400 hover:text-black'
@@ -66,13 +66,13 @@ export default function MenuBar() {
               {menu.label}
             </button>
             {openMenu === menu.label && (
-              <div className="absolute left-0 top-full z-50 min-w-36 border border-green-400 bg-black">
+              <div className="absolute left-0 top-full z-50 min-w-40 border border-green-400 bg-black">
                 {menu.items.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href || '#'}
                     onClick={handleItemClick}
-                    className="block px-4 py-2 text-sm font-mono uppercase hover:bg-green-400 hover:text-black transition-colors"
+                    className="block px-5 py-3 text-base font-mono uppercase hover:bg-green-400 hover:text-black transition-colors"
                   >
                     {item.label}
                   </Link>
