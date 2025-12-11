@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import GlobeIcon from './GlobeIcon';
+import ActivityGraph from './ActivityGraph';
 
 interface StatusBarProps {
   postsCount?: number;
@@ -97,6 +99,11 @@ export default function StatusBar({
 
         {/* 中央: システム情報 */}
         <div className="flex items-center gap-4 text-green-600">
+          {/* アクティビティグラフ */}
+          <div className="hidden sm:flex items-center gap-2">
+            <ActivityGraph className="text-green-400" barCount={6} height={14} />
+          </div>
+
           <span className="hidden sm:inline">
             CPU: {cpuUsage.toFixed(0)}%
           </span>
@@ -111,9 +118,10 @@ export default function StatusBar({
           </span>
         </div>
 
-        {/* 右: 時刻 */}
-        <div className="text-green-400">
-          {currentTime}
+        {/* 右: 地球アイコン + 時刻 */}
+        <div className="flex items-center gap-3 text-green-400">
+          <GlobeIcon size={16} className="hidden sm:block" />
+          <span>{currentTime}</span>
         </div>
       </div>
     </div>
