@@ -34,7 +34,6 @@ const menuItems: MenuItem[] = [
 
 export default function MenuBar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const pulseRef = useRef<HTMLSpanElement>(null);
   const activityRef = useRef<HTMLDivElement>(null);
 
   const handleMenuClick = (label: string) => {
@@ -44,19 +43,6 @@ export default function MenuBar() {
   const handleItemClick = () => {
     setOpenMenu(null);
   };
-
-  // パルスアニメーション
-  useEffect(() => {
-    if (pulseRef.current) {
-      gsap.to(pulseRef.current, {
-        opacity: 0.3,
-        duration: 0.8,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power1.inOut'
-      });
-    }
-  }, []);
 
   // アクティビティインジケーター（ランダムに点滅）
   useEffect(() => {
@@ -93,13 +79,9 @@ export default function MenuBar() {
     <nav className="border-b border-green-400 bg-black">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center">
-          {/* 稼働インジケーター */}
-          <div className="flex items-center gap-2 mr-4 pr-4 border-r border-green-800">
-            <span
-              ref={pulseRef}
-              className="inline-block w-2 h-2 rounded-full bg-green-400"
-            />
-            <span className="text-sm font-mono text-green-600 hidden sm:inline">ONLINE</span>
+          {/* 地球アイコン（稼働インジケーター） */}
+          <div className="flex items-center mr-4 pr-4 border-r border-green-800">
+            <GlobeIcon size={24} className="text-green-400" />
           </div>
 
           {/* TOP リンク（ドロップダウンなし） */}
@@ -141,16 +123,13 @@ export default function MenuBar() {
           ))}
         </div>
 
-        {/* 右側: 地球アイコン + アクティビティインジケーター */}
-        <div className="flex items-center gap-4">
-          <GlobeIcon size={28} className="text-green-400" />
-          <div className="flex items-center gap-2">
-            <div
-              ref={activityRef}
-              className="w-1.5 h-1.5 rounded-full bg-green-400 opacity-20"
-            />
-            <span className="text-sm font-mono text-green-600 hidden sm:inline">SYS</span>
-          </div>
+        {/* 右側: アクティビティインジケーター */}
+        <div className="flex items-center gap-2">
+          <div
+            ref={activityRef}
+            className="w-1.5 h-1.5 rounded-full bg-green-400 opacity-20"
+          />
+          <span className="text-sm font-mono text-green-600 hidden sm:inline">SYS</span>
         </div>
       </div>
     </nav>
