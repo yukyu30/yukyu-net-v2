@@ -24,7 +24,7 @@ export default function GridLayout({
   currentTag,
   pagination,
 }: GridLayoutProps) {
-  const [folderOpened, setFolderOpened] = useState(false);
+  const [folderOpened, setFolderOpened] = useState<boolean | null>(null);
   const [showContent, setShowContent] = useState(false);
 
   const windowTitle = currentTag
@@ -37,6 +37,8 @@ export default function GridLayout({
     if (hasSeenFolder) {
       setFolderOpened(true);
       setShowContent(true);
+    } else {
+      setFolderOpened(false);
     }
   }, []);
 
@@ -50,7 +52,7 @@ export default function GridLayout({
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* フォルダオープンアニメーション */}
-      {!folderOpened && <FolderOpen onComplete={handleFolderComplete} />}
+      {folderOpened === false && <FolderOpen onComplete={handleFolderComplete} />}
 
       {/* メニューバー */}
       <MenuBar />

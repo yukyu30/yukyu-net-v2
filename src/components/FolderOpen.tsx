@@ -61,27 +61,28 @@ export default function FolderOpen({ onComplete }: FolderOpenProps) {
     >
       <svg
         ref={folderRef}
-        width="120"
-        height="100"
+        width="200"
+        height="160"
         viewBox="0 0 48 40"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
         className="text-green-400"
       >
         {/* フォルダ本体 */}
         <path
           d="M 4 12 L 4 36 L 44 36 L 44 12 L 24 12 L 20 8 L 4 8 Z"
-          fill="none"
+          fill="currentColor"
+          fillOpacity="0.3"
+          stroke="currentColor"
+          strokeWidth="1.5"
         />
         {/* フォルダの蓋（アニメーション対象） */}
         <path
           ref={lidRef}
           d="M 4 12 L 44 12 L 44 8 L 20 8 L 16 4 L 4 4 Z"
-          fill="none"
+          fill="currentColor"
+          fillOpacity="0.5"
+          stroke="currentColor"
+          strokeWidth="1.5"
         />
-        {/* フォルダのタブ */}
-        <path d="M 4 8 L 16 8 L 20 12" fill="none" />
       </svg>
     </div>
   )
