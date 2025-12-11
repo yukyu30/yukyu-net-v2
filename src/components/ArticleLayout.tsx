@@ -48,7 +48,7 @@ export default function ArticleLayout({
             </div>
 
             <div className="p-8">
-              <ArticleContent content={content} duration={2500} />
+              <ArticleContent content={content} charsPerSecond={150} />
             </div>
 
             <ArticleActions title={title} />

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface ArticleContentProps {
   content: string;
-  duration?: number;
+  charsPerSecond?: number; // 1秒あたりに復号する文字数
 }
 
 // 文字化け用のランダム文字
@@ -16,7 +16,7 @@ function getRandomChar(): string {
 
 export default function ArticleContent({
   content,
-  duration = 2000,
+  charsPerSecond = 100, // デフォルト: 1秒あたり100文字復号
 }: ArticleContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -74,30 +74,33 @@ export default function ArticleContent({
     });
 
     const timeouts: NodeJS.Timeout[] = [];
-    const totalChars = charData.length;
+    const msPerChar = 1000 / charsPerSecond; // 1文字あたりのミリ秒
 
     // 各文字のアニメーション（先頭から順番に復号）
     charData.forEach((data, charIndex) => {
       // 先頭から順番に復号されるように、インデックスに基づいて時間を計算
+      const baseRevealTime = charIndex * msPerChar;
       // 少しランダム性を加えて自然な感じに
-      const baseRevealTime = (charIndex / totalChars) * duration * 0.9;
-      const randomOffset = Math.random() * (duration * 0.1);
-      const revealTime = baseRevealTime + randomOffset + duration * 0.05;
+      const randomOffset = (Math.random() - 0.5) * msPerChar * 2;
+      const revealTime = Math.max(0, baseRevealTime + randomOffset);
 
       const glitchCount = Math.floor(Math.random() * 3) + 2;
+      const glitchInterval = Math.min(revealTime / glitchCount, 50);
 
       // 文字化けアニメーション
       for (let i = 0; i < glitchCount; i++) {
-        const glitchTime = (revealTime / glitchCount) * i;
-        timeouts.push(
-          setTimeout(() => {
-            if (!data.revealed && data.node.textContent) {
-              const chars = data.node.textContent.split('');
-              chars[data.index] = getRandomChar();
-              data.node.textContent = chars.join('');
-            }
-          }, glitchTime)
-        );
+        const glitchTime = revealTime - (glitchCount - i) * glitchInterval;
+        if (glitchTime > 0) {
+          timeouts.push(
+            setTimeout(() => {
+              if (!data.revealed && data.node.textContent) {
+                const chars = data.node.textContent.split('');
+                chars[data.index] = getRandomChar();
+                data.node.textContent = chars.join('');
+              }
+            }, glitchTime)
+          );
+        }
       }
 
       // 正しい文字を表示
@@ -114,16 +117,17 @@ export default function ArticleContent({
     });
 
     // アニメーション完了後
+    const totalDuration = charData.length * msPerChar + 500;
     timeouts.push(
       setTimeout(() => {
         setIsRevealed(true);
-      }, duration)
+      }, totalDuration)
     );
 
     return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout));
     };
-  }, [content, duration, isRevealed]);
+  }, [content, charsPerSecond, isRevealed]);
 
   return (
     <div
