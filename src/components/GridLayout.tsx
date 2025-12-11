@@ -1,8 +1,11 @@
-import { ReactNode } from 'react';
+'use client'
+
+import { ReactNode, useState, useEffect } from 'react';
 import MenuBar from './MenuBar';
 import StatusBar from './StatusBar';
 import WindowFrame from './WindowFrame';
 import ProfileSection from './ProfileSection';
+import FolderOpen from './FolderOpen';
 
 interface GridLayoutProps {
   children: ReactNode;
@@ -21,12 +24,34 @@ export default function GridLayout({
   currentTag,
   pagination,
 }: GridLayoutProps) {
+  const [folderOpened, setFolderOpened] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+
   const windowTitle = currentTag
     ? `TAG: #${currentTag}`
     : 'DecoBoco Digital';
 
+  // 初回のみフォルダアニメーションを表示
+  useEffect(() => {
+    const hasSeenFolder = sessionStorage.getItem('folderOpened');
+    if (hasSeenFolder) {
+      setFolderOpened(true);
+      setShowContent(true);
+    }
+  }, []);
+
+  const handleFolderComplete = () => {
+    sessionStorage.setItem('folderOpened', 'true');
+    setFolderOpened(true);
+    // 少し遅延してからコンテンツ表示
+    setTimeout(() => setShowContent(true), 100);
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col">
+      {/* フォルダオープンアニメーション */}
+      {!folderOpened && <FolderOpen onComplete={handleFolderComplete} />}
+
       {/* メニューバー */}
       <MenuBar />
 
@@ -47,7 +72,7 @@ export default function GridLayout({
 
           {/* 記事グリッド */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
-            {children}
+            {showContent && children}
           </div>
 
           {/* ページネーション */}
