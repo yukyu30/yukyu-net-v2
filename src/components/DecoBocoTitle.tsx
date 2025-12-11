@@ -17,28 +17,29 @@ export default function DecoBocoTitle({ text }: DecoBocoTitleProps) {
     const chars = containerRef.current.querySelectorAll('[data-char]');
 
     // 各文字にランダムな初期状態と遅延でアニメーション
+    // シュッシュッとした緩急のある動き
     chars.forEach((char) => {
       const startExpanded = Math.random() > 0.5;
-      const randomDelay = Math.random() * 0.5;
+      const randomDelay = Math.random() * 0.3;
 
       if (startExpanded) {
-        // 最初から伸びた状態でスタートし、縮む
-        gsap.set(char, { scaleY: 1.4 });
+        // 最初から伸びた状態でスタートし、シュッと縮む
+        gsap.set(char, { scaleY: 1.5 });
         gsap.to(char, {
           scaleY: 1,
-          duration: 0.8,
+          duration: 0.4,
           delay: randomDelay,
-          ease: 'power2.inOut',
+          ease: 'back.out(2)',
         });
       } else {
-        // 通常状態からスタートし、伸びてから戻る
+        // 通常状態からスタートし、シュッと伸びてシュッと戻る
         gsap.to(char, {
-          scaleY: 1.4,
+          scaleY: 1.5,
           yoyo: true,
           repeat: 1,
-          duration: 0.8,
+          duration: 0.3,
           delay: randomDelay,
-          ease: 'power2.inOut',
+          ease: 'power4.inOut',
         });
       }
     });
