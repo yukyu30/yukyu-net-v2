@@ -15,15 +15,14 @@ export default function ActivityGraph({
   height = 16
 }: ActivityGraphProps) {
   const barsRef = useRef<(SVGRectElement | null)[]>([]);
-  const [values, setValues] = useState<number[]>([]);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // 初期値設定
-    setValues(Array(barCount).fill(0).map(() => 20 + Math.random() * 60));
+    setMounted(true);
 
     // バーのアニメーション
     const animateBars = () => {
-      barsRef.current.forEach((bar, index) => {
+      barsRef.current.forEach((bar) => {
         if (bar) {
           const newHeight = 20 + Math.random() * 60;
           gsap.to(bar, {
@@ -49,6 +48,9 @@ export default function ActivityGraph({
   const gap = 2;
   const totalWidth = barCount * barWidth + (barCount - 1) * gap;
 
+  // SSR時は固定値でレンダリング
+  const initialHeight = height * 0.5;
+
   return (
     <svg
       width={totalWidth}
@@ -56,21 +58,18 @@ export default function ActivityGraph({
       viewBox={`0 0 ${totalWidth} ${height}`}
       className={className}
     >
-      {Array(barCount).fill(0).map((_, index) => {
-        const initialHeight = 20 + Math.random() * 40;
-        return (
-          <rect
-            key={index}
-            ref={(el) => { barsRef.current[index] = el; }}
-            x={index * (barWidth + gap)}
-            y={height - initialHeight}
-            width={barWidth}
-            height={initialHeight}
-            fill="currentColor"
-            opacity="0.8"
-          />
-        );
-      })}
+      {Array(barCount).fill(0).map((_, index) => (
+        <rect
+          key={index}
+          ref={(el) => { barsRef.current[index] = el; }}
+          x={index * (barWidth + gap)}
+          y={height - initialHeight}
+          width={barWidth}
+          height={initialHeight}
+          fill="currentColor"
+          opacity="0.8"
+        />
+      ))}
     </svg>
   );
 }
