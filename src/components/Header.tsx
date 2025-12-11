@@ -15,14 +15,14 @@ export default function Header({
   pageType = 'index',
 }: HeaderProps) {
   return (
-    <header className="border-b-2 border-black">
+    <header className="border-b-2 border-green-400">
       <div className="container mx-auto px-0">
-        <div className="border-l-2 border-r-2 border-black mx-4">
+        <div className="border-l-2 border-r-2 border-green-400 mx-4">
           {showBackButton ? (
-            <div className="px-6 py-4 border-black flex justify-between items-center">
+            <div className="px-6 py-4 border-green-400 flex justify-between items-center">
               <Link
                 href="/"
-                className="text-sm font-mono uppercase hover:bg-black hover:text-white px-2 py-1 transition-colors"
+                className="text-sm font-mono uppercase hover:bg-green-400 hover:text-black px-2 py-1 transition-colors"
               >
                 ← INDEX
               </Link>
@@ -30,7 +30,7 @@ export default function Header({
             </div>
           ) : (
             <>
-              <div className="px-6 py-4 border-b-2 border-black">
+              <div className="px-6 py-4 border-b-2 border-green-400">
                 <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
                   <h1 className="text-4xl font-bold tracking-tight">
                     <DecoBocoTitle text="DecoBoco Digital" />
@@ -38,8 +38,8 @@ export default function Header({
                 </Link>
               </div>
               {/* デスクトップ表示 */}
-              <div className="hidden md:flex border-black">
-                <div className="px-6 py-2 border-r border-black">
+              <div className="hidden md:flex border-green-400">
+                <div className="px-6 py-2 border-r border-green-400">
                   <span className="text-xs font-mono">
                     ENTRIES: {postsCount}
                   </span>
@@ -51,21 +51,21 @@ export default function Header({
                 </div>
                 <Link
                   href="/works"
-                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
+                  className="px-4 py-2 border-l border-green-400 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center"
                   aria-label="Works"
                 >
                   <span className="text-xs font-mono font-bold">WORKS</span>
                 </Link>
                 <Link
                   href="/tags"
-                  className="px-4 py-2 border-l border-black hover:bg-black hover:text-white transition-colors flex items-center justify-center"
+                  className="px-4 py-2 border-l border-green-400 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center"
                   aria-label="All Tags"
                 >
                   <span className="text-xs font-mono font-bold">TAGS</span>
                 </Link>
                 <Link
                   href="/rss.xml"
-                  className="px-4 py-2 border-l-2 border-black bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center"
+                  className="px-4 py-2 border-l-2 border-green-400 bg-green-400 text-black hover:bg-green-600 transition-colors flex items-center justify-center"
                   aria-label="RSS Feed"
                 >
                   <span className="text-xs font-mono font-bold">RSS</span>
@@ -74,8 +74,8 @@ export default function Header({
               
               {/* モバイル表示 */}
               <div className="md:hidden">
-                <div className="flex border-black">
-                  <div className="px-6 py-2 border-r border-black">
+                <div className="flex border-green-400">
+                  <div className="px-6 py-2 border-r border-green-400">
                     <span className="text-xs font-mono">
                       ENTRIES: {postsCount}
                     </span>
@@ -86,24 +86,24 @@ export default function Header({
                     </span>
                   </div>
                 </div>
-                <div className="border-t-2 border-black flex">
+                <div className="border-t-2 border-green-400 flex">
                   <Link
                     href="/works"
-                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
+                    className="px-4 py-2 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center flex-1 border-r border-green-400"
                     aria-label="Works"
                   >
                     <span className="text-xs font-mono font-bold">WORKS</span>
                   </Link>
                   <Link
                     href="/tags"
-                    className="px-4 py-2 hover:bg-black hover:text-white transition-colors flex items-center justify-center flex-1 border-r border-black"
+                    className="px-4 py-2 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center flex-1 border-r border-green-400"
                     aria-label="All Tags"
                   >
                     <span className="text-xs font-mono font-bold">TAGS</span>
                   </Link>
                   <Link
                     href="/rss.xml"
-                    className="px-4 py-2 bg-black text-white hover:bg-white hover:text-black transition-colors flex items-center justify-center flex-1"
+                    className="px-4 py-2 bg-green-400 text-black hover:bg-green-600 transition-colors flex items-center justify-center flex-1"
                     aria-label="RSS Feed"
                   >
                     <span className="text-xs font-mono font-bold">RSS</span>
