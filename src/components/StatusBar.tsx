@@ -120,7 +120,7 @@ export default function StatusBar({
 
         {/* 右: 地球アイコン + 時刻 */}
         <div className="flex items-center gap-3 text-green-400">
-          <GlobeIcon size={16} className="hidden sm:block" />
+          <GlobeIcon size={20} className="hidden sm:block" />
           <span>{currentTime}</span>
         </div>
       </div>

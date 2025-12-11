@@ -143,7 +143,7 @@ export default function MenuBar() {
 
         {/* 右側: 地球アイコン + アクティビティインジケーター */}
         <div className="flex items-center gap-4">
-          <GlobeIcon size={20} className="text-green-400" />
+          <GlobeIcon size={28} className="text-green-400" />
           <div className="flex items-center gap-2">
             <div
               ref={activityRef}

@@ -23,7 +23,7 @@ export default function GlobeIcon({
 
   const cx = 12;
   const cy = 12;
-  const r = 8;
+  const r = 10;
 
   // 経線の数（45度間隔で4本）
   const meridianAngles = [0, 45, 90, 135];
@@ -38,7 +38,7 @@ export default function GlobeIcon({
     const cosVal = Math.cos(rad);
 
     // x位置
-    const x = cx + sinVal * r;
+    const x = cx + sinVal * r * 0.34;
 
     // 透明度: 端に近いほど薄く
     const opacity = Math.abs(cosVal);
@@ -58,9 +58,7 @@ export default function GlobeIcon({
     // 制御点: 円の内側に収まるよう計算
     // 経線のx位置から、外側方向（右なら右、左なら左）に膨らむ
     // 端では制御点がさらに外側へ（半円に近づく）
-    // ただし円の外にはみ出さないよう制限
-    const maxBulge = r - Math.abs(x - cx); // 円の端までの距離
-    const bulge = Math.min(curveFactor * r, maxBulge);
+    const bulge = curveFactor * r; // ベジェで円を近似する係数
     const direction = sinVal > 0 ? 1 : sinVal < 0 ? -1 : 0;
     const controlX = x + direction * bulge;
 
