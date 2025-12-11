@@ -54,9 +54,9 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
     const curveFactor = Math.abs(sinVal);
 
     // 端に近づくほど曲率を大きく（半円に近づける）
-    // cos(角度)は端で0になるので、それを利用して制御点を内側に
+    // 制御点を円の中心方向へ（右側の経線は左へ、左側の経線は右へ）
     const controlOffset = sinVal * r * curveFactor;
-    const controlX = x - controlOffset;
+    const controlX = cx + (sinVal * r * (1 - curveFactor));
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
 
