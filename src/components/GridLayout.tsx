@@ -24,26 +24,20 @@ export default function GridLayout({
   currentTag,
   pagination,
 }: GridLayoutProps) {
-  const [folderOpened, setFolderOpened] = useState<boolean | null>(null);
+  const [folderOpened, setFolderOpened] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const windowTitle = currentTag
     ? `TAG: #${currentTag}`
     : 'DecoBoco Digital';
 
-  // 初回のみフォルダアニメーションを表示
+  // クライアントサイドでマウント完了を検知
   useEffect(() => {
-    const hasSeenFolder = sessionStorage.getItem('folderOpened');
-    if (hasSeenFolder) {
-      setFolderOpened(true);
-      setShowContent(true);
-    } else {
-      setFolderOpened(false);
-    }
+    setMounted(true);
   }, []);
 
   const handleFolderComplete = () => {
-    sessionStorage.setItem('folderOpened', 'true');
     setFolderOpened(true);
     // 少し遅延してからコンテンツ表示
     setTimeout(() => setShowContent(true), 100);
@@ -52,7 +46,7 @@ export default function GridLayout({
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* フォルダオープンアニメーション */}
-      {folderOpened === false && <FolderOpen onComplete={handleFolderComplete} />}
+      {mounted && !folderOpened && <FolderOpen onComplete={handleFolderComplete} />}
 
       {/* メニューバー */}
       <MenuBar />
