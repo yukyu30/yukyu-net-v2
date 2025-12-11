@@ -16,16 +16,31 @@ export default function DecoBocoTitle({ text }: DecoBocoTitleProps) {
 
     const chars = containerRef.current.querySelectorAll('[data-char]');
 
-    // 凸凹アニメーション：一度伸びてから元に戻る
-    gsap.to(chars, {
-      scaleY: 1.4,
-      yoyo: true,
-      repeat: 1,
-      duration: 0.8,
-      ease: 'power2.inOut',
-      stagger: {
-        each: 0.08,
-      },
+    // 各文字にランダムな初期状態と遅延でアニメーション
+    chars.forEach((char) => {
+      const startExpanded = Math.random() > 0.5;
+      const randomDelay = Math.random() * 0.5;
+
+      if (startExpanded) {
+        // 最初から伸びた状態でスタートし、縮む
+        gsap.set(char, { scaleY: 1.4 });
+        gsap.to(char, {
+          scaleY: 1,
+          duration: 0.8,
+          delay: randomDelay,
+          ease: 'power2.inOut',
+        });
+      } else {
+        // 通常状態からスタートし、伸びてから戻る
+        gsap.to(char, {
+          scaleY: 1.4,
+          yoyo: true,
+          repeat: 1,
+          duration: 0.8,
+          delay: randomDelay,
+          ease: 'power2.inOut',
+        });
+      }
     });
   }, { scope: containerRef });
 

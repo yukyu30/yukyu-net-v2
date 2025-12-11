@@ -4,8 +4,10 @@ import { useEffect } from 'react';
 
 // GSAPをモック
 const mockTo = jest.fn();
+const mockSet = jest.fn();
 jest.mock('gsap', () => ({
   to: (...args: unknown[]) => mockTo(...args),
+  set: (...args: unknown[]) => mockSet(...args),
   registerPlugin: jest.fn(),
 }));
 
@@ -22,6 +24,13 @@ jest.mock('@gsap/react', () => ({
 
 beforeEach(() => {
   mockTo.mockClear();
+  mockSet.mockClear();
+  // Math.randomを固定値にしてテストを安定させる
+  jest.spyOn(Math, 'random').mockReturnValue(0.5);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('DecoBocoTitle', () => {
