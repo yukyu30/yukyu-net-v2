@@ -80,8 +80,9 @@ export default function MenuBar() {
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center">
           {/* 地球アイコン（稼働インジケーター） */}
-          <div className="flex items-center mr-4 pr-4 border-r border-green-800">
+          <div className="flex items-center gap-2 mr-4 pr-4 border-r border-green-800">
             <GlobeIcon size={24} className="text-green-400" />
+            <span className="text-sm font-mono text-green-600 hidden sm:inline">ONLINE</span>
           </div>
 
           {/* TOP リンク（ドロップダウンなし） */}
