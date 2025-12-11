@@ -1,7 +1,8 @@
 'use client'
 
-import Link from 'next/link'
+import { useState } from 'react'
 import { Post } from '@/lib/posts'
+import UnlockTransition from './UnlockTransition'
 
 interface PostCardProps {
   post: Post
@@ -9,6 +10,8 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, index }: PostCardProps) {
+  const [isUnlocking, setIsUnlocking] = useState(false)
+
   const borderClasses = `${
     index === 0
       ? ''
@@ -26,13 +29,29 @@ export default function PostCard({ post, index }: PostCardProps) {
   // スタガーアニメーション用のdelay計算
   const animationDelay = `${index * 50}ms`
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsUnlocking(true)
+  }
+
   return (
-    <article
-      className={`${borderClasses} animate-stagger-in`}
-      style={{ animationDelay }}
-    >
-      <Link href={`/posts/${post.slug}`} className="block h-full">
-        <div className="p-6 h-full flex flex-col hover:bg-gray-50 transition-colors">
+    <>
+      {isUnlocking && (
+        <UnlockTransition
+          href={`/posts/${post.slug}`}
+          onComplete={() => setIsUnlocking(false)}
+        />
+      )}
+      <article
+        className={`${borderClasses} animate-stagger-in`}
+        style={{ animationDelay }}
+      >
+        <a
+          href={`/posts/${post.slug}`}
+          onClick={handleClick}
+          className="block h-full cursor-pointer"
+        >
+          <div className="p-6 h-full flex flex-col hover:bg-gray-50 transition-colors">
           <div className="border-b border-black pb-2 mb-3">
             <time className="text-xs font-mono">{post.date}</time>
           </div>
@@ -70,7 +89,8 @@ export default function PostCard({ post, index }: PostCardProps) {
             </span>
           </div>
         </div>
-      </Link>
-    </article>
+        </a>
+      </article>
+    </>
   )
 }
