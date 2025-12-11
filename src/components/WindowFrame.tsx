@@ -8,32 +8,21 @@ interface WindowFrameProps {
 
 export default function WindowFrame({ title, children, className = '' }: WindowFrameProps) {
   return (
-    <div className={`border border-green-400 bg-black ${className}`}>
+    <div className={`border border-green-600 bg-black ${className}`}>
       {/* タイトルバー */}
-      <div className="flex items-center justify-between border-b border-green-400 px-2 py-1 bg-green-400/10">
-        {/* ウィンドウボタン */}
-        <div className="flex gap-1">
-          <button className="w-4 h-4 border border-green-400 text-green-400 text-xs font-mono flex items-center justify-center hover:bg-green-400 hover:text-black transition-colors">
-            -
-          </button>
-          <button className="w-4 h-4 border border-green-400 text-green-400 text-xs font-mono flex items-center justify-center hover:bg-green-400 hover:text-black transition-colors">
-            +
-          </button>
-          <button className="w-4 h-4 border border-green-400 text-green-400 text-xs font-mono flex items-center justify-center hover:bg-green-400 hover:text-black transition-colors">
-            x
-          </button>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-green-800">
+        <div className="flex gap-2 text-green-600">
+          <span className="text-sm font-mono">[-]</span>
+          <span className="text-sm font-mono">[+]</span>
+          <span className="text-sm font-mono">[x]</span>
         </div>
-        {/* タイトル */}
-        <span className="text-xs font-mono font-bold uppercase tracking-wide">
+        <span className="text-sm font-mono font-bold uppercase tracking-wide">
           {title}
         </span>
-        {/* スペーサー */}
-        <div className="w-16" />
+        <div className="w-20" />
       </div>
       {/* コンテンツ */}
-      <div className="p-0">
-        {children}
-      </div>
+      {children}
     </div>
   );
 }

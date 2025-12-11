@@ -28,7 +28,7 @@ export default function PostCard({ post, index }: PostCardProps) {
         />
       )}
       <article
-        className="m-2 animate-stagger-in h-full"
+        className="p-2 animate-stagger-in h-full"
         style={{ animationDelay }}
       >
         <a
@@ -36,57 +36,45 @@ export default function PostCard({ post, index }: PostCardProps) {
           onClick={handleClick}
           className="block cursor-pointer group h-full"
         >
-          {/* ドキュメントアイコン風のカード */}
-          <div className="border border-green-400 bg-black group-hover:bg-green-400/5 transition-colors h-full flex flex-col">
-            {/* ドキュメントヘッダー（ファイル情報） */}
-            <div className="px-3 py-2 border-b border-green-600 flex items-center gap-2">
-              {/* ファイルアイコン */}
-              <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-xs font-mono text-green-600 truncate">{post.slug}.md</span>
-              <span className="text-xs font-mono text-green-600 ml-auto flex-shrink-0">{post.date}</span>
+          <div className="bg-black group-hover:bg-green-950/50 transition-colors h-full flex flex-col p-4">
+            {/* ヘッダー */}
+            <div className="flex items-center gap-2 mb-3 text-green-600">
+              <span className="text-sm font-mono">{post.slug}.md</span>
+              <span className="text-sm font-mono ml-auto">{post.date}</span>
             </div>
 
             {/* サムネイル */}
             {post.thumbnail && (
-              <div className="mx-3 mt-3 relative aspect-video bg-green-950 overflow-hidden border border-green-600">
+              <div className="mb-3 relative aspect-video bg-green-950 overflow-hidden">
                 <img
                   src={post.thumbnail}
                   alt={post.title}
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                   loading="lazy"
                 />
               </div>
             )}
 
             {/* コンテンツ */}
-            <div className="p-3 flex-1 flex flex-col">
-              <h2 className="text-base font-bold mb-2 leading-tight group-hover:text-green-300 transition-colors">
-                {post.title}
-              </h2>
-              <p className="text-sm leading-relaxed line-clamp-2 text-green-600 flex-1">
-                {post.excerpt}
-              </p>
+            <h2 className="text-lg font-bold mb-2 leading-tight group-hover:text-green-300 transition-colors">
+              {post.title}
+            </h2>
+            <p className="text-base leading-relaxed line-clamp-3 text-green-600 flex-1">
+              {post.excerpt}
+            </p>
 
-              {/* タグ */}
-              {post.tags && post.tags.length > 0 && (
-                <div className="flex gap-1 mt-2 flex-wrap">
-                  {post.tags.slice(0, 2).map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-mono text-green-600"
-                    >
-                      [{tag}]
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* タグ */}
+            {post.tags && post.tags.length > 0 && (
+              <div className="flex gap-2 mt-3 text-sm font-mono text-green-600">
+                {post.tags.slice(0, 2).map((tag) => (
+                  <span key={tag}>[{tag}]</span>
+                ))}
+              </div>
+            )}
 
-            {/* フッター（ステータス行風） */}
-            <div className="px-3 py-2 border-t border-green-600 bg-green-400/5 mt-auto">
-              <span className="text-xs font-mono text-green-400">
+            {/* フッター */}
+            <div className="mt-3 pt-3 border-t border-green-800">
+              <span className="text-sm font-mono text-green-400">
                 &gt;_ OPEN
               </span>
             </div>

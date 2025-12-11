@@ -29,8 +29,8 @@ export default function StatusBar({
   }, []);
 
   return (
-    <div className="border-t border-green-400 bg-black px-2 py-1">
-      <div className="flex items-center justify-between text-xs font-mono">
+    <div className="border-t border-green-400 bg-black px-4 py-2">
+      <div className="flex items-center justify-between text-sm font-mono">
         {/* 左: ステータス */}
         <div className="flex items-center gap-2">
           <span className="text-green-400">{status}</span>

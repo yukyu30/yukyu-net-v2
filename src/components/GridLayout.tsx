@@ -35,7 +35,7 @@ export default function GridLayout({
         <WindowFrame title={windowTitle}>
           {/* タグ情報 */}
           {currentTag && (
-            <div className="border-b border-green-400 px-4 py-3">
+            <div className="px-4 py-3">
               <p className="text-sm font-mono text-green-600">
                 {postsCount} {postsCount === 1 ? 'ARTICLE' : 'ARTICLES'} FOUND
               </p>
