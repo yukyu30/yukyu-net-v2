@@ -10,7 +10,8 @@ interface FolderOpenProps {
 export default function FolderOpen({ onComplete }: FolderOpenProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const folderRef = useRef<SVGSVGElement>(null)
-  const lidRef = useRef<SVGGElement>(null)
+  const topRef = useRef<SVGGElement>(null)
+  const bottomRef = useRef<SVGGElement>(null)
 
   useEffect(() => {
     const tl = gsap.timeline({
@@ -34,22 +35,29 @@ export default function FolderOpen({ onComplete }: FolderOpenProps) {
     // 少し待機
     tl.to({}, { duration: 0.3 })
 
-    // フォルダの蓋が手前に開く（X軸回転をscaleYで表現）
-    tl.to(lidRef.current, {
-      scaleY: 0.1,
-      y: -8,
+    // 貝のように上下に開く
+    tl.to(topRef.current, {
+      y: -12,
+      scaleY: 0.3,
+      duration: 0.4,
+      ease: 'power2.out',
+      transformOrigin: 'center bottom',
+    }, 'open')
+
+    tl.to(bottomRef.current, {
+      y: 12,
+      scaleY: 0.3,
       duration: 0.4,
       ease: 'power2.out',
       transformOrigin: 'center top',
-    })
+    }, 'open')
 
-    // 蓋が開いた状態で少し待機
-    tl.to({}, { duration: 0.2 })
+    // 開いた状態で少し待機
+    tl.to({}, { duration: 0.3 })
 
-    // フォルダが上に浮いて消える
+    // フォルダが消える
     tl.to(folderRef.current, {
-      y: -20,
-      scale: 1.1,
+      scale: 1.2,
       opacity: 0,
       duration: 0.3,
       ease: 'power1.in',
@@ -66,25 +74,26 @@ export default function FolderOpen({ onComplete }: FolderOpenProps) {
         ref={folderRef}
         width="200"
         height="160"
-        viewBox="0 0 48 44"
+        viewBox="0 0 48 48"
         className="text-green-400"
         style={{ overflow: 'visible' }}
       >
-        {/* フォルダ本体（下部） */}
-        <path
-          d="M 4 16 L 4 40 L 44 40 L 44 16 Z"
-          fill="currentColor"
-          fillOpacity="0.3"
-          stroke="currentColor"
-          strokeWidth="1.5"
-        />
-        {/* フォルダの蓋（アニメーション対象） */}
-        <g ref={lidRef} style={{ transformOrigin: '24px 8px' }}>
-          {/* 蓋の上部（タブ付き） */}
+        {/* フォルダ上半分（蓋） */}
+        <g ref={topRef} style={{ transformOrigin: '24px 24px' }}>
           <path
-            d="M 4 8 L 4 16 L 44 16 L 44 8 L 26 8 L 22 4 L 4 4 Z"
+            d="M 4 8 L 4 24 L 44 24 L 44 8 L 26 8 L 22 4 L 4 4 Z"
             fill="currentColor"
             fillOpacity="0.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+        </g>
+        {/* フォルダ下半分（本体） */}
+        <g ref={bottomRef} style={{ transformOrigin: '24px 24px' }}>
+          <path
+            d="M 4 24 L 4 44 L 44 44 L 44 24 Z"
+            fill="currentColor"
+            fillOpacity="0.3"
             stroke="currentColor"
             strokeWidth="1.5"
           />
