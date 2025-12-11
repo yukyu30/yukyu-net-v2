@@ -21,20 +21,30 @@ export default function PostCard({ post, index }: PostCardProps) {
 
   useEffect(() => {
     if (cardRef.current) {
-      // フォルダから出てくるアニメーション
-      // 左上の一点（フォルダの位置）から各位置へ展開
-      const delay = index * 0.03 // より速いスタガー
+      // フォルダ（中央）から出てくるアニメーション
+      const delay = index * 0.03
 
-      // 初期位置: 左上のフォルダ位置（重なった状態）
+      // カードの位置を取得して中央からの相対位置を計算
+      const rect = cardRef.current.getBoundingClientRect()
+      const windowCenterX = window.innerWidth / 2
+      const windowCenterY = window.innerHeight / 2
+      const cardCenterX = rect.left + rect.width / 2
+      const cardCenterY = rect.top + rect.height / 2
+
+      // 中央からカードへの方向ベクトル（逆方向に初期位置を設定）
+      const offsetX = windowCenterX - cardCenterX
+      const offsetY = windowCenterY - cardCenterY
+
+      // 初期位置: 画面中央（フォルダ位置）に重なった状態
       gsap.set(cardRef.current, {
-        x: -300,
-        y: -200,
+        x: offsetX,
+        y: offsetY,
         opacity: 0,
-        scale: 0.3,
-        rotation: -15 + (index % 5) * 3, // ファイルが少しバラけた角度
+        scale: 0.2,
+        rotation: -10 + (index % 5) * 4,
       })
 
-      // アニメーション: フォルダから出てきて整列
+      // アニメーション: 中央から各位置へ展開
       gsap.to(cardRef.current, {
         x: 0,
         y: 0,
