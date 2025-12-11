@@ -20,9 +20,15 @@ export default function ArticleContent({
 }: ArticleContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // マウント後にフラグを立てる
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
-    if (!containerRef.current || isRevealed) return;
+    if (!containerRef.current || isRevealed || !isMounted) return;
 
     const container = containerRef.current;
 
@@ -127,7 +133,7 @@ export default function ArticleContent({
     return () => {
       timeouts.forEach((timeout) => clearTimeout(timeout));
     };
-  }, [content, charsPerSecond, isRevealed]);
+  }, [content, charsPerSecond, isRevealed, isMounted]);
 
   return (
     <div
