@@ -46,7 +46,7 @@ export default function GridLayout({
           {showProfile && <ProfileSection />}
 
           {/* 記事グリッド */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
             {children}
           </div>
 
