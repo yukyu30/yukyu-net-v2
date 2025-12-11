@@ -46,15 +46,18 @@ export default function GlobeIcon({ size = 20, className = '' }: GlobeIconProps)
     // - 右側の経線は ) 形（右に膨らむ）
     // - 左側の経線は ( 形（左に膨らむ）
     // - 中央の経線は | 形（直線）
+    // - 端の経線は半円（円周と一致）
     //
-    // 制御点は円の内側に収める必要がある
-    // 端(sin=±1)では制御点がx位置と同じ（膨らみなし、円周上）
-    // 中央に近づくほど膨らみが大きい
-    const curveFactor = Math.abs(cosVal); // 中央で最大、端で0
+    // 中央(sin=0): 直線
+    // 端(sin=±1): 半円（最大曲率）
+    const curveFactor = Math.abs(sinVal); // 端で最大、中央で0
 
-    // 制御点: xから外側方向へ（ただし円の内側に収まるよう）
-    const maxBulge = Math.sqrt(r * r - (x - cx) * (x - cx)); // その位置での最大膨らみ
-    const controlX = x + (sinVal > 0 ? 1 : -1) * maxBulge * curveFactor * 0.5;
+    // 制御点: 円の内側に収まるよう計算
+    // 経線のx位置から、外側方向（右なら右、左なら左）に膨らむ
+    // 端では制御点がさらに外側へ（半円に近づく）
+    const bulge = curveFactor * r * 0.55; // ベジェで円を近似する係数
+    const direction = sinVal > 0 ? 1 : (sinVal < 0 ? -1 : 0);
+    const controlX = x + direction * bulge;
 
     const path = `M ${x} ${cy - r} Q ${controlX} ${cy} ${x} ${cy + r}`;
 
