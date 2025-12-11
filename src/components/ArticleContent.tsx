@@ -74,11 +74,17 @@ export default function ArticleContent({
     });
 
     const timeouts: NodeJS.Timeout[] = [];
+    const totalChars = charData.length;
 
-    // 各文字のアニメーション
-    charData.forEach((data) => {
-      const revealTime = Math.random() * duration * 0.8 + duration * 0.1;
-      const glitchCount = Math.floor(Math.random() * 4) + 2;
+    // 各文字のアニメーション（先頭から順番に復号）
+    charData.forEach((data, charIndex) => {
+      // 先頭から順番に復号されるように、インデックスに基づいて時間を計算
+      // 少しランダム性を加えて自然な感じに
+      const baseRevealTime = (charIndex / totalChars) * duration * 0.9;
+      const randomOffset = Math.random() * (duration * 0.1);
+      const revealTime = baseRevealTime + randomOffset + duration * 0.05;
+
+      const glitchCount = Math.floor(Math.random() * 3) + 2;
 
       // 文字化けアニメーション
       for (let i = 0; i < glitchCount; i++) {
