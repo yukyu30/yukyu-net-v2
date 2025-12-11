@@ -17,13 +17,16 @@ export default function DecoBocoTitle({ text }: DecoBocoTitleProps) {
     const chars = containerRef.current.querySelectorAll('[data-char]');
 
     // 各文字にランダムな初期状態と遅延でアニメーション
-    // シュッシュッとした緩急のある動き
+    // シュッシュッとした緩急のある動き、一部は動かない
     chars.forEach((char) => {
-      const startExpanded = Math.random() > 0.5;
+      const rand = Math.random();
       const randomDelay = Math.random() * 0.3;
 
-      if (startExpanded) {
-        // 最初から伸びた状態でスタートし、シュッと縮む
+      if (rand < 0.3) {
+        // 30%の確率で動かない
+        return;
+      } else if (rand < 0.65) {
+        // 35%の確率で伸びた状態からスタートし、シュッと縮む
         gsap.set(char, { scaleY: 1.5 });
         gsap.to(char, {
           scaleY: 1,
@@ -32,7 +35,7 @@ export default function DecoBocoTitle({ text }: DecoBocoTitleProps) {
           ease: 'back.out(2)',
         });
       } else {
-        // 通常状態からスタートし、シュッと伸びてシュッと戻る
+        // 35%の確率で通常状態からスタートし、シュッと伸びてシュッと戻る
         gsap.to(char, {
           scaleY: 1.5,
           yoyo: true,
