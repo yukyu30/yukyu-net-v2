@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import DecoBocoTitle from './DecoBocoTitle';
 
 interface HeaderProps {
   postsCount?: number;
@@ -32,7 +33,7 @@ export default function Header({
               <div className="px-6 py-4 border-b-2 border-black">
                 <Link href="/" className="inline-block hover:opacity-80 transition-opacity">
                   <h1 className="text-4xl font-bold tracking-tight">
-                    DecoBoco Digital
+                    <DecoBocoTitle text="DecoBoco Digital" />
                   </h1>
                 </Link>
               </div>

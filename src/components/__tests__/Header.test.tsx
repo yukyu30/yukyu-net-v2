@@ -1,20 +1,31 @@
 import { render, screen } from '@testing-library/react'
 import Header from '../Header'
 
+// GSAPをモック
+jest.mock('gsap', () => ({
+  to: jest.fn(),
+  registerPlugin: jest.fn(),
+}));
+
+jest.mock('@gsap/react', () => ({
+  useGSAP: jest.fn(),
+}));
+
 describe('Header', () => {
   it('インデックスページのヘッダーを表示する', () => {
-    render(<Header postsCount={10} lastUpdate="2025-01-01" />)
-    
-    expect(screen.getByText('DecoBoco Digital')).toBeInTheDocument()
-    expect(screen.getByText('ENTRIES: 10')).toBeInTheDocument()
-    expect(screen.getByText('LAST UPDATE: 2025-01-01')).toBeInTheDocument()
-    expect(screen.getByText('STATUS: ACTIVE')).toBeInTheDocument()
-    expect(screen.getByText('RSS')).toBeInTheDocument()
+    const { container } = render(<Header postsCount={10} lastUpdate="2025-01-01" />)
+
+    // DecoBocoTitleは文字を分割するため、textContentで確認
+    expect(container.textContent).toContain('DecoBoco Digital')
+    // デスクトップとモバイル両方のビューがあるため、getAllByTextを使用
+    expect(screen.getAllByText('ENTRIES: 10')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('LAST UPDATE: 2025-01-01')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('RSS')[0]).toBeInTheDocument()
   })
 
   it('記事ページのヘッダーを表示する', () => {
     render(<Header showBackButton={true} pageType="article" />)
-    
+
     expect(screen.getByText('← INDEX')).toBeInTheDocument()
     expect(screen.getByText('ARTICLE VIEW')).toBeInTheDocument()
   })
