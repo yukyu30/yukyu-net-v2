@@ -38,18 +38,18 @@ export default function PostCard({ post, index }: PostCardProps) {
         >
           {/* ドキュメントアイコン風のカード */}
           <div className="relative">
-            {/* 折り返し部分（右上の三角） - カードの外に配置 */}
-            <div
-              className="absolute -top-[1px] -right-[1px] w-5 h-5 overflow-hidden z-10"
-              style={{
-                clipPath: 'polygon(100% 0, 0 0, 100% 100%)',
-              }}
+            {/* 折り返し部分（右上の三角） */}
+            <svg
+              className="absolute top-0 right-0 w-4 h-4 z-10"
+              viewBox="0 0 16 16"
+              fill="none"
             >
-              <div className="w-full h-full bg-green-950 border-l border-b border-green-400 transform rotate-0" />
-            </div>
+              <path d="M0 0 L16 0 L16 16 Z" fill="#052e16" />
+              <path d="M0 0 L16 16" stroke="#4ade80" strokeWidth="1" />
+            </svg>
 
             {/* メインカード */}
-            <div className="border border-green-400 bg-black group-hover:bg-green-400/5 transition-colors">
+            <div className="border border-green-400 bg-black group-hover:bg-green-400/5 transition-colors" style={{ clipPath: 'polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)' }}>
               {/* ドキュメントヘッダー（ファイル情報） */}
               <div className="px-3 pb-2 border-b border-green-600 flex items-center gap-2">
                 {/* ファイルアイコン */}
