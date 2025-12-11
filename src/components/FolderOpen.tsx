@@ -9,14 +9,13 @@ interface FolderOpenProps {
 
 export default function FolderOpen({ onComplete }: FolderOpenProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const folderRef = useRef<SVGSVGElement>(null)
-  const topRef = useRef<SVGGElement>(null)
-  const bottomRef = useRef<SVGGElement>(null)
+  const folderRef = useRef<HTMLDivElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const tl = gsap.timeline({
       onComplete: () => {
-        // フォルダが消えてからコールバック
         gsap.to(containerRef.current, {
           opacity: 0,
           duration: 0.2,
@@ -35,21 +34,18 @@ export default function FolderOpen({ onComplete }: FolderOpenProps) {
     // 少し待機
     tl.to({}, { duration: 0.3 })
 
-    // 貝のように上下に開く
+    // 本/貝のように開く（上半分が奥に倒れる）
     tl.to(topRef.current, {
-      y: -12,
-      scaleY: 0.3,
-      duration: 0.4,
+      rotateX: -70,
+      duration: 0.5,
       ease: 'power2.out',
-      transformOrigin: 'center bottom',
     }, 'open')
 
+    // 下半分が手前に倒れる
     tl.to(bottomRef.current, {
-      y: 12,
-      scaleY: 0.3,
-      duration: 0.4,
+      rotateX: 70,
+      duration: 0.5,
       ease: 'power2.out',
-      transformOrigin: 'center top',
     }, 'open')
 
     // 開いた状態で少し待機
@@ -69,36 +65,33 @@ export default function FolderOpen({ onComplete }: FolderOpenProps) {
     <div
       ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+      style={{ perspective: '800px' }}
     >
-      <svg
+      <div
         ref={folderRef}
-        width="200"
-        height="160"
-        viewBox="0 0 48 48"
-        className="text-green-400"
-        style={{ overflow: 'visible' }}
+        className="relative"
+        style={{ transformStyle: 'preserve-3d' }}
       >
-        {/* フォルダ上半分（蓋） */}
-        <g ref={topRef} style={{ transformOrigin: '24px 24px' }}>
-          <path
-            d="M 4 8 L 4 24 L 44 24 L 44 8 L 26 8 L 22 4 L 4 4 Z"
-            fill="currentColor"
-            fillOpacity="0.5"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-        </g>
-        {/* フォルダ下半分（本体） */}
-        <g ref={bottomRef} style={{ transformOrigin: '24px 24px' }}>
-          <path
-            d="M 4 24 L 4 44 L 44 44 L 44 24 Z"
-            fill="currentColor"
-            fillOpacity="0.3"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-        </g>
-      </svg>
+        {/* フォルダ上半分（蓋）- 奥に倒れる */}
+        <div
+          ref={topRef}
+          className="w-[200px] h-[80px] border-2 border-green-400 bg-green-400/50"
+          style={{
+            transformOrigin: 'center bottom',
+            transformStyle: 'preserve-3d',
+            clipPath: 'polygon(0% 20%, 35% 20%, 42% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          }}
+        />
+        {/* フォルダ下半分（本体）- 手前に倒れる */}
+        <div
+          ref={bottomRef}
+          className="w-[200px] h-[80px] border-2 border-green-400 bg-green-400/30"
+          style={{
+            transformOrigin: 'center top',
+            transformStyle: 'preserve-3d',
+          }}
+        />
+      </div>
     </div>
   )
 }
