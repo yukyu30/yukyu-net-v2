@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { gsap } from 'gsap';
 import GlobeIcon from './GlobeIcon';
+import { HeartbeatIndicator } from './HeartbeatIndicator';
+import type { StatusResponse } from '@/types/status';
 
 interface MenuItem {
   label: string;
@@ -34,7 +35,8 @@ const menuItems: MenuItem[] = [
 
 export default function MenuBar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const activityRef = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<StatusResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleMenuClick = (label: string) => {
     setOpenMenu(openMenu === label ? null : label);
@@ -44,35 +46,23 @@ export default function MenuBar() {
     setOpenMenu(null);
   };
 
-  // アクティビティインジケーター（ランダムに点滅）
+  // ステータスを取得
   useEffect(() => {
-    if (activityRef.current) {
-      const blink = () => {
-        if (activityRef.current) {
-          gsap.to(activityRef.current, {
-            opacity: 1,
-            duration: 0.1,
-            onComplete: () => {
-              gsap.to(activityRef.current, {
-                opacity: 0.2,
-                duration: 0.3,
-              });
-            }
-          });
+    async function fetchStatus() {
+      try {
+        const response = await fetch('/api/status');
+        if (response.ok) {
+          const data = await response.json();
+          setStatus(data);
         }
-      };
-
-      // ランダムな間隔で点滅
-      const scheduleNext = () => {
-        const delay = 500 + Math.random() * 2000;
-        setTimeout(() => {
-          blink();
-          scheduleNext();
-        }, delay);
-      };
-
-      scheduleNext();
+      } catch {
+        // エラーは無視（オフライン表示になる）
+      } finally {
+        setIsLoading(false);
+      }
     }
+
+    fetchStatus();
   }, []);
 
   return (
@@ -124,14 +114,10 @@ export default function MenuBar() {
           ))}
         </div>
 
-        {/* 右側: アクティビティインジケーター */}
-        <div className="flex items-center gap-2">
-          <div
-            ref={activityRef}
-            className="w-1.5 h-1.5 rounded-full bg-green-400 opacity-20"
-          />
-          <span className="text-sm font-mono text-green-600 hidden sm:inline">SYS</span>
-        </div>
+        {/* 右側: 生存ステータスインジケーター */}
+        <Link href="/status" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <HeartbeatIndicator isAlive={status?.is_alive ?? null} isLoading={isLoading} />
+        </Link>
       </div>
     </nav>
   );
