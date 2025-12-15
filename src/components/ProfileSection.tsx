@@ -1,6 +1,34 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { LifeStatus } from './LifeStatus';
+import type { StatusResponse } from '@/types/status';
 
 export default function ProfileSection() {
+  const [status, setStatus] = useState<StatusResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchStatus() {
+      try {
+        const response = await fetch('/api/status');
+        if (!response.ok) {
+          throw new Error('Failed to fetch status');
+        }
+        const data = await response.json();
+        setStatus(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchStatus();
+  }, []);
+
   const socialLinks = [
     { name: 'X (Twitter)', url: 'https://x.com/yukyu30' },
     { name: 'BlueSky', url: 'https://bsky.app/profile/yukyu.net' },
@@ -15,6 +43,11 @@ export default function ProfileSection() {
 
   return (
     <div className="border-b border-green-800 p-6">
+      {/* ステータス */}
+      <div className="mb-4">
+        <LifeStatus status={status} isLoading={isLoading} error={error} />
+      </div>
+
       {/* プロフィール情報 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
