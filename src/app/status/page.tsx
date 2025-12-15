@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import Link from 'next/link';
 import MenuBar from '@/components/MenuBar';
-import type { StatusResponse, Signal } from '@/types/status';
+import type { StatusResponse } from '@/types/status';
 
 function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString);
@@ -29,176 +29,6 @@ function formatDateTime(dateString: string): string {
     hour: '2-digit',
     minute: '2-digit',
   });
-}
-
-type FaceExpression = 'happy' | 'neutral' | 'sleepy' | 'excited';
-
-function getFaceExpression(signal: Signal | undefined): FaceExpression {
-  if (!signal) return 'neutral';
-
-  const title = signal.title.toLowerCase();
-
-  if (title.includes('朝') || title.includes('起') || title.includes('おはよう')) {
-    return 'sleepy';
-  }
-  if (title.includes('嬉') || title.includes('楽') || title.includes('good') || title.includes('完了')) {
-    return 'happy';
-  }
-  if (title.includes('!') || title.includes('！') || title.includes('やった')) {
-    return 'excited';
-  }
-
-  return 'neutral';
-}
-
-interface DotFaceProps {
-  expression: FaceExpression;
-  isAlive: boolean;
-}
-
-function DotFace({ expression, isAlive }: DotFaceProps) {
-  const eyeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!eyeRef.current || !isAlive) return;
-
-    const blink = () => {
-      if (eyeRef.current) {
-        const eyes = eyeRef.current.querySelectorAll('.eye');
-        gsap.to(eyes, {
-          scaleY: 0.1,
-          duration: 0.1,
-          yoyo: true,
-          repeat: 1,
-        });
-      }
-    };
-
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        blink();
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [isAlive]);
-
-  const baseColor = isAlive ? 'bg-green-400' : 'bg-red-500';
-  const dimColor = isAlive ? 'bg-green-600' : 'bg-red-700';
-
-  const getMouth = () => {
-    switch (expression) {
-      case 'happy':
-        return (
-          <div className="flex flex-col items-center mt-1">
-            <div className="flex gap-0.5">
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            </div>
-            <div className="flex gap-0.5 -mt-0.5">
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className="w-1 h-1" />
-              <div className="w-1 h-1" />
-              <div className="w-1 h-1" />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            </div>
-          </div>
-        );
-      case 'excited':
-        return (
-          <div className="flex flex-col items-center mt-1">
-            <div className="flex gap-0.5">
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            </div>
-            <div className="flex gap-0.5">
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${dimColor} rounded-full`} />
-              <div className={`w-1 h-1 ${dimColor} rounded-full`} />
-              <div className={`w-1 h-1 ${dimColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            </div>
-            <div className="flex gap-0.5 -mt-0.5">
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className="w-1 h-1" />
-              <div className="w-1 h-1" />
-              <div className="w-1 h-1" />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            </div>
-          </div>
-        );
-      case 'sleepy':
-        return (
-          <div className="flex flex-col items-center mt-1">
-            <div className="flex gap-0.5">
-              <div className="w-1 h-1" />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-              <div className="w-1 h-1" />
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div className="flex gap-0.5 mt-1">
-            <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-          </div>
-        );
-    }
-  };
-
-  const getEyes = () => {
-    if (expression === 'sleepy') {
-      return (
-        <div className="flex gap-4">
-          <div className="flex gap-0.5">
-            <div className={`eye w-1.5 h-0.5 ${baseColor} rounded-full`} />
-          </div>
-          <div className="flex gap-0.5">
-            <div className={`eye w-1.5 h-0.5 ${baseColor} rounded-full`} />
-          </div>
-        </div>
-      );
-    }
-
-    if (expression === 'excited') {
-      return (
-        <div className="flex gap-4">
-          <div className="flex flex-col gap-0.5">
-            <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            <div className={`eye w-2 h-2 ${baseColor} rounded-full`} />
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <div className={`w-1 h-1 ${baseColor} rounded-full`} />
-            <div className={`eye w-2 h-2 ${baseColor} rounded-full`} />
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex gap-4">
-        <div className={`eye w-2 h-2 ${baseColor} rounded-full`} />
-        <div className={`eye w-2 h-2 ${baseColor} rounded-full`} />
-      </div>
-    );
-  };
-
-  return (
-    <div ref={eyeRef} className="flex flex-col items-center p-4">
-      {getEyes()}
-      {getMouth()}
-    </div>
-  );
 }
 
 export default function StatusPage() {
@@ -245,7 +75,6 @@ export default function StatusPage() {
   }, [status?.is_alive]);
 
   const latestSignal = status?.recent_signals[0];
-  const expression = getFaceExpression(latestSignal);
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -283,17 +112,12 @@ export default function StatusPage() {
                 </div>
               ) : status ? (
                 <>
-                  {/* ドットフェイス */}
-                  <div className="mb-4 p-6 border border-green-800 rounded-lg">
-                    <DotFace expression={expression} isAlive={status.is_alive} />
-                  </div>
-
                   {/* ハートアイコン */}
                   <svg
                     ref={heartRef}
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className={`w-12 h-12 mb-4 ${
+                    className={`w-24 h-24 mb-6 ${
                       status.is_alive ? 'text-green-400' : 'text-red-500'
                     }`}
                     style={{ transformOrigin: 'center' }}
@@ -302,7 +126,7 @@ export default function StatusPage() {
                   </svg>
 
                   <div
-                    className={`text-3xl font-mono font-bold ${
+                    className={`text-4xl font-mono font-bold ${
                       status.is_alive ? 'text-green-400' : 'text-red-500'
                     }`}
                   >
