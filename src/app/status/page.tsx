@@ -145,73 +145,19 @@ export default function StatusPage() {
             </div>
           </div>
 
-          {/* 統計 */}
-          {status && (
-            <div className="border-2 border-green-400 mb-4">
-              <div className="border-b border-green-400 px-4 py-2">
-                <span className="text-sm font-mono text-green-600">STATISTICS</span>
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-green-800">
-                <div className="p-4 text-center">
-                  <div className="text-3xl font-mono text-green-400">
-                    {status.signal_count}
-                  </div>
-                  <div className="text-xs font-mono text-green-600 mt-1">
-                    TOTAL SIGNALS
-                  </div>
-                </div>
-                <div className="p-4 text-center">
-                  <div className="text-sm font-mono text-green-400">
-                    {formatDateTime(status.last_seen_at)}
-                  </div>
-                  <div className="text-xs font-mono text-green-600 mt-1">
-                    LAST SIGNAL
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* シグナルタイムライン */}
           {status && status.recent_signals.length > 0 && (
             <div className="border-2 border-green-400">
               <div className="border-b border-green-400 px-4 py-2">
-                <span className="text-sm font-mono text-green-600">
-                  SIGNAL TIMELINE
-                </span>
+                <span className="text-sm font-mono text-green-600">TIMELINE</span>
               </div>
-              <div className="relative">
-                {/* タイムラインの線 */}
-                <div className="absolute left-6 top-0 bottom-0 w-px bg-green-800" />
-
-                {status.recent_signals.map((signal, index) => (
-                  <div
-                    key={signal.id}
-                    className="relative px-4 py-4 flex items-start gap-4"
-                  >
-                    {/* タイムラインのドット */}
-                    <div className="relative z-10 flex-shrink-0">
-                      <div
-                        className={`w-3 h-3 rounded-full ${
-                          index === 0 ? 'bg-green-400 animate-pulse' : 'bg-green-600'
-                        }`}
-                      />
-                    </div>
-
-                    {/* シグナル内容 */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline justify-between gap-2">
-                        <div className="text-sm font-mono text-green-400 truncate">
-                          {signal.title}
-                        </div>
-                        <div className="text-xs font-mono text-green-600 flex-shrink-0">
-                          {formatRelativeTime(signal.created_at)}
-                        </div>
-                      </div>
-                      <div className="text-xs font-mono text-green-700 mt-1">
-                        {formatDateTime(signal.created_at)}
-                      </div>
-                    </div>
+              <div className="divide-y divide-green-800">
+                {status.recent_signals.map((signal) => (
+                  <div key={signal.id} className="px-4 py-3 flex items-center justify-between">
+                    <span className="text-sm font-mono text-green-400">{signal.title}</span>
+                    <span className="text-xs font-mono text-green-600">
+                      {formatRelativeTime(signal.created_at)}
+                    </span>
                   </div>
                 ))}
               </div>
