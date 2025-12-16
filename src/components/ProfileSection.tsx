@@ -38,16 +38,14 @@ export default function ProfileSection() {
     { name: 'SUZURI', url: 'https://suzuri.jp/yukyu30' },
     { name: 'Portfolio', url: 'https://foriio.com/yukyu30' },
     { name: 'YouTube', url: 'https://www.youtube.com/@yukyu30' },
-    { name: 'VRChat', url: 'https://vrchat.com/home/user/usr_c3a3cf58-fbf3-420b-9eb2-c9b69d46b5d6' },
+    {
+      name: 'VRChat',
+      url: 'https://vrchat.com/home/user/usr_c3a3cf58-fbf3-420b-9eb2-c9b69d46b5d6',
+    },
   ];
 
   return (
     <div className="border-b border-green-800 p-6">
-      {/* ステータス */}
-      <div className="mb-4">
-        <LifeStatus status={status} isLoading={isLoading} error={error} />
-      </div>
-
       {/* プロフィール情報 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
@@ -62,7 +60,9 @@ export default function ProfileSection() {
         </div>
         <div>
           <span className="text-base font-mono text-green-600">ROLE: </span>
-          <span className="text-lg font-mono">GMO Pepabo / Metaverse Div. / VR Expert</span>
+          <span className="text-lg font-mono">
+            GMOペパボ / メタバース推進室 / 上級VR技術者
+          </span>
         </div>
       </div>
 
