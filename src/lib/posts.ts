@@ -9,6 +9,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeRaw from 'rehype-raw'
 import rehypeStringify from 'rehype-stringify'
 import rehypeEmotion from './rehype-emotion'
+import rehypeHeadingId from './rehype-heading-id'
 
 const postsDirectory = path.join(process.cwd(), 'public_articles', 'source')
 
@@ -120,6 +121,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
+    .use(rehypeHeadingId)
     .use(rehypeEmotion)
     .use(rehypeStringify)
     .process(processedContent)

@@ -3,6 +3,8 @@ import MenuBar from './MenuBar';
 import StatusBar from './StatusBar';
 import ArticleActions from './ArticleActions';
 import ArticleContent from './ArticleContent';
+import TableOfContents from './TableOfContents';
+import { extractHeadings } from '@/lib/extract-headings';
 import '@/styles/article.css';
 
 interface ArticleLayoutProps {
@@ -18,6 +20,8 @@ export default function ArticleLayout({
   tags,
   content,
 }: ArticleLayoutProps) {
+  const headings = extractHeadings(content);
+
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* メニューバー */}
@@ -43,6 +47,9 @@ export default function ArticleLayout({
             </div>
           )}
         </header>
+
+        {/* 目次 */}
+        <TableOfContents headings={headings} />
 
         {/* 記事本文 */}
         <article className="mb-8">
