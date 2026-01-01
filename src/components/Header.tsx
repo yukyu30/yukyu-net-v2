@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import DecoBocoTitle from './DecoBocoTitle';
+import SearchBox from './SearchBox';
 
 interface HeaderProps {
   postsCount?: number;
@@ -49,6 +50,7 @@ export default function Header({
                     LAST UPDATE: {lastUpdate || 'N/A'}
                   </span>
                 </div>
+                <SearchBox />
                 <Link
                   href="/works"
                   className="px-4 py-2 border-l border-green-400 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center"
@@ -87,6 +89,7 @@ export default function Header({
                   </div>
                 </div>
                 <div className="border-t-2 border-green-400 flex">
+                  <SearchBox />
                   <Link
                     href="/works"
                     className="px-4 py-2 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center flex-1 border-r border-green-400"
