@@ -8,17 +8,8 @@ const nextConfig: NextConfig = {
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
       'node_modules/@esbuild/linux-x64',
-      'public_articles/source/**/*',
+      'public/source/**/*',
     ],
-    '/posts/[slug]': ['public_articles/source/**/*'],
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/public_articles/source/:path*',
-        destination: '/public_articles/source/:path*',
-      },
-    ]
   },
   // 開発サーバーの安定性を向上
   webpack: (config, { dev }) => {

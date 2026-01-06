@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "copy-articles": "mkdir -p public && cp -r public_articles public/ || echo 'Articles copied'",
-    "build": "npm run copy-articles && next build",
-    "build:vercel": "next build",
+    "build": "next build",
     "generate:rss": "node scripts/generate-rss.js",
     "start": "next start",
     "lint": "next lint",

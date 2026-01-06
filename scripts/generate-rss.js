@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 
-const postsDirectory = path.join(process.cwd(), 'public_articles', 'source');
+const postsDirectory = path.join(process.cwd(), 'public', 'source');
 const publicPath = path.join(process.cwd(), 'public');
 
 function escapeXML(text) {
