@@ -17,6 +17,7 @@ export default function ArticleActions({ title }: ArticleActionsProps) {
 
   const match = pathname.match(/^\/posts\/(.+)$/);
   const articleDir = match ? match[1] : null;
+  const markdownUrl = articleDir ? `/source/${articleDir}/index.md` : null;
   const githubEditUrl = articleDir
     ? `https://github.com/yukyu30/yukyu-net-v2/edit/main/public/source/${articleDir}/index.md`
     : null;
@@ -42,6 +43,18 @@ export default function ArticleActions({ title }: ArticleActionsProps) {
 
   return (
     <div className="flex flex-wrap gap-4 py-4">
+      {/* View Markdown button */}
+      {markdownUrl && (
+        <a
+          href={markdownUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-mono text-green-600 hover:text-green-400 transition-colors"
+        >
+          [VIEW MARKDOWN]
+        </a>
+      )}
+
       {/* GitHub edit button */}
       {githubEditUrl && (
         <a
