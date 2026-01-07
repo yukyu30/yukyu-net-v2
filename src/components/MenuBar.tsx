@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import GlobeIcon from './GlobeIcon';
 import { HeartbeatIndicator } from './HeartbeatIndicator';
+import Search from './Search';
 import type { StatusResponse } from '@/types/status';
 
 interface MenuItem {
@@ -114,10 +115,13 @@ export default function MenuBar() {
           ))}
         </div>
 
-        {/* 右側: 生存ステータスインジケーター */}
-        <Link href="/status" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <HeartbeatIndicator isAlive={status?.is_alive ?? null} isLoading={isLoading} />
-        </Link>
+        {/* 右側: 検索 + 生存ステータスインジケーター */}
+        <div className="flex items-center gap-2">
+          <Search />
+          <Link href="/status" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <HeartbeatIndicator isAlive={status?.is_alive ?? null} isLoading={isLoading} />
+          </Link>
+        </div>
       </div>
     </nav>
   );
