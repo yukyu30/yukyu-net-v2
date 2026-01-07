@@ -8,6 +8,7 @@
     "postbuild": "node scripts/generate-search-index.mjs",
     "generate:rss": "node scripts/generate-rss.js",
     "generate:search": "node scripts/generate-search-index.mjs",
+    "generate:graph": "node scripts/generate-graph-data.mjs",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -16,11 +17,15 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@tailwindcss/typography": "^0.5.16",
+    "dotenv": "^17.2.3",
     "gsap": "^3.14.1",
     "next": "16.0.10",
+    "openai": "^6.15.0",
     "pagefind": "^1.4.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-force-graph": "^1.48.1",
+    "react-force-graph-2d": "^1.29.0",
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {

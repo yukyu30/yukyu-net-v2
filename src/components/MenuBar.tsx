@@ -24,6 +24,7 @@ const menuItems: MenuItem[] = [
     items: [
       { label: 'Tags', href: '/tags' },
       { label: 'Works', href: '/works' },
+      { label: 'Graph', href: '/graph' },
     ],
   },
   {

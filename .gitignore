@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Pagefind search index (generated at build time)
 public/pagefind/
+
+# Graph embeddings cache
+public/graph/embeddings-cache.json
