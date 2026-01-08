@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import GlobeIcon from './GlobeIcon';
 import { HeartbeatIndicator } from './HeartbeatIndicator';
 import Search from './Search';
 import type { StatusResponse } from '@/types/status';
@@ -68,15 +67,11 @@ export default function MenuBar() {
   }, []);
 
   return (
-    <nav className="border-b border-green-400 bg-black">
+    <nav className="border-b border-green-400 bg-black sticky top-0 z-50">
       <div className="flex items-center justify-between px-2 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center">
-          {/* 地球アイコン（稼働インジケーター） */}
-          <div className="flex items-center gap-1 sm:gap-2 mr-2 sm:mr-4 pr-2 sm:pr-4 border-r border-green-800">
-            <GlobeIcon size={20} className="text-green-400 sm:hidden" />
-            <GlobeIcon size={24} className="text-green-400 hidden sm:block" />
-            <span className="text-sm font-mono text-green-600 hidden sm:inline">ONLINE</span>
-          </div>
+          {/* 生命体のホームポジション用スペース */}
+          <div className="w-10 h-6 mr-2" />
 
           {/* TOP リンク（ドロップダウンなし） */}
           <Link
