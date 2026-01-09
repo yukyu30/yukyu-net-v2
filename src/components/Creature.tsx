@@ -161,6 +161,15 @@ const getBrowserName = (): string => {
 
 type BehaviorMode = 'idle' | 'patrol' | 'follow' | 'dragging'
 
+// ホームポジション（左下）を取得
+const getHomePosition = () => {
+  if (typeof window === 'undefined') return { x: 20, y: 100 }
+  return {
+    x: 20,
+    y: window.innerHeight - 80,
+  }
+}
+
 // 生命体のアニメーションフレーム（Unicode文字）
 const FRAMES = {
   // アイドル時：四隅が回転（ゆっくり）
@@ -219,7 +228,7 @@ export default function Creature() {
     setIsOnRight(rect.left > window.innerWidth / 2)
   }, [])
 
-  // MenuBarに戻る（ホームポジション：左上）
+  // ホームポジション（左下）に戻る
   const returnToMenuBar = useCallback(() => {
     if (!creatureRef.current || typeof window === 'undefined' || isDragging.current) return
     if (modeRef.current !== 'idle') return
@@ -229,9 +238,10 @@ export default function Creature() {
 
     speak('ただいま')
 
+    const home = getHomePosition()
     gsap.to(creatureRef.current, {
-      x: 8, // 左側のホームポジション
-      y: 12,
+      x: home.x,
+      y: home.y,
       duration: 2 + Math.random(),
       ease: 'power2.inOut',
       onComplete: () => {
@@ -353,13 +363,14 @@ export default function Creature() {
       clearInterval(interval)
       updateMode('idle')
       speak('疲れた...')
-      // 2秒後にMenuBarに戻る
+      // 2秒後にホームに戻る
       setTimeout(() => {
         if (modeRef.current === 'idle') {
           updateMode('patrol')
+          const home = getHomePosition()
           gsap.to(creatureRef.current, {
-            x: 8, // 左側のホームポジション
-            y: 12,
+            x: home.x,
+            y: home.y,
             duration: 2,
             ease: 'power2.inOut',
             onComplete: () => {
@@ -589,16 +600,17 @@ export default function Creature() {
   useGSAP(() => {
     if (!creatureRef.current || !bodyRef.current || typeof window === 'undefined') return
 
-    // 初期位置（MenuBar内、左側のホームポジション）
+    // 初期位置（左下のホームポジション）
+    const home = getHomePosition()
     gsap.set(creatureRef.current, {
-      x: 8,
-      y: 12,
+      x: home.x,
+      y: home.y,
     })
 
-    // 浮遊アニメーション（MenuBar内なので控えめに左右に揺れる）
+    // 浮遊アニメーション（控えめに上下に揺れる）
     gsap.to(creatureRef.current, {
-      x: '+=5',
-      duration: 3,
+      y: '-=8',
+      duration: 2,
       repeat: -1,
       yoyo: true,
       ease: 'power1.inOut',
