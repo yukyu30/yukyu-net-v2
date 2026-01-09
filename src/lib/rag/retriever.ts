@@ -3,6 +3,7 @@ import { queryVectors } from './vector-store'
 import OpenAI from 'openai'
 import fs from 'fs'
 import path from 'path'
+import { unstable_cache } from 'next/cache'
 
 // 定数
 const DEFAULT_TOP_K = 5
@@ -51,22 +52,22 @@ interface GraphData {
   links: GraphLink[]
 }
 
-let graphData: GraphData | null = null
+// Next.jsのキャッシュを使用してメモリリークを防止
+const loadGraphData = unstable_cache(
+  async (): Promise<GraphData | null> => {
+    try {
+      const graphPath = path.join(process.cwd(), 'public', 'graph', 'graph-data.json')
+      if (!fs.existsSync(graphPath)) return null
 
-function loadGraphData(): GraphData | null {
-  if (graphData) return graphData
-
-  try {
-    const graphPath = path.join(process.cwd(), 'public', 'graph', 'graph-data.json')
-    if (!fs.existsSync(graphPath)) return null
-
-    graphData = JSON.parse(fs.readFileSync(graphPath, 'utf-8'))
-    return graphData
-  } catch (error) {
-    console.warn('Failed to load graph data:', error)
-    return null
-  }
-}
+      return JSON.parse(fs.readFileSync(graphPath, 'utf-8'))
+    } catch (error) {
+      console.warn('Failed to load graph data:', error)
+      return null
+    }
+  },
+  ['graph-data'],
+  { revalidate: 3600 } // 1時間キャッシュ
+)
 
 function extractDateFromSlug(slug: string): Date | null {
   const match = slug.match(DATE_PATTERN)
@@ -110,8 +111,8 @@ JSONで回答してください:
   }
 }
 
-export function getRelatedPosts(slug: string, limit = MAX_RELATED_POSTS): RelatedPost[] {
-  const graph = loadGraphData()
+export async function getRelatedPosts(slug: string, limit = MAX_RELATED_POSTS): Promise<RelatedPost[]> {
+  const graph = await loadGraphData()
   if (!graph) return []
 
   return graph.links
@@ -126,8 +127,8 @@ export function getRelatedPosts(slug: string, limit = MAX_RELATED_POSTS): Relate
     .slice(0, limit)
 }
 
-export function getRecentPosts(limit = DEFAULT_TOP_K): Array<{ slug: string; title: string; date: string }> {
-  const graph = loadGraphData()
+export async function getRecentPosts(limit = DEFAULT_TOP_K): Promise<Array<{ slug: string; title: string; date: string }>> {
+  const graph = await loadGraphData()
   if (!graph) return []
 
   return graph.nodes
@@ -158,8 +159,8 @@ async function searchRecentWithKeyword(searchKeyword: string, topK: number): Pro
     .map(({ date, ...rest }) => rest)
 }
 
-function getRecentPostsAsResults(topK: number): SearchResult[] {
-  const recentPosts = getRecentPosts(RECENT_POSTS_LIMIT)
+async function getRecentPostsAsResults(topK: number): Promise<SearchResult[]> {
+  const recentPosts = await getRecentPosts(RECENT_POSTS_LIMIT)
 
   return recentPosts.slice(0, topK).map(post => ({
     slug: post.slug,
@@ -204,7 +205,9 @@ export async function searchWithRelated(
   const results = await searchPosts(query, topK)
   const uniqueSlugs = [...new Set(results.map(r => r.slug))]
 
-  const allRelated = uniqueSlugs.flatMap(slug => getRelatedPosts(slug, RELATED_POSTS_PER_SLUG))
+  const allRelated = (
+    await Promise.all(uniqueSlugs.map(slug => getRelatedPosts(slug, RELATED_POSTS_PER_SLUG)))
+  ).flat()
 
   const seenSlugs = new Set(uniqueSlugs)
   const relatedPosts = allRelated

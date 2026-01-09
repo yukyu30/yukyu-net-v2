@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import { indexAllPosts, indexNewPostsOnly } from '../src/lib/rag/indexer'
+import { closeDbClient } from '../src/lib/rag/vector-store'
 
 const isIncremental = process.argv.includes('--incremental')
 
@@ -11,11 +12,15 @@ async function main() {
 
   try {
     if (isIncremental) {
-      const { total, skipped, indexed } = await indexNewPostsOnly()
+      const { total, skipped, indexed, deleted, failed } = await indexNewPostsOnly()
       console.log(`\nIndexing complete!`)
       console.log(`Total posts: ${total}`)
-      console.log(`Skipped (already indexed): ${skipped}`)
+      console.log(`Skipped (unchanged): ${skipped}`)
       console.log(`Newly indexed chunks: ${indexed}`)
+      console.log(`Deleted (removed posts): ${deleted}`)
+      if (failed.length > 0) {
+        console.log(`Failed: ${failed.length} (${failed.join(', ')})`)
+      }
     } else {
       const { total, indexed } = await indexAllPosts()
       console.log(`\nIndexing complete!`)
@@ -25,6 +30,8 @@ async function main() {
   } catch (error) {
     console.error('Failed to index posts:', error)
     process.exit(1)
+  } finally {
+    await closeDbClient()
   }
 }
 
