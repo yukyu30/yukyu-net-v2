@@ -185,10 +185,13 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
                 accumulatedContent += data.content
                 setStreamingContent(accumulatedContent)
               } else if (data.type === 'done') {
-                setMessages((prev) => [
-                  ...prev,
-                  { role: 'assistant', content: accumulatedContent, sources },
-                ])
+                // コンテンツがある場合のみメッセージを追加（prankの場合は空）
+                if (accumulatedContent) {
+                  setMessages((prev) => [
+                    ...prev,
+                    { role: 'assistant', content: accumulatedContent, sources },
+                  ])
+                }
                 setStreamingContent('')
                 setStreamingSources([])
                 setCurrentStatus(null)
