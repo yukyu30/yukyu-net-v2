@@ -13,6 +13,12 @@ interface Message {
   sources?: Array<{ slug: string; title: string }>
 }
 
+interface StatusInfo {
+  status: string
+  message: string
+  documents?: string[]
+}
+
 interface CreatureChatProps {
   initialQuery?: string
 }
@@ -24,6 +30,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [creatureFrame, setCreatureFrame] = useState(CREATURE_FRAMES[0])
   const [streamingContent, setStreamingContent] = useState('')
   const [streamingSources, setStreamingSources] = useState<Array<{ slug: string; title: string }>>([])
+  const [currentStatus, setCurrentStatus] = useState<StatusInfo | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const initialQuerySent = useRef(false)
 
@@ -39,7 +46,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, streamingContent])
+  }, [messages, streamingContent, currentStatus])
 
   const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return
@@ -48,6 +55,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     setIsLoading(true)
     setStreamingContent('')
     setStreamingSources([])
+    setCurrentStatus(null)
 
     try {
       const response = await fetch('/api/chat', {
@@ -79,20 +87,27 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-              if (data.type === 'sources') {
+              if (data.type === 'status') {
+                setCurrentStatus({
+                  status: data.status,
+                  message: data.message,
+                  documents: data.documents,
+                })
+              } else if (data.type === 'sources') {
                 sources = data.sources
                 setStreamingSources(data.sources)
+                setCurrentStatus(null) // ステータス表示を消す
               } else if (data.type === 'content') {
                 accumulatedContent += data.content
                 setStreamingContent(accumulatedContent)
               } else if (data.type === 'done') {
-                // ストリーミング完了、メッセージを確定
                 setMessages((prev) => [
                   ...prev,
                   { role: 'assistant', content: accumulatedContent, sources },
                 ])
                 setStreamingContent('')
                 setStreamingSources([])
+                setCurrentStatus(null)
               }
             } catch {
               // JSON parse error, skip
@@ -108,6 +123,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       ])
       setStreamingContent('')
       setStreamingSources([])
+      setCurrentStatus(null)
     } finally {
       setIsLoading(false)
     }
@@ -132,7 +148,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   return (
     <div className="flex flex-col h-[70vh] border border-green-900 rounded-lg overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && !streamingContent && (
+        {messages.length === 0 && !streamingContent && !currentStatus && (
           <div className="text-center text-green-700 py-8">
             <span className="text-6xl block mb-4">{creatureFrame}</span>
             <p>何でも聞いてね！</p>
@@ -167,6 +183,28 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
             </div>
           </div>
         ))}
+
+        {/* ステータス表示 */}
+        {currentStatus && !streamingContent && (
+          <div className="flex justify-start">
+            <div className="bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
+              <span className="text-xl mr-2">{creatureFrame}</span>
+              <span className="text-green-600">{currentStatus.message}</span>
+              {currentStatus.documents && currentStatus.documents.length > 0 && (
+                <ul className="mt-2 text-xs text-green-700 space-y-1">
+                  {currentStatus.documents.map((doc, i) => (
+                    <li key={i} className="flex items-center gap-1">
+                      <span className="text-green-500">→</span>
+                      <span>{doc}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ストリーミング中の回答 */}
         {streamingContent && (
           <div className="flex justify-start">
             <div className="max-w-[80%] bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
@@ -191,14 +229,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
             </div>
           </div>
         )}
-        {isLoading && !streamingContent && (
-          <div className="flex justify-start">
-            <div className="bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
-              <span className="text-xl mr-2">{creatureFrame}</span>
-              <span className="animate-pulse">考え中...</span>
-            </div>
-          </div>
-        )}
+
         <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="p-4 border-t border-green-900">
