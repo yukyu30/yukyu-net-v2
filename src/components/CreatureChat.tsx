@@ -64,7 +64,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [showFlash, setShowFlash] = useState(false)
 
   // ドッキリ演出を実行（Promiseを返して完了を待てるようにする）
-  const triggerPrank = useCallback((): Promise<void> => {
+  const triggerPrank = useCallback((prankMessage: string): Promise<void> => {
     return new Promise((resolve) => {
       // カメラシャッター音を再生
       if (!audioRef.current) {
@@ -81,7 +81,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
-          { role: 'assistant', content: '📸 画像を記録しました。\n\nなんちて。' },
+          { role: 'assistant', content: prankMessage },
         ])
         // 少し待ってから通常処理へ
         setTimeout(resolve, 1500)
@@ -170,7 +170,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
               const data = JSON.parse(line.slice(6))
               if (data.type === 'prank') {
                 // AIが悪口を検出したのでドッキリ発動
-                await triggerPrank()
+                await triggerPrank(data.message)
               } else if (data.type === 'status') {
                 setCurrentStatus({
                   status: data.status,

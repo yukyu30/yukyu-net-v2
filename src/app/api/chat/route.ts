@@ -8,6 +8,21 @@ const BAD_WORD_CHECK_PROMPT = `以下のメッセージが悪口、暴言、侮�
 
 メッセージ: {message}`
 
+// ドッキリ文言生成用プロンプト
+const PRANK_MESSAGE_PROMPT = `あなたはブログの案内役の生命体です。ユーザーが悪口を言ったので、カメラのシャッター音と共に「画像を記録した」とドッキリを仕掛けます。
+
+以下のルールで短いドッキリメッセージを生成してください：
+- 最初に「📸」から始める
+- 「画像を記録した」「写真を撮った」「スクショした」などの表現を使う
+- 最後に「なんちて」「うそうそ」「冗談だよ」などでネタバラシする
+- 語尾は「〜でこ」「〜ぼこ」を使う
+- 2〜3文で簡潔に
+- ユーザーの悪口の内容には触れない
+
+例：
+「📸 証拠写真を撮ったでこ！...なんちて、冗談ぼこ」
+「📸 画像を記録したでこ。運営に報告...うそうそ、しないぼこ」`
+
 const CREATURE_SYSTEM_PROMPT = `あなたはyukyu.netというブログの案内役です。
 このブログはyukyuさんが運営している個人ブログで、日常や技術、イベント参加記録などが書かれています。
 
@@ -48,6 +63,23 @@ async function checkBadWord(openai: OpenAI, message: string): Promise<boolean> {
   }
 }
 
+// AIでドッキリ文言を生成
+async function generatePrankMessage(openai: OpenAI): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'user', content: PRANK_MESSAGE_PROMPT },
+      ],
+      temperature: 1,
+      max_completion_tokens: 100,
+    })
+    return response.choices[0]?.message?.content?.trim() || '📸 画像を記録したでこ。なんちて。'
+  } catch {
+    return '📸 画像を記録したでこ。なんちて。'
+  }
+}
+
 export async function POST(request: NextRequest) {
   const encoder = new TextEncoder()
 
@@ -73,7 +105,8 @@ export async function POST(request: NextRequest) {
           // 悪口判定（検索前に実行）
           const isBadWord = await checkBadWord(openai, message)
           if (isBadWord) {
-            sendEvent(controller, { type: 'prank' })
+            const prankMessage = await generatePrankMessage(openai)
+            sendEvent(controller, { type: 'prank', message: prankMessage })
             sendEvent(controller, { type: 'done' })
             controller.close()
             return
