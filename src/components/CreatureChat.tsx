@@ -17,23 +17,6 @@ interface Message {
 }
 
 const HISTORY_LIMIT = 6
-
-// 悪口キーワード（ドッキリ発動用）
-const BAD_WORDS = [
-  'バカ', 'ばか', '馬鹿', 'アホ', 'あほ', '阿呆',
-  'うざい', 'ウザい', 'きもい', 'キモい', 'キモイ',
-  '死ね', 'しね', '消えろ', 'きえろ', 'うるさい',
-  'ゴミ', 'ごみ', 'カス', 'かす', 'クソ', 'くそ',
-  '嫌い', 'きらい', 'むかつく', 'ムカつく',
-  'ブス', 'ぶす', 'デブ', 'でぶ', 'ハゲ', 'はげ',
-  'つまらない', 'つまんない', 'おもしろくない',
-  '役立たず', 'やくたたず', '無能', 'むのう',
-]
-
-// 悪口検出
-const containsBadWord = (text: string): boolean => {
-  return BAD_WORDS.some(word => text.includes(word))
-}
 const PROSE_CLASSES = "prose prose-invert prose-sm max-w-none [&_p]:my-1 [&_ul]:my-2 [&_ul]:ml-4 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-4 [&_ol]:list-decimal [&_li]:my-0.5 [&_li]:text-green-400 [&_h1]:text-green-300 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:mt-2 [&_h1]:mb-1 [&_h2]:text-green-300 [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:text-green-300 [&_h3]:text-sm [&_h3]:font-bold [&_h3]:mt-2 [&_h3]:mb-1 [&_strong]:text-green-300 [&_strong]:font-bold [&_em]:text-green-500 [&_code]:text-green-300 [&_code]:bg-green-900/30 [&_code]:px-1 [&_code]:rounded [&_a]:text-green-400 [&_a]:underline"
 
 function SourcesList({ sources }: { sources: Source[] }) {
@@ -79,26 +62,31 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const isLoadingRef = useRef(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [showFlash, setShowFlash] = useState(false)
-  const [showPrankMessage, setShowPrankMessage] = useState(false)
 
-  // ドッキリ演出を実行
-  const triggerPrank = useCallback(() => {
-    // カメラシャッター音を再生
-    if (!audioRef.current) {
-      audioRef.current = new Audio('/sounds/camera-shutter.mp3')
-    }
-    audioRef.current.currentTime = 0
-    audioRef.current.play().catch(() => {})
+  // ドッキリ演出を実行（Promiseを返して完了を待てるようにする）
+  const triggerPrank = useCallback((): Promise<void> => {
+    return new Promise((resolve) => {
+      // カメラシャッター音を再生
+      if (!audioRef.current) {
+        audioRef.current = new Audio('/sounds/camera-shutter.mp3')
+      }
+      audioRef.current.currentTime = 0
+      audioRef.current.play().catch(() => {})
 
-    // フラッシュ演出
-    setShowFlash(true)
-    setTimeout(() => setShowFlash(false), 150)
+      // フラッシュ演出
+      setShowFlash(true)
+      setTimeout(() => setShowFlash(false), 150)
 
-    // メッセージ表示
-    setTimeout(() => {
-      setShowPrankMessage(true)
-      setTimeout(() => setShowPrankMessage(false), 3000)
-    }, 200)
+      // 生命体のドッキリメッセージを追加
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', content: '📸 画像を記録しました。\n\nなんちて。' },
+        ])
+        // 少し待ってから通常処理へ
+        setTimeout(resolve, 1500)
+      }, 200)
+    })
   }, [])
 
   // ステータスに応じたフレームアニメーション
@@ -143,11 +131,6 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoadingRef.current) return
 
-    // 悪口検出でドッキリ発動
-    if (containsBadWord(userMessage)) {
-      triggerPrank()
-    }
-
     isLoadingRef.current = true
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
@@ -185,7 +168,10 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6))
-              if (data.type === 'status') {
+              if (data.type === 'prank') {
+                // AIが悪口を検出したのでドッキリ発動
+                await triggerPrank()
+              } else if (data.type === 'status') {
                 setCurrentStatus({
                   status: data.status,
                   message: data.message,
@@ -250,16 +236,6 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       {/* フラッシュ演出 */}
       {showFlash && (
         <div className="fixed inset-0 bg-white z-[100] pointer-events-none" />
-      )}
-
-      {/* ドッキリメッセージ */}
-      {showPrankMessage && (
-        <div className="fixed inset-0 z-[99] flex items-center justify-center pointer-events-none">
-          <div className="bg-red-600 text-white px-8 py-6 rounded-lg shadow-2xl text-center animate-bounce">
-            <p className="text-2xl font-bold mb-2">📸 画像を記録しました</p>
-            <p className="text-lg">なんちて。</p>
-          </div>
-        </div>
       )}
 
       <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-4">

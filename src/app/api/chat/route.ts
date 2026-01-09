@@ -2,6 +2,12 @@ import { NextRequest } from 'next/server'
 import OpenAI from 'openai'
 import { searchWithRelated } from '@/lib/rag/retriever'
 
+// 悪口判定用プロンプト
+const BAD_WORD_CHECK_PROMPT = `以下のメッセージが悪口、暴言、侮辱、攻撃的な表現を含むかどうか判定してください。
+判定結果を「YES」か「NO」のみで答えてください。
+
+メッセージ: {message}`
+
 const CREATURE_SYSTEM_PROMPT = `あなたはyukyu.netというブログの案内役です。
 このブログはyukyuさんが運営している個人ブログで、日常や技術、イベント参加記録などが書かれています。
 
@@ -24,6 +30,24 @@ const CREATURE_SYSTEM_PROMPT = `あなたはyukyu.netというブログの案内
 ユーザーの質問に、上記の記事内容を参考にして回答してください。
 記事に関連する情報がなければ、一般的な知識で答えても構いませんが、その場合は「ブログにはその情報がなかったけど...」と前置きしてください。`
 
+// AIで悪口判定
+async function checkBadWord(openai: OpenAI, message: string): Promise<boolean> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'user', content: BAD_WORD_CHECK_PROMPT.replace('{message}', message) },
+      ],
+      temperature: 0,
+      max_completion_tokens: 10,
+    })
+    const result = response.choices[0]?.message?.content?.trim().toUpperCase()
+    return result === 'YES'
+  } catch {
+    return false
+  }
+}
+
 export async function POST(request: NextRequest) {
   const encoder = new TextEncoder()
 
@@ -44,10 +68,20 @@ export async function POST(request: NextRequest) {
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
+          const openai = new OpenAI()
+
+          // 悪口判定（検索前に実行）
+          const isBadWord = await checkBadWord(openai, message)
+          if (isBadWord) {
+            sendEvent(controller, { type: 'prank' })
+            sendEvent(controller, { type: 'done' })
+            controller.close()
+            return
+          }
+
           // 検索中ステータス
           sendEvent(controller, { type: 'status', status: 'searching', message: '記事を検索中...' })
 
-          const openai = new OpenAI()
           let context = ''
           let relatedPostsText = ''
           let sources: Array<{ slug: string; title: string }> = []
