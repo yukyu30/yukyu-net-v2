@@ -109,30 +109,42 @@ export async function indexAllPosts(): Promise<{ total: number; indexed: number 
   return { total: posts.length, indexed }
 }
 
-export async function indexNewPostsOnly(): Promise<{ total: number; skipped: number; indexed: number; deleted: number }> {
+export interface IndexResult {
+  total: number
+  skipped: number
+  indexed: number
+  deleted: number
+  failed: string[]
+}
+
+export async function indexNewPostsOnly(): Promise<IndexResult> {
   // インデックスを初期化
   await initializeIndex()
 
   const posts = await getAllPosts()
   const cachedHashes = await loadHashCache()
-  
+
   let indexed = 0
   let skipped = 0
   let deleted = 0
-  
+  const failed: string[] = []
+
   // 現在の記事のslugセットを作成
   const currentSlugs = new Set(posts.map(p => p.slug))
-  
+
   // 削除された記事をベクトルストアとキャッシュから削除
   for (const [slug] of cachedHashes) {
     if (!currentSlugs.has(slug)) {
       try {
+        // ベクトル削除とキャッシュ削除を連続して実行
+        // どちらかが失敗した場合はエラーを記録し、次回の実行で再試行される
         await deleteVectorsBySlug(slug)
         await deleteHashFromCache(slug)
         console.log(`Deleted ${slug} (post removed)`)
         deleted++
       } catch (error) {
         console.error(`Failed to delete ${slug}:`, error)
+        failed.push(slug)
       }
     }
   }
@@ -144,32 +156,33 @@ export async function indexNewPostsOnly(): Promise<{ total: number; skipped: num
       console.warn(`Skipped ${post.slug} (content not found)`)
       continue
     }
-    
+
     const contentHash = computeContentHash(rawContent)
     const cachedHash = cachedHashes.get(post.slug)
-    
+
     // ハッシュが一致する場合はスキップ
-    if (cachedHash && cachedHash === contentHash) {
+    if (cachedHash === contentHash) {
       skipped++
       console.log(`Skipped ${post.slug} (unchanged)`)
       continue
     }
-    
+
     // 新規または更新された記事をインデックス
     try {
       const chunkCount = await indexPost(post.slug)
       indexed += chunkCount
-      
+
       // ハッシュをDBに保存
       await saveHashToCache(post.slug, contentHash)
-      
+
       console.log(`Indexed ${post.slug}: ${chunkCount} chunks${cachedHash ? ' (updated)' : ' (new)'}`)
     } catch (error) {
       console.error(`Failed to index ${post.slug}:`, error)
+      failed.push(post.slug)
     }
   }
 
-  return { total: posts.length, skipped, indexed, deleted }
+  return { total: posts.length, skipped, indexed, deleted, failed }
 }
 
 export { CHUNK_SIZE, CHUNK_OVERLAP }

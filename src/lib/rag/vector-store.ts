@@ -47,6 +47,15 @@ function getDbClient(): Client {
   return dbClient
 }
 
+// DBクライアントをクローズ（サーバーレス環境でのリソースリーク防止）
+export async function closeDbClient(): Promise<void> {
+  if (dbClient) {
+    dbClient.close()
+    dbClient = null
+  }
+  vectorStore = null
+}
+
 export async function initializeIndex(): Promise<void> {
   const store = getVectorStore()
   await store.createIndex({
