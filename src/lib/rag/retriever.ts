@@ -159,8 +159,8 @@ async function searchRecentWithKeyword(searchKeyword: string, topK: number): Pro
     .map(({ date, ...rest }) => rest)
 }
 
-function getRecentPostsAsResults(topK: number): SearchResult[] {
-  const recentPosts = getRecentPosts(RECENT_POSTS_LIMIT)
+async function getRecentPostsAsResults(topK: number): Promise<SearchResult[]> {
+  const recentPosts = await getRecentPosts(RECENT_POSTS_LIMIT)
 
   return recentPosts.slice(0, topK).map(post => ({
     slug: post.slug,
@@ -205,7 +205,9 @@ export async function searchWithRelated(
   const results = await searchPosts(query, topK)
   const uniqueSlugs = [...new Set(results.map(r => r.slug))]
 
-  const allRelated = uniqueSlugs.flatMap(slug => getRelatedPosts(slug, RELATED_POSTS_PER_SLUG))
+  const allRelated = (
+    await Promise.all(uniqueSlugs.map(slug => getRelatedPosts(slug, RELATED_POSTS_PER_SLUG)))
+  ).flat()
 
   const seenSlugs = new Set(uniqueSlugs)
   const relatedPosts = allRelated
