@@ -12,12 +12,17 @@ interface Message {
   sources?: Array<{ slug: string; title: string }>
 }
 
-export default function CreatureChat() {
+interface CreatureChatProps {
+  initialQuery?: string
+}
+
+export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [creatureFrame, setCreatureFrame] = useState(CREATURE_FRAMES[0])
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const initialQuerySent = useRef(false)
 
   useEffect(() => {
     let frameIndex = 0
@@ -29,16 +34,21 @@ export default function CreatureChat() {
     return () => clearInterval(interval)
   }, [isLoading])
 
+  // 初期クエリがある場合は自動送信
+  useEffect(() => {
+    if (initialQuery && !initialQuerySent.current) {
+      initialQuerySent.current = true
+      sendMessage(`「${initialQuery}」について教えて`)
+    }
+  }, [initialQuery])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim() || isLoading) return
+  const sendMessage = async (userMessage: string) => {
+    if (!userMessage.trim() || isLoading) return
 
-    const userMessage = input.trim()
-    setInput('')
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
 
@@ -66,6 +76,14 @@ export default function CreatureChat() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!input.trim() || isLoading) return
+    const userMessage = input.trim()
+    setInput('')
+    await sendMessage(userMessage)
   }
 
   return (

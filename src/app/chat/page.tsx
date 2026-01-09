@@ -6,7 +6,13 @@ export const metadata: Metadata = {
   description: 'yukyuのブログに住む生命体とおしゃべり',
 }
 
-export default function ChatPage() {
+interface ChatPageProps {
+  searchParams: Promise<{ q?: string }>
+}
+
+export default async function ChatPage({ searchParams }: ChatPageProps) {
+  const { q } = await searchParams
+
   return (
     <main className="min-h-screen bg-black">
       <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -17,7 +23,7 @@ export default function ChatPage() {
         <p className="text-green-600 mb-8 text-sm">
           このブログに住んでいる生命体に話しかけてみよう
         </p>
-        <CreatureChat />
+        <CreatureChat initialQuery={q} />
       </div>
     </main>
   )

@@ -196,27 +196,39 @@ export default function Search() {
                 )}
 
                 {results.map((result, index) => (
-                  <Link
+                  <div
                     key={result.url || index}
-                    href={result.url}
-                    onClick={handleClose}
-                    className="block p-3 border-b border-green-800 hover:bg-green-900/30 transition-colors"
+                    className="p-3 border-b border-green-800 hover:bg-green-900/30 transition-colors"
                   >
-                    <h3 className="font-mono text-green-400 font-bold">
-                      {result.meta?.title || 'Untitled'}
-                    </h3>
-                    {result.meta?.tags && (
-                      <p className="text-xs font-mono text-green-600 mt-1">
-                        TAGS: {result.meta.tags}
-                      </p>
-                    )}
-                    {result.excerpt && (
-                      <p
-                        className="text-sm font-mono text-green-500 mt-2 line-clamp-2"
-                        dangerouslySetInnerHTML={{ __html: result.excerpt }}
-                      />
-                    )}
-                  </Link>
+                    <Link
+                      href={result.url}
+                      onClick={handleClose}
+                      className="block"
+                    >
+                      <h3 className="font-mono text-green-400 font-bold">
+                        {result.meta?.title || 'Untitled'}
+                      </h3>
+                      {result.meta?.tags && (
+                        <p className="text-xs font-mono text-green-600 mt-1">
+                          TAGS: {result.meta.tags}
+                        </p>
+                      )}
+                      {result.excerpt && (
+                        <p
+                          className="text-sm font-mono text-green-500 mt-2 line-clamp-2"
+                          dangerouslySetInnerHTML={{ __html: result.excerpt }}
+                        />
+                      )}
+                    </Link>
+                    <Link
+                      href={`/chat?q=${encodeURIComponent(result.meta?.title || '')}`}
+                      onClick={handleClose}
+                      className="inline-flex items-center gap-1 mt-2 text-xs font-mono text-green-600 hover:text-green-400 transition-colors"
+                    >
+                      <span>▛</span>
+                      <span>この記事についてChatで話す</span>
+                    </Link>
+                  </div>
                 ))}
               </div>
 
