@@ -63,30 +63,18 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [showFlash, setShowFlash] = useState(false)
 
-  // ドッキリ演出を実行（Promiseを返して完了を待てるようにする）
-  const triggerPrank = useCallback((prankMessage: string): Promise<void> => {
-    return new Promise((resolve) => {
-      // カメラシャッター音を再生
-      if (!audioRef.current) {
-        audioRef.current = new Audio('/sounds/camera-shutter.mp3')
-      }
-      audioRef.current.currentTime = 0
-      audioRef.current.play().catch(() => {})
+  // フラッシュと音声の演出フック
+  const playPrankEffect = useCallback(() => {
+    // カメラシャッター音を再生
+    if (!audioRef.current) {
+      audioRef.current = new Audio('/sounds/camera-shutter.mp3')
+    }
+    audioRef.current.currentTime = 0
+    audioRef.current.play().catch(() => {})
 
-      // フラッシュ演出
-      setShowFlash(true)
-      setTimeout(() => setShowFlash(false), 150)
-
-      // 生命体のドッキリメッセージを追加
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          { role: 'assistant', content: prankMessage },
-        ])
-        // 少し待ってから通常処理へ
-        setTimeout(resolve, 1500)
-      }, 200)
-    })
+    // フラッシュ演出
+    setShowFlash(true)
+    setTimeout(() => setShowFlash(false), 150)
   }, [])
 
   // ステータスに応じたフレームアニメーション
@@ -128,7 +116,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     messagesRef.current = messages
   }, [messages])
 
-  const sendMessage = useCallback(async (userMessage: string) => {
+  const sendMessage = useCallback(async (userMessage: string, options?: { onPrank?: () => void }) => {
     if (!userMessage.trim() || isLoadingRef.current) return
 
     isLoadingRef.current = true
@@ -170,7 +158,9 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
               const data = JSON.parse(line.slice(6))
               if (data.type === 'prank') {
                 // AIが悪口を検出したのでドッキリ発動
-                await triggerPrank(data.message)
+                options?.onPrank?.()
+                // prankメッセージをcontentとして扱う
+                accumulatedContent = data.message
               } else if (data.type === 'status') {
                 setCurrentStatus({
                   status: data.status,
@@ -215,15 +205,15 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       isLoadingRef.current = false
       setIsLoading(false)
     }
-  }, [triggerPrank])
+  }, [])
 
   // 初期クエリがある場合は自動送信
   useEffect(() => {
     if (initialQuery && !initialQuerySent.current) {
       initialQuerySent.current = true
-      sendMessage(`「${initialQuery}」について教えて`)
+      sendMessage(`「${initialQuery}」について教えて`, { onPrank: playPrankEffect })
     }
-  }, [initialQuery, sendMessage])
+  }, [initialQuery, sendMessage, playPrankEffect])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -231,7 +221,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     const userMessage = input.trim()
     setInput('')
     inputRef.current?.focus()
-    sendMessage(userMessage)
+    sendMessage(userMessage, { onPrank: playPrankEffect })
   }
 
   return (
