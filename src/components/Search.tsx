@@ -196,46 +196,44 @@ export default function Search() {
                 )}
 
                 {results.map((result, index) => (
-                  <div
+                  <Link
                     key={result.url || index}
-                    className="p-3 border-b border-green-800 hover:bg-green-900/30 transition-colors"
+                    href={result.url}
+                    onClick={handleClose}
+                    className="block p-3 border-b border-green-800 hover:bg-green-900/30 transition-colors"
                   >
-                    <Link
-                      href={result.url}
-                      onClick={handleClose}
-                      className="block"
-                    >
-                      <h3 className="font-mono text-green-400 font-bold">
-                        {result.meta?.title || 'Untitled'}
-                      </h3>
-                      {result.meta?.tags && (
-                        <p className="text-xs font-mono text-green-600 mt-1">
-                          TAGS: {result.meta.tags}
-                        </p>
-                      )}
-                      {result.excerpt && (
-                        <p
-                          className="text-sm font-mono text-green-500 mt-2 line-clamp-2"
-                          dangerouslySetInnerHTML={{ __html: result.excerpt }}
-                        />
-                      )}
-                    </Link>
-                    <Link
-                      href={`/chat?q=${encodeURIComponent(result.meta?.title || '')}`}
-                      onClick={handleClose}
-                      className="inline-flex items-center gap-1 mt-2 text-xs font-mono text-green-600 hover:text-green-400 transition-colors"
-                    >
-                      <span>▛</span>
-                      <span>この記事についてChatで話す</span>
-                    </Link>
-                  </div>
+                    <h3 className="font-mono text-green-400 font-bold">
+                      {result.meta?.title || 'Untitled'}
+                    </h3>
+                    {result.meta?.tags && (
+                      <p className="text-xs font-mono text-green-600 mt-1">
+                        TAGS: {result.meta.tags}
+                      </p>
+                    )}
+                    {result.excerpt && (
+                      <p
+                        className="text-sm font-mono text-green-500 mt-2 line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: result.excerpt }}
+                      />
+                    )}
+                  </Link>
                 ))}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-green-800">
+              <div className="mt-4 pt-4 border-t border-green-800 flex justify-between items-center">
                 <p className="text-xs font-mono text-green-700">
                   TIP: Cmd/Ctrl + K でいつでも検索
                 </p>
+                {query.trim() && (
+                  <Link
+                    href={`/chat?q=${encodeURIComponent(query)}`}
+                    onClick={handleClose}
+                    className="inline-flex items-center gap-1 text-xs font-mono text-green-600 hover:text-green-400 transition-colors"
+                  >
+                    <span>▛</span>
+                    <span>Chatで探す</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
