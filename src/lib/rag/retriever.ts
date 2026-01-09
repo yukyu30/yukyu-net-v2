@@ -1,5 +1,6 @@
 import { embedText } from './embeddings'
 import { queryVectors } from './vector-store'
+import OpenAI from 'openai'
 import fs from 'fs'
 import path from 'path'
 
@@ -33,9 +34,6 @@ interface GraphData {
   }>
 }
 
-// 「最近」系のキーワード
-const RECENT_KEYWORDS = ['最近', '近況', '今', '最新', '直近', '近頃', 'この頃', '最近の']
-
 let graphData: GraphData | null = null
 
 function loadGraphData(): GraphData | null {
@@ -62,9 +60,42 @@ function extractDateFromSlug(slug: string): Date | null {
   return null
 }
 
-// 最近系のクエリかどうか判定
-function isRecentQuery(query: string): boolean {
-  return RECENT_KEYWORDS.some(keyword => query.includes(keyword))
+// 最近系のクエリかどうかOpenAIで判定
+async function isRecentQuery(query: string): Promise<{ isRecent: boolean; searchKeyword: string }> {
+  const openai = new OpenAI()
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `ユーザーの質問が「最近」「近況」「最新」など時間的に新しい情報を求めているかを判定してください。
+JSONで回答してください:
+- isRecent: 最近の情報を求めているならtrue
+- searchKeyword: 「最近」などの時間表現を除いた検索キーワード（なければ空文字）
+
+例:
+「最近のマイブーム」→ {"isRecent": true, "searchKeyword": "マイブーム"}
+「最近どうしてる？」→ {"isRecent": true, "searchKeyword": ""}
+「マイブームは？」→ {"isRecent": false, "searchKeyword": "マイブーム"}
+「VRChatについて」→ {"isRecent": false, "searchKeyword": "VRChat"}`
+      },
+      { role: 'user', content: query }
+    ],
+    temperature: 0,
+    max_tokens: 100,
+    response_format: { type: 'json_object' },
+  })
+
+  try {
+    const result = JSON.parse(response.choices[0]?.message?.content || '{}')
+    return {
+      isRecent: result.isRecent === true,
+      searchKeyword: result.searchKeyword || '',
+    }
+  } catch {
+    return { isRecent: false, searchKeyword: query }
+  }
 }
 
 export function getRelatedPosts(slug: string, limit: number = 3): RelatedPost[] {
@@ -121,20 +152,16 @@ export async function searchPosts(
     return []
   }
 
-  // 「最近」系のクエリの場合、日付でソート
-  if (isRecentQuery(query)) {
-    // クエリから「最近」などを除いた内容で検索
-    const cleanQuery = RECENT_KEYWORDS.reduce(
-      (q, keyword) => q.replace(keyword, ''),
-      query
-    ).trim()
+  // OpenAIで「最近」系のクエリかどうか判定
+  const { isRecent, searchKeyword } = await isRecentQuery(query)
 
+  if (isRecent) {
     // 最新記事を取得
     const recentPosts = getRecentPosts(10)
 
-    if (cleanQuery) {
-      // 残りのキーワードがある場合はベクトル検索も併用
-      const queryVector = await embedText(cleanQuery)
+    if (searchKeyword) {
+      // キーワードがある場合はベクトル検索して日付順ソート
+      const queryVector = await embedText(searchKeyword)
       const vectorResults = await queryVectors(queryVector, topK * 2)
 
       // 日付でソートして返す
@@ -157,7 +184,6 @@ export async function searchPosts(
       const graph = loadGraphData()
       if (!graph) return []
 
-      // 最新記事のslugでベクトル検索
       const results: SearchResult[] = []
       for (const post of recentPosts.slice(0, topK)) {
         const node = graph.nodes.find(n => n.id === post.slug)
