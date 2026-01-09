@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       model: 'gpt-5.1',
       messages,
       temperature: 0.7,
-      max_tokens: 1000,
+      max_completion_tokens: 1000,
     })
 
     const reply = completion.choices[0]?.message?.content || 'すみません、うまく答えられませんでした...'
