@@ -3,9 +3,9 @@ import crypto from 'crypto'
 // テスト対象の純粋関数をテスト
 describe('indexer - utility functions', () => {
   describe('computeContentHash', () => {
-    // ハッシュ計算関数を直接テスト
+    // ハッシュ計算関数を直接テスト（SHA-256使用）
     const computeContentHash = (content: string): string => {
-      return crypto.createHash('md5').update(content).digest('hex')
+      return crypto.createHash('sha256').update(content).digest('hex')
     }
 
     it('同じ内容には同じハッシュを返すこと', () => {

@@ -5,11 +5,11 @@ import { getAllPosts, getPostBySlug } from '../posts'
 import { embedMany } from './embeddings'
 import { initializeIndex, upsertVectors, deleteVectorsBySlug, loadHashCache, saveHashToCache, deleteHashFromCache } from './vector-store'
 
-const CHUNK_SIZE = 500
-const CHUNK_OVERLAP = 50
+const CHUNK_SIZE = 350 // 日本語は1文字≒1トークンで情報密度が高いため小さめに
+const CHUNK_OVERLAP = 70 // チャンクサイズの20%でコンテキスト切断を防止
 
 function computeContentHash(content: string): string {
-  return crypto.createHash('md5').update(content).digest('hex')
+  return crypto.createHash('sha256').update(content).digest('hex')
 }
 
 // 記事のMarkdownコンテンツを直接読み取る（ハッシュ計算用）

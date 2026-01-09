@@ -72,7 +72,11 @@ export async function loadHashCache(): Promise<Map<string, string>> {
   
   const map = new Map<string, string>()
   for (const row of result.rows) {
-    map.set(row.slug as string, row.content_hash as string)
+    if (typeof row.slug === 'string' && typeof row.content_hash === 'string') {
+      map.set(row.slug, row.content_hash)
+    } else {
+      console.warn('Invalid row data in post_hash_cache:', row)
+    }
   }
   return map
 }
