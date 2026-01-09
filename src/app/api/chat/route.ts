@@ -66,10 +66,19 @@ export async function POST(request: NextRequest) {
               context = results
                 .map(r => `【${r.title}】\n${r.text}`)
                 .join('\n\n---\n\n')
-              sources = results.slice(0, 3).map(r => ({
-                slug: r.slug,
-                title: r.title,
-              }))
+              // 重複するslugを除去してユニークな記事のみをソースとして表示
+              const seenSlugs = new Set<string>()
+              sources = results
+                .filter(r => {
+                  if (seenSlugs.has(r.slug)) return false
+                  seenSlugs.add(r.slug)
+                  return true
+                })
+                .slice(0, 3)
+                .map(r => ({
+                  slug: r.slug,
+                  title: r.title,
+                }))
             } else {
               sendEvent(controller, { type: 'status', status: 'not_found', message: '関連記事が見つかりませんでした' })
             }
