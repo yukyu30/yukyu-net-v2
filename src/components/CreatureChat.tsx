@@ -156,13 +156,13 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     }
   }, [initialQuery, sendMessage])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
     const userMessage = input.trim()
     setInput('')
-    await sendMessage(userMessage)
     inputRef.current?.focus()
+    sendMessage(userMessage)
   }
 
   return (
