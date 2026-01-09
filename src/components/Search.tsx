@@ -220,10 +220,20 @@ export default function Search() {
                 ))}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-green-800">
+              <div className="mt-4 pt-4 border-t border-green-800 flex justify-between items-center">
                 <p className="text-xs font-mono text-green-700">
                   TIP: Cmd/Ctrl + K でいつでも検索
                 </p>
+                {query.trim() && (
+                  <Link
+                    href={`/chat?q=${encodeURIComponent(query)}`}
+                    onClick={handleClose}
+                    className="inline-flex items-center gap-1 text-xs font-mono text-green-600 hover:text-green-400 transition-colors"
+                  >
+                    <span>▛</span>
+                    <span>Chatで探す</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

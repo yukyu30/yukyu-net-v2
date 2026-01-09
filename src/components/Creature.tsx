@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { usePathname } from 'next/navigation'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 
@@ -177,6 +178,8 @@ const FRAMES = {
 }
 
 export default function Creature() {
+  const pathname = usePathname()
+  const isHidden = pathname === '/chat'
   const [monologue, setMonologue] = useState('')
   const [showBubble, setShowBubble] = useState(false)
   const [, setMode] = useState<BehaviorMode>('idle')
@@ -606,6 +609,11 @@ export default function Creature() {
     }
     setTimeout(blink, 3000)
   }, [])
+
+  // /chatページでは動き回る生命体を非表示
+  if (isHidden) {
+    return null
+  }
 
   return (
     <div

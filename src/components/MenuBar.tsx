@@ -81,6 +81,14 @@ export default function MenuBar() {
             Top
           </Link>
 
+          {/* CHAT リンク */}
+          <Link
+            href="/chat"
+            className="px-2 sm:px-4 py-2 text-sm sm:text-base font-mono uppercase transition-colors hover:bg-green-400 hover:text-black"
+          >
+            <span className="mr-1">▛</span>Chat
+          </Link>
+
           {/* ドロップダウンメニュー */}
           {menuItems.map((menu) => (
             <div key={menu.label} className="relative">
