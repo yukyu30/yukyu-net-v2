@@ -30,6 +30,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [streamingSources, setStreamingSources] = useState<Array<{ slug: string; title: string }>>([])
   const [currentStatus, setCurrentStatus] = useState<StatusInfo | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const initialQuerySent = useRef(false)
 
   // ステータスに応じたフレームアニメーション
@@ -161,6 +162,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     const userMessage = input.trim()
     setInput('')
     await sendMessage(userMessage)
+    inputRef.current?.focus()
   }
 
   return (
@@ -253,6 +255,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       <form onSubmit={handleSubmit} className="p-4 border-t border-green-900">
         <div className="flex gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
