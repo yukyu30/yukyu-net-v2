@@ -259,9 +259,8 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="メッセージを入力..."
+            placeholder={isLoading ? "応答中..." : "メッセージを入力..."}
             className="flex-1 bg-gray-900 border border-green-900 rounded-lg px-4 py-3 text-green-400 placeholder-green-800 focus:outline-none focus:border-green-700"
-            disabled={isLoading}
           />
           <button
             type="submit"
