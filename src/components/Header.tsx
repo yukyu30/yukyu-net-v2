@@ -64,6 +64,13 @@ export default function Header({
                   <span className="text-xs font-mono font-bold">TAGS</span>
                 </Link>
                 <Link
+                  href="/chat"
+                  className="px-4 py-2 border-l border-green-400 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center"
+                  aria-label="Chat with Creature"
+                >
+                  <span className="text-xs font-mono font-bold">▛ CHAT</span>
+                </Link>
+                <Link
                   href="/rss.xml"
                   className="px-4 py-2 border-l-2 border-green-400 bg-green-400 text-black hover:bg-green-600 transition-colors flex items-center justify-center"
                   aria-label="RSS Feed"
@@ -100,6 +107,13 @@ export default function Header({
                     aria-label="All Tags"
                   >
                     <span className="text-xs font-mono font-bold">TAGS</span>
+                  </Link>
+                  <Link
+                    href="/chat"
+                    className="px-4 py-2 hover:bg-green-400 hover:text-black transition-colors flex items-center justify-center flex-1 border-r border-green-400"
+                    aria-label="Chat with Creature"
+                  >
+                    <span className="text-xs font-mono font-bold">▛ CHAT</span>
                   </Link>
                   <Link
                     href="/rss.xml"
