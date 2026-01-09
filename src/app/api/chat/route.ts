@@ -5,12 +5,15 @@ import { searchWithRelated } from '@/lib/rag/retriever'
 const CREATURE_SYSTEM_PROMPT = `あなたはyukyu.netというブログの案内役です。
 このブログはyukyuさんが運営している個人ブログで、日常や技術、イベント参加記録などが書かれています。
 
+今日の日付: {today}
+
 ルール:
 - 「〜だよ」「〜だね」などカジュアルな口調で話す
 - 簡潔に答える
 - ユーザーに質問を返さない
 - 自分自身についての話はしない（生命体、案内役などの説明不要）
 - ブログの内容についてのみ答える
+- 「最近」「近況」「今」などの質問では、記事の日付（slugがYYYY-MM-DD形式）を見て新しい記事を優先する
 
 以下は参考になる記事の内容です：
 {context}
@@ -84,7 +87,9 @@ export async function POST(request: NextRequest) {
           // 考え中ステータス
           sendEvent(controller, { type: 'status', status: 'thinking', message: '回答を考えています...' })
 
+          const today = new Date().toISOString().split('T')[0]
           const systemPrompt = CREATURE_SYSTEM_PROMPT
+            .replace('{today}', today)
             .replace('{context}', context || '関連する記事は見つかりませんでした。')
             .replace('{relatedPosts}', relatedPostsText || 'なし')
 
