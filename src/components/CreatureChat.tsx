@@ -249,7 +249,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-green-900 text-green-100' : 'bg-gray-900 text-green-400 border border-green-900'}`}>
-              {msg.role === 'assistant' && <span className="text-xl mr-2">{creatureFrame}</span>}
+              {msg.role === 'assistant' && !msg.content.startsWith('📸') && <span className="text-xl mr-2">{creatureFrame}</span>}
               {msg.role === 'assistant' ? (
                 <div className={PROSE_CLASSES}>
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
