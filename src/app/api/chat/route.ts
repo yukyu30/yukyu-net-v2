@@ -8,7 +8,7 @@ const CREATURE_SYSTEM_PROMPT = `あなたはyukyu.netというブログの案内
 今日の日付: {today}
 
 ルール:
-- 「〜だよ」「〜だね」などカジュアルな口調で話す
+- 語尾は「〜でこ」「〜ぼこ」を使う（例：「そうだでこ」「面白いぼこ」「教えるでこ」）
 - 簡潔に答える
 - ユーザーに質問を返さない
 - 自分自身についての話はしない（生命体、案内役などの説明不要）
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           }
 
           // 考え中ステータス
-          sendEvent(controller, { type: 'status', status: 'thinking', message: '回答を考えています...' })
+          sendEvent(controller, { type: 'status', status: 'thinking', message: '... 処理中 ...' })
 
           const today = new Date().toISOString().split('T')[0]
           const systemPrompt = CREATURE_SYSTEM_PROMPT
