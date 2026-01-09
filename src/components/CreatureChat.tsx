@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
 
 const CREATURE_FRAMES = ['▘', '▝', '▗', '▖']
 const THINKING_FRAMES = ['▚', '▞']
@@ -21,6 +22,8 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [creatureFrame, setCreatureFrame] = useState(CREATURE_FRAMES[0])
+  const [streamingContent, setStreamingContent] = useState('')
+  const [streamingSources, setStreamingSources] = useState<Array<{ slug: string; title: string }>>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const initialQuerySent = useRef(false)
 
@@ -34,23 +37,17 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     return () => clearInterval(interval)
   }, [isLoading])
 
-  // 初期クエリがある場合は自動送信
-  useEffect(() => {
-    if (initialQuery && !initialQuerySent.current) {
-      initialQuerySent.current = true
-      sendMessage(`「${initialQuery}」について教えて`)
-    }
-  }, [initialQuery])
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, streamingContent])
 
-  const sendMessage = async (userMessage: string) => {
+  const sendMessage = useCallback(async (userMessage: string) => {
     if (!userMessage.trim() || isLoading) return
 
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
+    setStreamingContent('')
+    setStreamingSources([])
 
     try {
       const response = await fetch('/api/chat', {
@@ -61,22 +58,68 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
           history: messages.slice(-6),
         }),
       })
+
       if (!response.ok) throw new Error('Chat failed')
-      const data = await response.json()
-      setMessages((prev) => [
-        ...prev,
-        { role: 'assistant', content: data.reply, sources: data.sources },
-      ])
+
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error('No reader')
+
+      const decoder = new TextDecoder()
+      let accumulatedContent = ''
+      let sources: Array<{ slug: string; title: string }> = []
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6))
+              if (data.type === 'sources') {
+                sources = data.sources
+                setStreamingSources(data.sources)
+              } else if (data.type === 'content') {
+                accumulatedContent += data.content
+                setStreamingContent(accumulatedContent)
+              } else if (data.type === 'done') {
+                // ストリーミング完了、メッセージを確定
+                setMessages((prev) => [
+                  ...prev,
+                  { role: 'assistant', content: accumulatedContent, sources },
+                ])
+                setStreamingContent('')
+                setStreamingSources([])
+              }
+            } catch {
+              // JSON parse error, skip
+            }
+          }
+        }
+      }
     } catch (error) {
       console.error('Chat error:', error)
       setMessages((prev) => [
         ...prev,
         { role: 'assistant', content: 'ごめん、うまく答えられなかった...もう一度聞いてみて！' },
       ])
+      setStreamingContent('')
+      setStreamingSources([])
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [isLoading, messages])
+
+  // 初期クエリがある場合は自動送信
+  useEffect(() => {
+    if (initialQuery && !initialQuerySent.current) {
+      initialQuerySent.current = true
+      sendMessage(`「${initialQuery}」について教えて`)
+    }
+  }, [initialQuery, sendMessage])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,7 +132,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   return (
     <div className="flex flex-col h-[70vh] border border-green-900 rounded-lg overflow-hidden">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
+        {messages.length === 0 && !streamingContent && (
           <div className="text-center text-green-700 py-8">
             <span className="text-6xl block mb-4">{creatureFrame}</span>
             <p>何でも聞いてね！</p>
@@ -100,7 +143,13 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-green-900 text-green-100' : 'bg-gray-900 text-green-400 border border-green-900'}`}>
               {msg.role === 'assistant' && <span className="text-xl mr-2">{creatureFrame}</span>}
-              <span className="whitespace-pre-wrap">{msg.content}</span>
+              {msg.role === 'assistant' ? (
+                <div className="prose prose-invert prose-green prose-sm max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              ) : (
+                <span className="whitespace-pre-wrap">{msg.content}</span>
+              )}
               {msg.sources && msg.sources.length > 0 && (
                 <div className="mt-3 pt-2 border-t border-green-900">
                   <p className="text-xs text-green-700 mb-1">参考にした記事:</p>
@@ -118,7 +167,31 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
             </div>
           </div>
         ))}
-        {isLoading && (
+        {streamingContent && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
+              <span className="text-xl mr-2">{creatureFrame}</span>
+              <div className="prose prose-invert prose-green prose-sm max-w-none [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_li]:my-0">
+                <ReactMarkdown>{streamingContent}</ReactMarkdown>
+              </div>
+              {streamingSources.length > 0 && (
+                <div className="mt-3 pt-2 border-t border-green-900">
+                  <p className="text-xs text-green-700 mb-1">参考にした記事:</p>
+                  <ul className="text-xs space-y-1">
+                    {streamingSources.map((src, j) => (
+                      <li key={j}>
+                        <Link href={`/posts/${src.slug}`} className="text-green-500 hover:text-green-300 underline">
+                          {src.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {isLoading && !streamingContent && (
           <div className="flex justify-start">
             <div className="bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
               <span className="text-xl mr-2">{creatureFrame}</span>

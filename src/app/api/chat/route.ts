@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import OpenAI from 'openai'
 import { searchWithRelated } from '@/lib/rag/retriever'
 
@@ -27,7 +27,10 @@ export async function POST(request: NextRequest) {
     const { message, history = [] } = await request.json()
 
     if (!message || typeof message !== 'string') {
-      return NextResponse.json({ error: 'message is required' }, { status: 400 })
+      return new Response(JSON.stringify({ error: 'message is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     const openai = new OpenAI()
@@ -35,6 +38,7 @@ export async function POST(request: NextRequest) {
     // RAG検索 + 関連記事取得
     let context = ''
     let relatedPostsText = ''
+    let sources: Array<{ slug: string; title: string }> = []
 
     try {
       const { results, relatedPosts } = await searchWithRelated(message, 5)
@@ -43,6 +47,10 @@ export async function POST(request: NextRequest) {
         context = results
           .map(r => `【${r.title}】\n${r.text}`)
           .join('\n\n---\n\n')
+        sources = results.slice(0, 3).map(r => ({
+          slug: r.slug,
+          title: r.title,
+        }))
       }
 
       if (relatedPosts.length > 0) {
@@ -52,14 +60,12 @@ export async function POST(request: NextRequest) {
       }
     } catch (error) {
       console.error('RAG search failed:', error)
-      // RAG検索が失敗しても続行
     }
 
     const systemPrompt = CREATURE_SYSTEM_PROMPT
       .replace('{context}', context || '関連する記事は見つかりませんでした。')
       .replace('{relatedPosts}', relatedPostsText || 'なし')
 
-    // OpenAI Chat API呼び出し
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       { role: 'system', content: systemPrompt },
       ...history.map((h: { role: string; content: string }) => ({
@@ -69,33 +75,47 @@ export async function POST(request: NextRequest) {
       { role: 'user', content: message },
     ]
 
-    const completion = await openai.chat.completions.create({
+    // ストリーミングレスポンス
+    const stream = await openai.chat.completions.create({
       model: 'gpt-5.1',
       messages,
       temperature: 0.7,
       max_completion_tokens: 1000,
+      stream: true,
     })
 
-    const reply = completion.choices[0]?.message?.content || 'すみません、うまく答えられませんでした...'
+    const encoder = new TextEncoder()
 
-    // 参照した記事のslugを抽出（UI側でリンク表示用）
-    const searchResults = context
-      ? await searchWithRelated(message, 5).then(r => r.results.slice(0, 3))
-      : []
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        // 最初にsourcesを送信
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'sources', sources })}\n\n`))
 
-    return NextResponse.json({
-      reply,
-      sources: searchResults.map(r => ({
-        slug: r.slug,
-        title: r.title,
-      })),
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content
+          if (content) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'content', content })}\n\n`))
+          }
+        }
+
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`))
+        controller.close()
+      },
+    })
+
+    return new Response(readableStream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
     })
   } catch (error) {
     console.error('Chat API error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json(
-      { error: 'Internal server error', details: errorMessage },
-      { status: 500 }
-    )
+    return new Response(JSON.stringify({ error: 'Internal server error', details: errorMessage }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    })
   }
 }
