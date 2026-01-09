@@ -3,9 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
-
-const CREATURE_FRAMES = ['▘', '▝', '▗', '▖']
-const THINKING_FRAMES = ['▚', '▞']
+import { getFramesForStatus, getAnimationSpeed, type ChatStatus } from '@/lib/creature-frames'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -27,22 +25,42 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [creatureFrame, setCreatureFrame] = useState(CREATURE_FRAMES[0])
+  const [creatureFrame, setCreatureFrame] = useState(getFramesForStatus('idle')[0])
   const [streamingContent, setStreamingContent] = useState('')
   const [streamingSources, setStreamingSources] = useState<Array<{ slug: string; title: string }>>([])
   const [currentStatus, setCurrentStatus] = useState<StatusInfo | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const initialQuerySent = useRef(false)
 
+  // ステータスに応じたフレームアニメーション
   useEffect(() => {
     let frameIndex = 0
+
+    // 現在のステータスを決定
+    const getCurrentStatus = (): ChatStatus => {
+      if (currentStatus?.status) {
+        return currentStatus.status as ChatStatus
+      }
+      if (streamingContent) {
+        return 'thinking' // ストリーミング中は思考アニメーション
+      }
+      if (isLoading) {
+        return 'searching' // ローディング中で状態がなければ検索アニメーション
+      }
+      return 'idle'
+    }
+
+    const status = getCurrentStatus()
+    const frames = getFramesForStatus(status)
+    const speed = getAnimationSpeed(status)
+
     const interval = setInterval(() => {
-      const frames = isLoading ? THINKING_FRAMES : CREATURE_FRAMES
       frameIndex = (frameIndex + 1) % frames.length
       setCreatureFrame(frames[frameIndex])
-    }, isLoading ? 150 : 500)
+    }, speed)
+
     return () => clearInterval(interval)
-  }, [isLoading])
+  }, [isLoading, currentStatus, streamingContent])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -150,7 +168,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && !streamingContent && !currentStatus && (
           <div className="text-center text-green-700 py-8">
-            <span className="text-6xl block mb-4">{creatureFrame}</span>
+            <span data-testid="creature-frame" className="text-6xl block mb-4">{creatureFrame}</span>
             <p>何でも聞いてね！</p>
             <p className="text-sm mt-2 text-green-800">ブログの記事について教えてあげるよ</p>
           </div>
