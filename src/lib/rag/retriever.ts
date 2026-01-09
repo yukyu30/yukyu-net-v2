@@ -33,6 +33,9 @@ interface GraphData {
   }>
 }
 
+// 「最近」系のキーワード
+const RECENT_KEYWORDS = ['最近', '近況', '今', '最新', '直近', '近頃', 'この頃', '最近の']
+
 let graphData: GraphData | null = null
 
 function loadGraphData(): GraphData | null {
@@ -48,6 +51,20 @@ function loadGraphData(): GraphData | null {
     console.warn('Failed to load graph data:', error)
   }
   return null
+}
+
+// slugから日付を抽出（YYYY-MM-DD形式）
+function extractDateFromSlug(slug: string): Date | null {
+  const match = slug.match(/^(\d{4}-\d{2}-\d{2})/)
+  if (match) {
+    return new Date(match[1])
+  }
+  return null
+}
+
+// 最近系のクエリかどうか判定
+function isRecentQuery(query: string): boolean {
+  return RECENT_KEYWORDS.some(keyword => query.includes(keyword))
 }
 
 export function getRelatedPosts(slug: string, limit: number = 3): RelatedPost[] {
@@ -75,6 +92,27 @@ export function getRelatedPosts(slug: string, limit: number = 3): RelatedPost[] 
     .slice(0, limit)
 }
 
+// 最新の記事を取得
+export function getRecentPosts(limit: number = 5): Array<{ slug: string; title: string; date: string }> {
+  const graph = loadGraphData()
+  if (!graph) return []
+
+  return graph.nodes
+    .filter(n => extractDateFromSlug(n.id) !== null)
+    .sort((a, b) => {
+      const dateA = extractDateFromSlug(a.id)
+      const dateB = extractDateFromSlug(b.id)
+      if (!dateA || !dateB) return 0
+      return dateB.getTime() - dateA.getTime()
+    })
+    .slice(0, limit)
+    .map(n => ({
+      slug: n.id,
+      title: n.name,
+      date: n.date,
+    }))
+}
+
 export async function searchPosts(
   query: string,
   topK: number = 5
@@ -83,10 +121,62 @@ export async function searchPosts(
     return []
   }
 
-  // クエリをEmbeddingに変換
-  const queryVector = await embedText(query)
+  // 「最近」系のクエリの場合、日付でソート
+  if (isRecentQuery(query)) {
+    // クエリから「最近」などを除いた内容で検索
+    const cleanQuery = RECENT_KEYWORDS.reduce(
+      (q, keyword) => q.replace(keyword, ''),
+      query
+    ).trim()
 
-  // ベクトル検索
+    // 最新記事を取得
+    const recentPosts = getRecentPosts(10)
+
+    if (cleanQuery) {
+      // 残りのキーワードがある場合はベクトル検索も併用
+      const queryVector = await embedText(cleanQuery)
+      const vectorResults = await queryVectors(queryVector, topK * 2)
+
+      // 日付でソートして返す
+      const resultsWithDate = vectorResults
+        .map(r => ({
+          slug: r.metadata.slug,
+          title: r.metadata.title,
+          text: r.metadata.text,
+          score: r.score,
+          chunkIndex: r.metadata.chunkIndex,
+          date: extractDateFromSlug(r.metadata.slug),
+        }))
+        .filter(r => r.date !== null)
+        .sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0))
+        .slice(0, topK)
+
+      return resultsWithDate.map(({ date, ...rest }) => rest)
+    } else {
+      // 「最近どう？」のような質問は最新記事から
+      const graph = loadGraphData()
+      if (!graph) return []
+
+      // 最新記事のslugでベクトル検索
+      const results: SearchResult[] = []
+      for (const post of recentPosts.slice(0, topK)) {
+        const node = graph.nodes.find(n => n.id === post.slug)
+        if (node) {
+          results.push({
+            slug: post.slug,
+            title: post.title,
+            text: `${post.title} (${post.date})`,
+            score: 1,
+            chunkIndex: 0,
+          })
+        }
+      }
+      return results
+    }
+  }
+
+  // 通常のベクトル検索
+  const queryVector = await embedText(query)
   const results = await queryVectors(queryVector, topK)
 
   return results.map(r => ({
