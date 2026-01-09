@@ -392,8 +392,8 @@ export default function Creature() {
     )
   }, [])
 
-  // ドラッグ開始
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  // ドラッグ開始（共通処理）
+  const startDrag = useCallback((clientX: number, clientY: number) => {
     if (!creatureRef.current) return
 
     isDragging.current = true
@@ -402,25 +402,49 @@ export default function Creature() {
 
     const rect = creatureRef.current.getBoundingClientRect()
     dragOffset.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: clientX - rect.left,
+      y: clientY - rect.top,
     }
 
     gsap.killTweensOf(creatureRef.current)
   }, [speak, updateMode])
 
-  // ドラッグ中
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    mousePos.current = { x: e.clientX, y: e.clientY }
+  // マウスでドラッグ開始
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    startDrag(e.clientX, e.clientY)
+  }, [startDrag])
+
+  // タッチでドラッグ開始
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    startDrag(touch.clientX, touch.clientY)
+  }, [startDrag])
+
+  // ドラッグ中（共通処理）
+  const moveDrag = useCallback((clientX: number, clientY: number) => {
+    mousePos.current = { x: clientX, y: clientY }
 
     if (!isDragging.current || !creatureRef.current) return
 
     gsap.set(creatureRef.current, {
-      x: e.clientX - dragOffset.current.x,
-      y: e.clientY - dragOffset.current.y,
+      x: clientX - dragOffset.current.x,
+      y: clientY - dragOffset.current.y,
     })
     updateBubbleDirection()
   }, [updateBubbleDirection])
+
+  // マウスでドラッグ中
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    moveDrag(e.clientX, e.clientY)
+  }, [moveDrag])
+
+  // タッチでドラッグ中
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging.current) return
+    e.preventDefault() // スクロール防止
+    const touch = e.touches[0]
+    moveDrag(touch.clientX, touch.clientY)
+  }, [moveDrag])
 
   // ドラッグ終了
   const handleMouseUp = useCallback(() => {
@@ -461,16 +485,20 @@ export default function Creature() {
     }
   }, [patrol, speak, updateBubbleDirection, updateMode, returnToMenuBar])
 
-  // マウスイベントのリスナー設定
+  // マウス・タッチイベントのリスナー設定
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('mouseup', handleMouseUp)
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('touchend', handleMouseUp)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleMouseUp)
     }
-  }, [handleMouseMove, handleMouseUp])
+  }, [handleMouseMove, handleMouseUp, handleTouchMove])
 
   // 生命体のパラパラアニメーション
   useEffect(() => {
@@ -621,6 +649,7 @@ export default function Creature() {
       data-testid="creature"
       className="fixed z-[60] cursor-grab active:cursor-grabbing select-none"
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
       <div className={`flex gap-2 ${isAtHome ? 'flex-col items-start' : `items-center ${isOnRight ? 'flex-row-reverse' : ''}`}`}>
         <span
