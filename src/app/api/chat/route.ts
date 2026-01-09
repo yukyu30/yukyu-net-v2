@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           }
 
           // 考え中ステータス
-          sendEvent(controller, { type: 'status', status: 'thinking', message: '回答を考えています...' })
+          sendEvent(controller, { type: 'status', status: 'thinking', message: '... 処理中 ...' })
 
           const today = new Date().toISOString().split('T')[0]
           const systemPrompt = CREATURE_SYSTEM_PROMPT
