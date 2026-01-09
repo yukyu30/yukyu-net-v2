@@ -9,6 +9,7 @@
     "generate:rss": "node scripts/generate-rss.js",
     "generate:search": "node scripts/generate-search-index.mjs",
     "generate:graph": "node scripts/generate-graph-data.mjs",
+    "generate:rag-index": "npx tsx scripts/index-posts-for-rag.ts --incremental",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
