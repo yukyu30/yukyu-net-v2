@@ -5,10 +5,36 @@ import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import { getFramesForStatus, getAnimationSpeed, type ChatStatus } from '@/lib/creature-frames'
 
+interface Source {
+  slug: string
+  title: string
+}
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
-  sources?: Array<{ slug: string; title: string }>
+  sources?: Source[]
+}
+
+const HISTORY_LIMIT = 6
+const PROSE_CLASSES = "prose prose-invert prose-sm max-w-none [&_p]:my-1 [&_ul]:my-2 [&_ul]:ml-4 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-4 [&_ol]:list-decimal [&_li]:my-0.5 [&_li]:text-green-400 [&_h1]:text-green-300 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:mt-2 [&_h1]:mb-1 [&_h2]:text-green-300 [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:text-green-300 [&_h3]:text-sm [&_h3]:font-bold [&_h3]:mt-2 [&_h3]:mb-1 [&_strong]:text-green-300 [&_strong]:font-bold [&_em]:text-green-500 [&_code]:text-green-300 [&_code]:bg-green-900/30 [&_code]:px-1 [&_code]:rounded [&_a]:text-green-400 [&_a]:underline"
+
+function SourcesList({ sources }: { sources: Source[] }) {
+  if (sources.length === 0) return null
+  return (
+    <div className="mt-3 pt-2 border-t border-green-900">
+      <p className="text-xs text-green-700 mb-1">参考にした記事:</p>
+      <ul className="text-xs space-y-1">
+        {sources.map((src, j) => (
+          <li key={j}>
+            <Link href={`/posts/${src.slug}`} className="text-green-500 hover:text-green-300 underline">
+              {src.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 interface StatusInfo {
@@ -27,11 +53,13 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [creatureFrame, setCreatureFrame] = useState(getFramesForStatus('idle')[0])
   const [streamingContent, setStreamingContent] = useState('')
-  const [streamingSources, setStreamingSources] = useState<Array<{ slug: string; title: string }>>([])
+  const [streamingSources, setStreamingSources] = useState<Source[]>([])
   const [currentStatus, setCurrentStatus] = useState<StatusInfo | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const initialQuerySent = useRef(false)
+  const messagesRef = useRef<Message[]>([])
+  const isLoadingRef = useRef(false)
 
   // ステータスに応じたフレームアニメーション
   useEffect(() => {
@@ -67,9 +95,15 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, streamingContent, currentStatus])
 
-  const sendMessage = useCallback(async (userMessage: string) => {
-    if (!userMessage.trim() || isLoading) return
+  // messagesRef を同期
+  useEffect(() => {
+    messagesRef.current = messages
+  }, [messages])
 
+  const sendMessage = useCallback(async (userMessage: string) => {
+    if (!userMessage.trim() || isLoadingRef.current) return
+
+    isLoadingRef.current = true
     setMessages((prev) => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
     setStreamingContent('')
@@ -82,7 +116,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
-          history: messages.slice(-6),
+          history: messagesRef.current.slice(-HISTORY_LIMIT),
         }),
       })
 
@@ -93,7 +127,7 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
 
       const decoder = new TextDecoder()
       let accumulatedContent = ''
-      let sources: Array<{ slug: string; title: string }> = []
+      let sources: Source[] = []
 
       while (true) {
         const { done, value } = await reader.read()
@@ -144,9 +178,10 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
       setStreamingSources([])
       setCurrentStatus(null)
     } finally {
+      isLoadingRef.current = false
       setIsLoading(false)
     }
-  }, [isLoading, messages])
+  }, [])
 
   // 初期クエリがある場合は自動送信
   useEffect(() => {
@@ -180,26 +215,13 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
             <div className={`max-w-[80%] rounded-lg p-3 ${msg.role === 'user' ? 'bg-green-900 text-green-100' : 'bg-gray-900 text-green-400 border border-green-900'}`}>
               {msg.role === 'assistant' && <span className="text-xl mr-2">{creatureFrame}</span>}
               {msg.role === 'assistant' ? (
-                <div className="prose prose-invert prose-sm max-w-none [&_p]:my-1 [&_ul]:my-2 [&_ul]:ml-4 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-4 [&_ol]:list-decimal [&_li]:my-0.5 [&_li]:text-green-400 [&_h1]:text-green-300 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:mt-2 [&_h1]:mb-1 [&_h2]:text-green-300 [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:text-green-300 [&_h3]:text-sm [&_h3]:font-bold [&_h3]:mt-2 [&_h3]:mb-1 [&_strong]:text-green-300 [&_strong]:font-bold [&_em]:text-green-500 [&_code]:text-green-300 [&_code]:bg-green-900/30 [&_code]:px-1 [&_code]:rounded [&_a]:text-green-400 [&_a]:underline">
+                <div className={PROSE_CLASSES}>
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
               ) : (
                 <span className="whitespace-pre-wrap">{msg.content}</span>
               )}
-              {msg.sources && msg.sources.length > 0 && (
-                <div className="mt-3 pt-2 border-t border-green-900">
-                  <p className="text-xs text-green-700 mb-1">参考にした記事:</p>
-                  <ul className="text-xs space-y-1">
-                    {msg.sources.map((src, j) => (
-                      <li key={j}>
-                        <Link href={`/posts/${src.slug}`} className="text-green-500 hover:text-green-300 underline">
-                          {src.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {msg.sources && <SourcesList sources={msg.sources} />}
             </div>
           </div>
         ))}
@@ -229,23 +251,10 @@ export default function CreatureChat({ initialQuery }: CreatureChatProps) {
           <div className="flex justify-start">
             <div className="max-w-[80%] bg-gray-900 text-green-400 border border-green-900 rounded-lg p-3">
               <span className="text-xl mr-2">{creatureFrame}</span>
-              <div className="prose prose-invert prose-sm max-w-none [&_p]:my-1 [&_ul]:my-2 [&_ul]:ml-4 [&_ul]:list-disc [&_ol]:my-2 [&_ol]:ml-4 [&_ol]:list-decimal [&_li]:my-0.5 [&_li]:text-green-400 [&_h1]:text-green-300 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:mt-2 [&_h1]:mb-1 [&_h2]:text-green-300 [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-2 [&_h2]:mb-1 [&_h3]:text-green-300 [&_h3]:text-sm [&_h3]:font-bold [&_h3]:mt-2 [&_h3]:mb-1 [&_strong]:text-green-300 [&_strong]:font-bold [&_em]:text-green-500 [&_code]:text-green-300 [&_code]:bg-green-900/30 [&_code]:px-1 [&_code]:rounded [&_a]:text-green-400 [&_a]:underline">
+              <div className={PROSE_CLASSES}>
                 <ReactMarkdown>{streamingContent}</ReactMarkdown>
               </div>
-              {streamingSources.length > 0 && (
-                <div className="mt-3 pt-2 border-t border-green-900">
-                  <p className="text-xs text-green-700 mb-1">参考にした記事:</p>
-                  <ul className="text-xs space-y-1">
-                    {streamingSources.map((src, j) => (
-                      <li key={j}>
-                        <Link href={`/posts/${src.slug}`} className="text-green-500 hover:text-green-300 underline">
-                          {src.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <SourcesList sources={streamingSources} />
             </div>
           </div>
         )}
