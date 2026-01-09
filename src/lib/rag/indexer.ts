@@ -1,41 +1,27 @@
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import { getAllPosts, getPostBySlug } from '../posts'
 import { embedMany } from './embeddings'
-import { initializeIndex, upsertVectors, deleteVectorsBySlug } from './vector-store'
+import { initializeIndex, upsertVectors, deleteVectorsBySlug, loadHashCache, saveHashToCache, deleteHashFromCache } from './vector-store'
 
 const CHUNK_SIZE = 500
 const CHUNK_OVERLAP = 50
-const CACHE_FILE_PATH = path.join(process.cwd(), 'public/rag/indexed-slugs.json')
 
-interface IndexCache {
-  slugs: string[]
-  lastUpdated: string
+function computeContentHash(content: string): string {
+  return crypto.createHash('md5').update(content).digest('hex')
 }
 
-function loadIndexedSlugs(): Set<string> {
-  try {
-    if (fs.existsSync(CACHE_FILE_PATH)) {
-      const data = JSON.parse(fs.readFileSync(CACHE_FILE_PATH, 'utf-8')) as IndexCache
-      return new Set(data.slugs)
-    }
-  } catch (error) {
-    console.warn('Failed to load indexed slugs cache:', error)
+// 記事のMarkdownコンテンツを直接読み取る（ハッシュ計算用）
+function getPostRawContent(slug: string): string | null {
+  const postsDirectory = path.join(process.cwd(), 'public', 'source')
+  const indexPath = path.join(postsDirectory, slug, 'index.md')
+  
+  if (!fs.existsSync(indexPath)) {
+    return null
   }
-  return new Set()
-}
-
-function saveIndexedSlugs(slugs: Set<string>): void {
-  const dir = path.dirname(CACHE_FILE_PATH)
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-
-  const cache: IndexCache = {
-    slugs: Array.from(slugs),
-    lastUpdated: new Date().toISOString(),
-  }
-  fs.writeFileSync(CACHE_FILE_PATH, JSON.stringify(cache, null, 2))
+  
+  return fs.readFileSync(indexPath, 'utf-8')
 }
 
 export interface Chunk {
@@ -101,8 +87,19 @@ export async function indexAllPosts(): Promise<{ total: number; indexed: number 
 
   for (const post of posts) {
     try {
+      const rawContent = getPostRawContent(post.slug)
+      if (!rawContent) {
+        console.warn(`Skipped ${post.slug} (content not found)`)
+        continue
+      }
+      
       const chunkCount = await indexPost(post.slug)
       indexed += chunkCount
+      
+      // ハッシュをDBに保存
+      const contentHash = computeContentHash(rawContent)
+      await saveHashToCache(post.slug, contentHash)
+      
       console.log(`Indexed ${post.slug}: ${chunkCount} chunks`)
     } catch (error) {
       console.error(`Failed to index ${post.slug}:`, error)
@@ -112,36 +109,67 @@ export async function indexAllPosts(): Promise<{ total: number; indexed: number 
   return { total: posts.length, indexed }
 }
 
-export async function indexNewPostsOnly(): Promise<{ total: number; skipped: number; indexed: number }> {
+export async function indexNewPostsOnly(): Promise<{ total: number; skipped: number; indexed: number; deleted: number }> {
   // インデックスを初期化
   await initializeIndex()
 
   const posts = await getAllPosts()
-  const indexedSlugs = loadIndexedSlugs()
+  const cachedHashes = await loadHashCache()
+  
   let indexed = 0
   let skipped = 0
+  let deleted = 0
+  
+  // 現在の記事のslugセットを作成
+  const currentSlugs = new Set(posts.map(p => p.slug))
+  
+  // 削除された記事をベクトルストアとキャッシュから削除
+  for (const [slug] of cachedHashes) {
+    if (!currentSlugs.has(slug)) {
+      try {
+        await deleteVectorsBySlug(slug)
+        await deleteHashFromCache(slug)
+        console.log(`Deleted ${slug} (post removed)`)
+        deleted++
+      } catch (error) {
+        console.error(`Failed to delete ${slug}:`, error)
+      }
+    }
+  }
 
   for (const post of posts) {
-    if (indexedSlugs.has(post.slug)) {
-      skipped++
-      console.log(`Skipped ${post.slug} (already indexed)`)
+    // 記事の生のコンテンツを取得してハッシュを計算
+    const rawContent = getPostRawContent(post.slug)
+    if (!rawContent) {
+      console.warn(`Skipped ${post.slug} (content not found)`)
       continue
     }
-
+    
+    const contentHash = computeContentHash(rawContent)
+    const cachedHash = cachedHashes.get(post.slug)
+    
+    // ハッシュが一致する場合はスキップ
+    if (cachedHash && cachedHash === contentHash) {
+      skipped++
+      console.log(`Skipped ${post.slug} (unchanged)`)
+      continue
+    }
+    
+    // 新規または更新された記事をインデックス
     try {
       const chunkCount = await indexPost(post.slug)
       indexed += chunkCount
-      indexedSlugs.add(post.slug)
-      console.log(`Indexed ${post.slug}: ${chunkCount} chunks`)
+      
+      // ハッシュをDBに保存
+      await saveHashToCache(post.slug, contentHash)
+      
+      console.log(`Indexed ${post.slug}: ${chunkCount} chunks${cachedHash ? ' (updated)' : ' (new)'}`)
     } catch (error) {
       console.error(`Failed to index ${post.slug}:`, error)
     }
   }
 
-  // キャッシュを保存
-  saveIndexedSlugs(indexedSlugs)
-
-  return { total: posts.length, skipped, indexed }
+  return { total: posts.length, skipped, indexed, deleted }
 }
 
 export { CHUNK_SIZE, CHUNK_OVERLAP }

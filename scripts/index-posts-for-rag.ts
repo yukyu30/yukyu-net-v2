@@ -11,11 +11,12 @@ async function main() {
 
   try {
     if (isIncremental) {
-      const { total, skipped, indexed } = await indexNewPostsOnly()
+      const { total, skipped, indexed, deleted } = await indexNewPostsOnly()
       console.log(`\nIndexing complete!`)
       console.log(`Total posts: ${total}`)
-      console.log(`Skipped (already indexed): ${skipped}`)
+      console.log(`Skipped (unchanged): ${skipped}`)
       console.log(`Newly indexed chunks: ${indexed}`)
+      console.log(`Deleted (removed posts): ${deleted}`)
     } else {
       const { total, indexed } = await indexAllPosts()
       console.log(`\nIndexing complete!`)
