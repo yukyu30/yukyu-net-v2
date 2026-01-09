@@ -10,6 +10,7 @@ const RECENT_POSTS_LIMIT = 10
 const RELATED_POSTS_PER_SLUG = 2
 const MAX_RELATED_POSTS = 3
 const DATE_PATTERN = /^(\d{4}-\d{2}-\d{2})/
+const MIN_SCORE_THRESHOLD = 0.5 // 関連性が低い結果を除外
 
 export interface SearchResult {
   slug: string
@@ -139,9 +140,10 @@ export function getRecentPosts(limit = DEFAULT_TOP_K): Array<{ slug: string; tit
 
 async function searchRecentWithKeyword(searchKeyword: string, topK: number): Promise<SearchResult[]> {
   const queryVector = await embedText(searchKeyword)
-  const vectorResults = await queryVectors(queryVector, topK * 2)
+  const vectorResults = await queryVectors(queryVector, topK * 3)
 
   return vectorResults
+    .filter(result => result.score >= MIN_SCORE_THRESHOLD)
     .map(result => ({
       slug: result.metadata.slug,
       title: result.metadata.title,
@@ -180,15 +182,19 @@ export async function searchPosts(query: string, topK = DEFAULT_TOP_K): Promise<
   }
 
   const queryVector = await embedText(query)
-  const results = await queryVectors(queryVector, topK)
+  // スコアフィルタリング用に多めに取得
+  const results = await queryVectors(queryVector, topK * 2)
 
-  return results.map(result => ({
-    slug: result.metadata.slug,
-    title: result.metadata.title,
-    text: result.metadata.text,
-    score: result.score,
-    chunkIndex: result.metadata.chunkIndex,
-  }))
+  return results
+    .filter(result => result.score >= MIN_SCORE_THRESHOLD)
+    .slice(0, topK)
+    .map(result => ({
+      slug: result.metadata.slug,
+      title: result.metadata.title,
+      text: result.metadata.text,
+      score: result.score,
+      chunkIndex: result.metadata.chunkIndex,
+    }))
 }
 
 export async function searchWithRelated(
